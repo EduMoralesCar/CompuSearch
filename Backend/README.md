@@ -30,8 +30,8 @@ Este directorio contiene el backend para el proyecto **CompuSearch**.
 
 ## 🧑‍💻 IDE Recomendado
 
-- **IntelliJ IDEA** 🟢
-- **VSCode** (con extensiones de Java y Spring) 🔵
+- **[IntelliJ IDEA](https://www.jetbrains.com/es-es/idea/download/?section=windows)** 🟢
+- **[Visual Studio Code](https://code.visualstudio.com/)** (con extensiones de Java y Spring) 🔵
 
 ## 🗂️ Estructura propuesta del Backend
 
