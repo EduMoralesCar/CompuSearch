@@ -1,11 +1,40 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
+import { Collapse } from "bootstrap";
 
 const Header = () => {
+  const location = useLocation();
+  const bsRef = useRef(null);
+  const navbarCollapseId = "navbarCompuSearch";
+
+  useEffect(() => {
+    const el = document.getElementById(navbarCollapseId);
+    if (!el) return;
+
+    bsRef.current =
+      Collapse.getInstance(el) || new Collapse(el, { toggle: false });
+
+    return () => {
+      if (bsRef.current) {
+        bsRef.current.dispose();
+        bsRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (bsRef.current) {
+      bsRef.current.hide();
+    }
+  }, [location]);
+
+  const toggleNavbar = () => {
+    if (bsRef.current) bsRef.current.toggle();
+  };
+
   return (
     <header className="fixed-top">
-      {/* Barra de navegación */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
         <div className="container-fluid">
           {/* Logo */}
@@ -13,76 +42,49 @@ const Header = () => {
             <img src={logo} alt="Logo" height="40" className="me-2" />
           </NavLink>
 
-          {/* Botón de toggle */}
+          {/* Botón toggle */}
           <button
             className="navbar-toggler"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarCompuSearch"
-            aria-controls="navbarCompuSearch"
+            aria-controls={navbarCollapseId}
             aria-expanded="false"
             aria-label="Toggle navigation"
+            onClick={toggleNavbar}
           >
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          {/* Contenido que se colapsa para pantallas pequeñas */}
-          <div className="collapse navbar-collapse" id="navbarCompuSearch">
-            {/* Enlaces de navegación */}
+          {/* Contenido colapsable */}
+          <div className="collapse navbar-collapse" id={navbarCollapseId}>
             <ul className="navbar-nav d-block d-lg-none">
               <li className="nav-item">
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    "nav-link" + (isActive ? " active" : "")
-                  }
-                >
+                <NavLink to="/" className="nav-link">
                   Inicio
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink
-                  to="/componentes"
-                  className={({ isActive }) =>
-                    "nav-link" + (isActive ? " active" : "")
-                  }
-                >
+                <NavLink to="/componentes" className="nav-link">
                   Componentes
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink
-                  to="/tiendas"
-                  className={({ isActive }) =>
-                    "nav-link" + (isActive ? " active" : "")
-                  }
-                >
+                <NavLink to="/tiendas" className="nav-link">
                   Tiendas
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink
-                  to="/categorias"
-                  className={({ isActive }) =>
-                    "nav-link" + (isActive ? " active" : "")
-                  }
-                >
+                <NavLink to="/categorias" className="nav-link">
                   Categorías
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink
-                  to="/builds"
-                  className={({ isActive }) =>
-                    "nav-link" + (isActive ? " active" : "")
-                  }
-                >
+                <NavLink to="/builds" className="nav-link">
                   Armado (Builds)
                 </NavLink>
               </li>
             </ul>
 
-            {/* Formulario de búsqueda */}
+            {/* Buscador */}
             <form
               className="d-flex col-12 col-lg-6 mx-auto mt-3 mt-lg-0 order-lg-2"
               role="search"
@@ -91,7 +93,6 @@ const Header = () => {
                 <input
                   className="form-control"
                   type="search"
-                  id="inputBusqueda"
                   placeholder="¿Qué estás buscando?"
                   aria-label="Buscar"
                 />
@@ -101,7 +102,7 @@ const Header = () => {
               </div>
             </form>
 
-            {/* Iconos de usuario y tienda solo para pantallas pequeñas */}
+            {/* Iconos en móvil */}
             <ul className="navbar-nav d-block d-lg-none mt-3">
               <li className="nav-item">
                 <NavLink to="/login" className="nav-link">
@@ -116,7 +117,7 @@ const Header = () => {
             </ul>
           </div>
 
-          {/* Iconos de usuario y tienda solo para pantallas grandes */}
+          {/* Iconos en escritorio */}
           <div className="d-none d-lg-flex align-items-center order-lg-3 ms-4">
             <NavLink to="/login" className="text-white">
               <i className="bi bi-person-fill fs-4"></i>
@@ -128,57 +129,32 @@ const Header = () => {
         </div>
       </nav>
 
-      {/* Barra de navegación inferior solo en pantallas grandes */}
+      {/* Barra secundaria */}
       <nav className="navbar navbar-expand navbar-dark bg-dark d-none d-lg-block">
         <div className="container-fluid">
           <ul className="navbar-nav mx-auto" style={{ gap: "5rem" }}>
             <li className="nav-item">
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  "nav-link" + (isActive ? " active" : "")
-                }
-              >
+              <NavLink to="/" className="nav-link">
                 Inicio
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink
-                to="/componentes"
-                className={({ isActive }) =>
-                  "nav-link" + (isActive ? " active" : "")
-                }
-              >
+              <NavLink to="/componentes" className="nav-link">
                 Componentes
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink
-                to="/tiendas"
-                className={({ isActive }) =>
-                  "nav-link" + (isActive ? " active" : "")
-                }
-              >
+              <NavLink to="/tiendas" className="nav-link">
                 Tiendas
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink
-                to="/categorias"
-                className={({ isActive }) =>
-                  "nav-link" + (isActive ? " active" : "")
-                }
-              >
+              <NavLink to="/categorias" className="nav-link">
                 Categorías
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink
-                to="/builds"
-                className={({ isActive }) =>
-                  "nav-link" + (isActive ? " active" : "")
-                }
-              >
+              <NavLink to="/builds" className="nav-link">
                 Armado (Builds)
               </NavLink>
             </li>

@@ -16,16 +16,18 @@ const App = () => {
 
   useEffect(() => {
     const header = document.querySelector("header")
+
     if (header) {
-      setHeaderHeight(header.offsetHeight)
-    }
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          setHeaderHeight(entry.contentRect.height)
+        }
+      })
 
-    const handleResize = () => {
-      if (header) setHeaderHeight(header.offsetHeight)
-    }
-    window.addEventListener("resize", handleResize)
+      resizeObserver.observe(header)
 
-    return () => window.removeEventListener("resize", handleResize)
+      return () => resizeObserver.disconnect()
+    }
   }, [])
 
   return (
