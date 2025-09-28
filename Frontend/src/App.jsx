@@ -11,6 +11,8 @@ import Builds from "./pages/Builds"
 import Login from "./pages/Login"
 import Registro from "./pages/Registro"
 import Perfil from "./pages/Perfil";
+import ForgotPassword from "./pages/ForgotPassword"
+import ResetPassword from "./pages/ResetPassword"
 
 const App = () => {
   const [headerHeight, setHeaderHeight] = useState(0)
@@ -46,6 +48,8 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
             <Route path="/perfil" element={<Perfil />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
         </main>
 

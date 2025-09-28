@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.universidad.compuSearch.entity.ResetToken;
 import com.universidad.compuSearch.entity.Usuario;
 import com.universidad.compuSearch.service.AuthService;
+import com.universidad.compuSearch.service.EmailService;
 import com.universidad.compuSearch.service.ResetPasswordAttemptService;
 import com.universidad.compuSearch.service.ResetTokenService;
 
@@ -25,7 +26,8 @@ public class ResetPasswordController {
     private final AuthService authService;
     private final ResetTokenService resetTokenService;
     private final ResetPasswordAttemptService resetAttemptService;
-    
+    private final EmailService emailService;
+
     @PostMapping("/forgot")
     public ResponseEntity<?> forgot(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -46,11 +48,12 @@ public class ResetPasswordController {
         }
 
         ResetToken token = resetTokenService.createToken(usuario, 3600_000);
+
+        emailService.sendPasswordResetEmail(email, token.getToken());
+
         resetAttemptService.requestSucceeded(email);
         return ResponseEntity.ok(Map.of(
-                "message", "Token de recuperación generado",
-                "token", token.getToken()
-        ));
+                "message", "Se ha enviado un correo con instrucciones para restablecer tu contraseña"));
     }
 
     @PostMapping("/reset")

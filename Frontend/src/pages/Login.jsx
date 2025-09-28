@@ -87,6 +87,7 @@ const Login = () => {
           <Card className="shadow-sm p-4">
             <h3 className="fw-bold text-primary mb-4">Acceder</h3>
             <Form onSubmit={handleSubmit}>
+
               {/* Email */}
               <Form.Group className="mb-3" controlId="formEmail">
                 <Form.Label>Correo electrónico</Form.Label>
@@ -119,9 +120,8 @@ const Login = () => {
                     onClick={togglePassword}
                   >
                     <i
-                      className={`bi ${
-                        showPassword ? "bi-eye-slash" : "bi-eye"
-                      }`}
+                      className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"
+                        }`}
                     />
                   </Button>
                 </div>
@@ -131,6 +131,19 @@ const Login = () => {
                   </div>
                 )}
               </Form.Group>
+
+              {/* Opciones debajo de la contraseña */}
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <Form.Check
+                  type="checkbox"
+                  id="rememberMe"
+                  label="Recuérdame"
+                />
+                <Link to="/forgot-password" className="text-decoration-none small">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
+
 
               {/* Error del servidor */}
               {serverError && (
