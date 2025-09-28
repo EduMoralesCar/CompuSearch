@@ -1,0 +1,38 @@
+<!-- Configuracion de LogBack -->
+<configuration scan="true">
+
+    <!-- Variables de ruta -->
+    <property name="LOG_PATH" value="logs"/>
+    
+    <!-- Console Appender: muestra logs en la consola -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender: guarda logs en archivo -->
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger para paquetes específicos -->
+    <logger name="com.universidad.compuSearch" level="DEBUG"/>
+
+    <!-- Logger específico para Spring Security -->
+    <logger name="org.springframework.security" level="INFO"/>
+
+    <!-- Nivel global -->
+    <root level="INFO">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+    </root>
+
+</configuration>
