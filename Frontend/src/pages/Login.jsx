@@ -12,6 +12,17 @@ const Login = () => {
   const [ip, setIp] = useState("desconocido"); // valor por defecto
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // 1. Obtiene el token
+    const token = localStorage.getItem("token");
+
+    // 2. Si hay token, el usuario está logueado
+    if (token) {
+      // 3. Redirige a la página principal o a /perfil
+      navigate("/");
+    }
+  }, [navigate]);
+
   // Obtener IP pública al montar el componente
   useEffect(() => {
     const getIp = async () => {
@@ -81,9 +92,9 @@ const Login = () => {
 
   return (
     <div className="container d-flex justify-content-center align-items-center flex-grow-1">
-      <div className="row w-100 mt-4">
+      <div className="row w-100 my-4 gap-4 gap-lg-0">
         {/* Login */}
-        <div className="col-md-6 mb-4">
+        <div className="col-lg-6">
           <Card className="shadow-sm p-4">
             <h3 className="fw-bold text-primary mb-4">Acceder</h3>
             <Form onSubmit={handleSubmit}>
@@ -158,7 +169,7 @@ const Login = () => {
         </div>
 
         {/* Registro */}
-        <div className="col-md-6 mb-4">
+        <div className="col-lg-6">
           <Card className="shadow-sm p-4 d-flex justify-content-center align-items-center">
             <h3 className="fw-bold text-primary mb-3">Registro</h3>
             <p className="text-muted text-center">

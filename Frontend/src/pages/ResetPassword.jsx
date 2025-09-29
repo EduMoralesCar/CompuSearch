@@ -1,5 +1,5 @@
 // src/pages/ResetPassword.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -16,7 +16,24 @@ const ResetPassword = () => {
 
     // Extraer token desde la URL
     const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get("token");
+    const resetToken = queryParams.get("token");
+
+    useEffect(() => {
+        const authToken = localStorage.getItem("token");
+        // Si el usuario está logueado, redirigir a home
+        if (authToken) {
+            navigate("/");
+            return; // Detener la ejecución del useEffect
+        }
+        // Si no está logueado Y falta el token de restablecimiento, redirigir a forgot
+        if (!resetToken) {
+            setError("Token de restablecimiento de contraseña no encontrado. Por favor, solicita uno nuevamente.");
+
+            setTimeout(() => {
+                navigate("/forgot-password");
+            }, 2000);
+        }
+    }, [resetToken, navigate]);
 
     const validatePassword = (pass) => {
         // Debe cumplir con la validación del backend
@@ -28,6 +45,11 @@ const ResetPassword = () => {
         e.preventDefault();
         setMessage("");
         setError("");
+
+        if (!resetToken) {
+            setError("Token no válido. No se puede procesar la solicitud.");
+            return;
+        }
 
         if (!validatePassword(password)) {
             setError(
@@ -43,7 +65,7 @@ const ResetPassword = () => {
 
         try {
             const res = await axios.post("http://localhost:8080/auth/password/reset", {
-                token,
+                token: resetToken,
                 password,
             });
             setMessage(res.data.message);
@@ -60,14 +82,24 @@ const ResetPassword = () => {
         }
     };
 
+    if (!resetToken) {
+        return (
+            <div className="container d-flex justify-content-center align-items-center flex-grow-1 my-4">
+                <Alert variant="warning" className="w-50">
+                    {error || "Verificando token de acceso..."}
+                </Alert>
+            </div>
+        );
+    }
+
     return (
         <div className="container d-flex justify-content-center align-items-center flex-grow-1">
-            <div className="row w-100 mt-4">
+            <div className="row w-100 my-4">
                 <div className="col-md-6 offset-md-3">
                     <Card className="shadow-sm p-4">
                         <h3 className="fw-bold text-primary mb-4">Restablecer Contraseña</h3>
                         <Form onSubmit={handleSubmit}>
-                            
+
                             {/* Nueva contraseña */}
                             <Form.Group className="mb-3">
                                 <Form.Label>Nueva contraseña</Form.Label>
