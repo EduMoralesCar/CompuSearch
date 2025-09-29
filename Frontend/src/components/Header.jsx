@@ -72,7 +72,66 @@ const Header = () => {
 
           {/* Contenido colapsable */}
           <div className="collapse navbar-collapse" id={navbarCollapseId}>
-            {/* ... resto de tus menús ... */}
+            <ul className="navbar-nav d-block d-lg-none">
+              <li className="nav-item">
+                <NavLink to="/" className="nav-link">
+                  Inicio
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/componentes" className="nav-link">
+                  Componentes
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/tiendas" className="nav-link">
+                  Tiendas
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/categorias" className="nav-link">
+                  Categorías
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/builds" className="nav-link">
+                  Armado (Builds)
+                </NavLink>
+              </li>
+            </ul>
+
+            {/* Buscador */}
+            <form
+              className="d-flex col-12 col-lg-6 mx-auto mt-3 mt-lg-0 order-lg-2"
+              role="search"
+            >
+              <div className="input-group">
+                <input
+                  className="form-control"
+                  type="search"
+                  placeholder="¿Qué estás buscando?"
+                  aria-label="Buscar"
+                />
+                <button className="btn btn-outline-light" type="submit">
+                  <i className="bi bi-search fs-6 me-0"></i>
+                </button>
+              </div>
+            </form>
+
+            {/* Iconos en móvil */}
+            <ul className="navbar-nav d-block d-lg-none mt-3">
+              <li className="nav-item">
+                <button onClick={handleProfileClick} className="nav-link btn btn-link text-start w-100">
+                  <i className="bi bi-person-fill fs-4 me-2"></i>
+                  {isAuthenticated ? "Mi Perfil" : "Iniciar Sesión"}
+                </button>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/tiendas" className="nav-link">
+                  <i className="bi bi-shop-window fs-4 me-2"></i>Tiendas
+                </NavLink>
+              </li>
+            </ul>
           </div>
 
           {/* Iconos en escritorio */}

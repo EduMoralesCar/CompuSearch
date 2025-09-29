@@ -19,7 +19,7 @@ public class DataInitializer {
             if (usuarioRepository.findByEmail("admin@test.com").isEmpty()) {
                 Empleado admin = new Empleado();
                 admin.setEmail("admin@test.com");
-                admin.setContrasena(passwordEncoder.encode("123"));
+                admin.setContrasena(passwordEncoder.encode("123!123Aa"));
                 admin.setTipoUsuario(TipoUsuario.EMPLEADO);
                 admin.setActivo(true);
 
@@ -30,7 +30,7 @@ public class DataInitializer {
 
                 usuarioRepository.save(admin);
 
-                System.out.println("✅ Usuario admin creado con rol ADMIN: admin@test.com / 123");
+                System.out.println("✅ Usuario admin creado con rol ADMIN: admin@test.com / 123!123Aa");
             }
         };
     }
