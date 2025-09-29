@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Registro = () => {
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
   });
 
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -21,12 +24,6 @@ const Registro = () => {
   const validate = () => {
     let newErrors = {};
 
-    if (!formData.username.trim()) {
-      newErrors.username = "El nombre de usuario es obligatorio";
-    } else if (formData.username.length < 3) {
-      newErrors.username = "Debe tener al menos 3 caracteres";
-    }
-
     if (!formData.email) {
       newErrors.email = "El correo es obligatorio";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -35,17 +32,41 @@ const Registro = () => {
 
     if (!formData.password) {
       newErrors.password = "La contraseña es obligatoria";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Debe tener al menos 8 caracteres";
+    } else {
+      const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
+      if (!passwordRegex.test(formData.password)) {
+        newErrors.password =
+          "La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula, número y carácter especial";
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError("");
     if (validate()) {
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/auth/register",
+          {
+            email: formData.email,
+            contrasena: formData.password,
+            tipoUsuario: "USUARIO",
+          }
+        );
+
+        localStorage.setItem("token", response.data.data.token);
+        navigate("/");
+      } catch (error) {
+        if (error.response && error.response.data.error) {
+          setServerError(error.response.data.error);
+        } else {
+          setServerError("Error de conexión con el servidor");
+        }
+      }
     }
   };
 
@@ -57,21 +78,6 @@ const Registro = () => {
       >
         <h3 className="text-center text-primary fw-bold mb-4">REGISTRARSE</h3>
         <Form onSubmit={handleSubmit}>
-          {/* Nombre de usuario */}
-          <Form.Group className="mb-3">
-            <Form.Label>Nombre de usuario</Form.Label>
-            <Form.Control
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              isInvalid={!!errors.username}
-              placeholder="Ingresa tu usuario"
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.username}
-            </Form.Control.Feedback>
-          </Form.Group>
 
           {/* Email */}
           <Form.Group className="mb-3">
@@ -106,7 +112,7 @@ const Registro = () => {
                 variant="outline-secondary"
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="rounded-start-0 rounded-end" 
+                className="rounded-start-0 rounded-end"
               >
                 <i
                   className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}
@@ -131,6 +137,11 @@ const Registro = () => {
               REGISTRARSE
             </Button>
           </div>
+
+          {/* Mensaje de error del servidor */}
+          {serverError && (
+            <p className="text-danger mt-3 text-center">{serverError}</p>
+          )}
         </Form>
       </div>
     </div>

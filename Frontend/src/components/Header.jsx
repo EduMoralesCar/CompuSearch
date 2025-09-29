@@ -1,12 +1,20 @@
-import React, { useEffect, useRef } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Collapse } from "bootstrap";
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const bsRef = useRef(null);
   const navbarCollapseId = "navbarCompuSearch";
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, [location]);
 
   useEffect(() => {
     const el = document.getElementById(navbarCollapseId);
@@ -31,6 +39,14 @@ const Header = () => {
 
   const toggleNavbar = () => {
     if (bsRef.current) bsRef.current.toggle();
+  };
+
+  const handleProfileClick = () => {
+    if (isAuthenticated) {
+      navigate("/perfil");
+    } else {
+      navigate("/login");
+    }
   };
 
   return (
@@ -68,11 +84,6 @@ const Header = () => {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink to="/tiendas" className="nav-link">
-                  Tiendas
-                </NavLink>
-              </li>
-              <li className="nav-item">
                 <NavLink to="/categorias" className="nav-link">
                   Categorías
                 </NavLink>
@@ -105,9 +116,10 @@ const Header = () => {
             {/* Iconos en móvil */}
             <ul className="navbar-nav d-block d-lg-none mt-3">
               <li className="nav-item">
-                <NavLink to="/login" className="nav-link">
-                  <i className="bi bi-person-fill fs-4 me-2"></i>Iniciar Sesión
-                </NavLink>
+                <button onClick={handleProfileClick} className="nav-link btn btn-link text-start w-100">
+                  <i className="bi bi-person-fill fs-4 me-2"></i>
+                  {isAuthenticated ? "Mi Perfil" : "Iniciar Sesión"}
+                </button>
               </li>
               <li className="nav-item">
                 <NavLink to="/tiendas" className="nav-link">
@@ -119,9 +131,12 @@ const Header = () => {
 
           {/* Iconos en escritorio */}
           <div className="d-none d-lg-flex align-items-center order-lg-3 ms-4">
-            <NavLink to="/login" className="text-white">
+            <button
+              onClick={handleProfileClick}
+              className="btn btn-link text-white p-0"
+            >
               <i className="bi bi-person-fill fs-4"></i>
-            </NavLink>
+            </button>
             <NavLink to="/tiendas" className="ms-3 text-white">
               <i className="bi bi-shop-window fs-4"></i>
             </NavLink>
@@ -141,11 +156,6 @@ const Header = () => {
             <li className="nav-item">
               <NavLink to="/componentes" className="nav-link">
                 Componentes
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/tiendas" className="nav-link">
-                Tiendas
               </NavLink>
             </li>
             <li className="nav-item">

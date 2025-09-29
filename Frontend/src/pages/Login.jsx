@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Card } from "react-bootstrap";
 
 const Login = () => {
@@ -7,6 +8,33 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+  const [ip, setIp] = useState("desconocido"); // valor por defecto
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // 1. Obtiene el token
+    const token = localStorage.getItem("token");
+    
+    // 2. Si hay token, el usuario está logueado
+    if (token) {
+      // 3. Redirige a la página principal o a /perfil
+      navigate("/"); 
+    }
+  }, [navigate]);
+
+  // Obtener IP pública al montar el componente
+  useEffect(() => {
+    const getIp = async () => {
+      try {
+        const res = await axios.get("https://api.ipify.org?format=json");
+        setIp(res.data.ip);
+      } catch (err) {
+        console.error("No se pudo obtener IP:", err);
+      }
+    };
+    getIp();
+  }, []);
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
@@ -34,21 +62,43 @@ const Login = () => {
   };
 
   // Enviar formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
+    if (!validate()) return;
 
+    try {
+      const response = await axios.post("http://localhost:8080/auth/login", {
+        email: email,
+        contrasena: password,
+        dispositivo: `web-${ip}`,
+      });
+
+      const data = response.data;
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("user", JSON.stringify(data.data));
+
+      navigate("/");
+    } catch (error) {
+      console.error("Error en login:", error);
+      if (error.response && error.response.status === 401) {
+        setServerError("Credenciales inválidas");
+      } else {
+        setServerError("Error en el servidor, intenta más tarde");
+      }
     }
   };
 
   return (
     <div className="container d-flex justify-content-center align-items-center flex-grow-1">
-      <div className="row w-100 mt-4">
+      <div className="row w-100 my-4 gap-4 gap-lg-0">
         {/* Login */}
-        <div className="col-md-6 mb-4">
+        <div className="col-lg-6">
           <Card className="shadow-sm p-4">
             <h3 className="fw-bold text-primary mb-4">Acceder</h3>
             <Form onSubmit={handleSubmit}>
+
               {/* Email */}
               <Form.Group className="mb-3" controlId="formEmail">
                 <Form.Label>Correo electrónico</Form.Label>
@@ -80,25 +130,36 @@ const Login = () => {
                     type="button"
                     onClick={togglePassword}
                   >
-                    <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`} />
+                    <i
+                      className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"
+                        }`}
+                    />
                   </Button>
                 </div>
                 {errors.password && (
-                  <div className="invalid-feedback d-block">{errors.password}</div>
+                  <div className="invalid-feedback d-block">
+                    {errors.password}
+                  </div>
                 )}
               </Form.Group>
 
-              {/* Opciones */}
+              {/* Opciones debajo de la contraseña */}
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <Form.Check
                   type="checkbox"
                   id="rememberMe"
                   label="Recuérdame"
                 />
-                <a href="#" className="text-decoration-none small">
-                  ¿Perdiste tu contraseña?
-                </a>
+                <Link to="/forgot-password" className="text-decoration-none small">
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
+
+
+              {/* Error del servidor */}
+              {serverError && (
+                <div className="alert alert-danger py-2">{serverError}</div>
+              )}
 
               <Button variant="primary" type="submit" className="w-100">
                 Iniciar Sesión
@@ -108,7 +169,7 @@ const Login = () => {
         </div>
 
         {/* Registro */}
-        <div className="col-md-6 mb-4">
+        <div className="col-lg-6">
           <Card className="shadow-sm p-4 d-flex justify-content-center align-items-center">
             <h3 className="fw-bold text-primary mb-3">Registro</h3>
             <p className="text-muted text-center">
