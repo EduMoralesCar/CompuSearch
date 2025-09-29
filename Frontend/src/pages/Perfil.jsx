@@ -17,7 +17,7 @@ const Perfil = () => {
     };
 
     return (
-        <div className="container mt-5">
+        <div className="container my-4">
             <h2>Perfil de Usuario</h2>
             <button className="btn btn-danger mt-3" onClick={handleLogout}>
                 Cerrar sesión

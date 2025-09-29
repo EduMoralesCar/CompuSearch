@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
+import ScrollToTop from "./components/ScrollToTop" 
 
 import Home from "./pages/Home"
 import Componentes from "./pages/Componentes"
@@ -13,6 +14,7 @@ import Registro from "./pages/Registro"
 import Perfil from "./pages/Perfil";
 import ForgotPassword from "./pages/ForgotPassword"
 import ResetPassword from "./pages/ResetPassword"
+import NotFound from "./pages/NotFound"
 
 const App = () => {
   const [headerHeight, setHeaderHeight] = useState(0)
@@ -35,6 +37,7 @@ const App = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="d-flex flex-column min-vh-100">
         <Header />
 
@@ -50,6 +53,8 @@ const App = () => {
             <Route path="/perfil" element={<Perfil />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            {/* Esta es la ruta de comodín para las URLs que no existen */}
+            <Route path="*" element={<NotFound />} /> 
           </Routes>
         </main>
 

@@ -1,12 +1,21 @@
 // src/pages/ForgotPassword.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            navigate("/");
+        }
+    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -28,7 +37,7 @@ const ForgotPassword = () => {
 
     return (
         <div className="container d-flex justify-content-center align-items-center flex-grow-1">
-            <div className="row w-100 mt-4">
+            <div className="row w-100 my-4">
                 <div className="col-md-6 offset-md-3">
                     <Card className="shadow-sm p-4">
                         <h3 className="fw-bold text-primary mb-4">Recuperar Contraseña</h3>

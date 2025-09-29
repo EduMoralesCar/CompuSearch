@@ -84,11 +84,6 @@ const Header = () => {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink to="/tiendas" className="nav-link">
-                  Tiendas
-                </NavLink>
-              </li>
-              <li className="nav-item">
                 <NavLink to="/categorias" className="nav-link">
                   Categorías
                 </NavLink>
@@ -161,11 +156,6 @@ const Header = () => {
             <li className="nav-item">
               <NavLink to="/componentes" className="nav-link">
                 Componentes
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/tiendas" className="nav-link">
-                Tiendas
               </NavLink>
             </li>
             <li className="nav-item">
