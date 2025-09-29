@@ -16,7 +16,7 @@ const ResetPassword = () => {
 
     // Extraer token desde la URL
     const queryParams = new URLSearchParams(location.search);
-    const resetToken = queryParams.get("token");
+    const token = queryParams.get("token");
 
     useEffect(() => {
         const authToken = localStorage.getItem("token");
@@ -26,14 +26,14 @@ const ResetPassword = () => {
             return; // Detener la ejecución del useEffect
         }
         // Si no está logueado Y falta el token de restablecimiento, redirigir a forgot
-        if (!resetToken) {
+        if (!token) {
             setError("Token de restablecimiento de contraseña no encontrado. Por favor, solicita uno nuevamente.");
 
             setTimeout(() => {
                 navigate("/forgot-password");
             }, 2000);
         }
-    }, [resetToken, navigate]);
+    }, [token, navigate]);
 
     const validatePassword = (pass) => {
         // Debe cumplir con la validación del backend
@@ -46,7 +46,7 @@ const ResetPassword = () => {
         setMessage("");
         setError("");
 
-        if (!resetToken) {
+        if (!token) {
             setError("Token no válido. No se puede procesar la solicitud.");
             return;
         }
@@ -65,7 +65,7 @@ const ResetPassword = () => {
 
         try {
             const res = await axios.post("http://localhost:8080/auth/password/reset", {
-                token: resetToken,
+                token,
                 password,
             });
             setMessage(res.data.message);
@@ -82,7 +82,7 @@ const ResetPassword = () => {
         }
     };
 
-    if (!resetToken) {
+    if (!token) {
         return (
             <div className="container d-flex justify-content-center align-items-center flex-grow-1 my-4">
                 <Alert variant="warning" className="w-50">
