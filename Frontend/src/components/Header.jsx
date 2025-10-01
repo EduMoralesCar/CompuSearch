@@ -10,10 +10,25 @@ const Header = () => {
   const navbarCollapseId = "navbarCompuSearch";
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
+
+    // Obtener el rol del usuario
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        setUserRole(user.rol);
+      } catch (e) {
+        console.error("Error al parsear usuario de localStorage:", e);
+        setUserRole(null);
+      }
+    } else {
+      setUserRole(null);
+    }
   }, [location]);
 
   useEffect(() => {
@@ -43,11 +58,40 @@ const Header = () => {
 
   const handleProfileClick = () => {
     if (isAuthenticated) {
-      navigate("/perfil");
+      switch (userRole) {
+        case "EMPLEADO":
+          navigate("/admin");
+          break;
+        case "TIENDA":
+          navigate("/admin-tienda");
+          break;
+        case "USUARIO":
+        default:
+          navigate("/perfil");
+          break;
+      }
     } else {
       navigate("/login");
     }
   };
+
+  const getProfileButtonContent = () => {
+    if (!isAuthenticated) {
+      return { iconClass: "bi-person-fill", text: "Iniciar Sesión" };
+    }
+
+    switch (userRole) {
+      case "EMPLEADO":
+        return { iconClass: "bi-shield-lock-fill", text: "Admin" }; // Icono de Admin
+      case "TIENDA":
+        return { iconClass: "bi-shield-lock-fill", text: "Admin Tienda" }; // Icono de Tienda
+      case "USUARIO":
+      default:
+        return { iconClass: "bi-person-fill", text: "Mi Perfil" }; // Icono de Perfil
+    }
+  };
+
+  const { iconClass, text } = getProfileButtonContent();
 
   return (
     <header className="fixed-top">
@@ -116,9 +160,12 @@ const Header = () => {
             {/* Iconos en móvil */}
             <ul className="navbar-nav d-block d-lg-none mt-3">
               <li className="nav-item">
-                <button onClick={handleProfileClick} className="nav-link btn btn-link text-start w-100">
-                  <i className="bi bi-person-fill fs-4 me-2"></i>
-                  {isAuthenticated ? "Mi Perfil" : "Iniciar Sesión"}
+                <button
+                  onClick={handleProfileClick}
+                  className="nav-link btn btn-link text-start w-100"
+                >
+                  <i className={`bi ${iconClass} fs-4 me-2`}></i>
+                  {text}
                 </button>
               </li>
               <li className="nav-item">
@@ -134,8 +181,9 @@ const Header = () => {
             <button
               onClick={handleProfileClick}
               className="btn btn-link text-white p-0"
+              title={text} // Añadir title para accesibilidad
             >
-              <i className="bi bi-person-fill fs-4"></i>
+              <i className={`bi ${iconClass} fs-4`}></i>
             </button>
             <NavLink to="/tiendas" className="ms-3 text-white">
               <i className="bi bi-shop-window fs-4"></i>
