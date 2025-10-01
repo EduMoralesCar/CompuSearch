@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.universidad.compuSearch.entity.Usuario;
 import com.universidad.compuSearch.filter.JwtAuthenticationFilter;
 import com.universidad.compuSearch.service.UsuarioService;
 
