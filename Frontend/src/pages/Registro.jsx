@@ -40,7 +40,8 @@ const Registro = () => {
     if (!formData.password) {
       newErrors.password = "La contraseña es obligatoria";
     } else {
-      const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
+      const passwordRegex =
+        /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
       if (!passwordRegex.test(formData.password)) {
         newErrors.password =
           "La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula, número y carácter especial";
@@ -65,7 +66,12 @@ const Registro = () => {
           }
         );
 
-        localStorage.setItem("token", response.data.data.token);
+        const responseData = response.data.data;
+
+        localStorage.setItem("token", responseData.token);
+        localStorage.setItem("refreshToken", responseData.refreshToken);
+        localStorage.setItem("user", JSON.stringify(responseData.user));
+
         navigate("/");
       } catch (error) {
         if (error.response && error.response.data.error) {
@@ -85,7 +91,6 @@ const Registro = () => {
       >
         <h3 className="text-center text-primary fw-bold mb-4">REGISTRARSE</h3>
         <Form onSubmit={handleSubmit}>
-
           {/* Email */}
           <Form.Group className="mb-3">
             <Form.Label>Dirección de correo electrónico</Form.Label>
