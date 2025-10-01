@@ -1,14 +1,15 @@
 package com.universidad.compuSearch.controller;
 
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.universidad.compuSearch.dto.MessageResponse;
+import com.universidad.compuSearch.dto.RefreshTokenRequest;
+import com.universidad.compuSearch.dto.RefreshTokenResponse;
+import com.universidad.compuSearch.entity.RefreshToken;
 import com.universidad.compuSearch.entity.Usuario;
 import com.universidad.compuSearch.service.AuthService;
 import com.universidad.compuSearch.service.RefreshTokenService;
@@ -23,33 +24,30 @@ public class RefreshTokenController {
     private final RefreshTokenService refreshTokenService;
     private final AuthService authService;
 
+    // EndPoint para refrescar el token de refresco
     @PostMapping
-    public ResponseEntity<?> refresh(@RequestBody Map<String, String> request) {
-        String tokenStr = request.get("refreshToken");
-        if (tokenStr == null || tokenStr.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Refresh token requerido"));
-        }
+    public ResponseEntity<RefreshTokenResponse> refresh(@RequestBody RefreshTokenRequest request) {
 
-        if (!refreshTokenService.validateRefreshToken(tokenStr)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Refresh token inválido o expirado"));
-        }
-
-        Usuario usuario = refreshTokenService.findByToken(tokenStr).getUsuario();
+        // Valida el token y obtiene el token
+        RefreshToken refreshToken = refreshTokenService.validateAndGetRefreshToken(request.getRefreshToken());
+        // Si el token es valido obtiene el usuario
+        Usuario usuario = refreshToken.getUsuario();
+        // Generar un nuevo token
         String token = authService.generateJwtToken(usuario);
 
-        return ResponseEntity.ok(Map.of("token", token));
+        //Devuelve el token
+        return ResponseEntity.ok(new RefreshTokenResponse(token));
     }
 
+    // Endpoint para revocar el token de refresco del usuario
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody Map<String, String> request) {
-        String tokenStr = request.get("refreshToken");
-        if (tokenStr == null || tokenStr.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Refresh token requerido"));
-        }
+    public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest request) {
 
-        refreshTokenService.revokeRefreshToken(tokenStr);
-        return ResponseEntity.ok(Map.of("message", "Sesión cerrada"));
+        // Busca y revoca el token del usuario
+        refreshTokenService.revokeRefreshToken(request.getRefreshToken());
+
+        // Devuelve un mensaje de sesion cerrada
+        return ResponseEntity.ok(new MessageResponse("Sesión cerrada"));
     }
 }
 

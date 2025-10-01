@@ -1,17 +1,14 @@
 package com.universidad.compuSearch.controller;
 
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.universidad.compuSearch.dto.AuthResponse;
 import com.universidad.compuSearch.dto.LoginRequest;
 import com.universidad.compuSearch.dto.RegisterRequest;
 import com.universidad.compuSearch.entity.RefreshToken;
 import com.universidad.compuSearch.entity.TipoUsuario;
 import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.exception.AuthException;
 import com.universidad.compuSearch.service.AuthService;
 import com.universidad.compuSearch.service.RefreshTokenService;
 
@@ -26,67 +23,43 @@ public class AuthController {
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
 
+    // Endpoint donde el usuario inicia sesion
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        try {
-            Usuario usuario = authService.authenticate(request.getEmail(), request.getContrasena());
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
 
-            String token = authService.generateJwtToken(usuario);
+        // Autentica al usuario con su contraseña
+        Usuario usuario = authService.authenticate(request.getEmail(), request.getContrasena());
+        // Si el usuario es valido genera el token
+        String token = authService.generateJwtToken(usuario);
+        // Genera el token de refresco
+        RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, request.getDispositivo());
 
-            RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario,
-                    request.getDispositivo());
-
-            return ResponseEntity.ok(Map.of(
-                    "token", token,
-                    "refreshToken", refreshToken.getToken(),
-                    "data", Map.of(
-                            "email", usuario.getEmail(),
-                            "rol", usuario.getTipoUsuario().name(),
-                            "device", request.getDispositivo())));
-        } catch (AuthException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of(
-                            "success", false,
-                            "error", "Credenciales inválidas"));
-        }
+        // Devuelve los datos necesarios
+        return ResponseEntity.ok(
+                new AuthResponse(token,
+                        refreshToken.getToken(),
+                        request.getEmail(),
+                        usuario.getTipoUsuario().name()));
     }
 
+    // Enpoint donde el usuario se registra
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-        try {
-            TipoUsuario tipo = TipoUsuario.valueOf(request.getTipoUsuario().toUpperCase());
-            Usuario usuario = authService.register(request.getEmail(), request.getContrasena(), tipo);
-            String token = authService.generateJwtToken(usuario);
-            RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, "default");
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
 
-            return ResponseEntity.ok(Map.of(
-                    "success", true,
-                    "data", Map.of(
-                            "token", token,
-                            "refreshToken", refreshToken.getToken(),
-                            "user", Map.of(
-                                    "email", usuario.getEmail(),
-                                    "rol", usuario.getTipoUsuario().name()))));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of(
-                            "success", false,
-                            "error", "Tipo de usuario inválido"));
-        } catch (AuthException e) {
-            String mensajeError;
-            if (e.getMessage().contains("email")) {
-                mensajeError = "El email ya está en uso";
-            } else if (e.getMessage().contains("contraseña")) {
-                mensajeError = "Contraseña no válida";
-            } else {
-                mensajeError = "No se pudo registrar el usuario";
-            }
+        // Se extrae el tipo de usuario (siempre sera de tipo usuario USUARIO)
+        TipoUsuario tipo = TipoUsuario.valueOf(request.getTipoUsuario().toUpperCase());
+        // Se registra el usuario con su email y contraseña
+        Usuario usuario = authService.register(request.getEmail(), request.getContrasena(), tipo);
+        // Si el usuario se registro correctamente genera un token
+        String token = authService.generateJwtToken(usuario);
+        // Genera un token de refresco
+        RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, "default");
 
-            return ResponseEntity.badRequest()
-                    .body(Map.of(
-                            "success", false,
-                            "error", mensajeError));
-        }
+        // Devuelve los datos necesarios
+        return ResponseEntity.ok(
+                new AuthResponse(token,
+                        refreshToken.getToken(),
+                        request.getEmail(),
+                        usuario.getTipoUsuario().name()));
     }
-
 }
