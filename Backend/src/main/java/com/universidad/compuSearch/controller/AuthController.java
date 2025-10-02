@@ -1,5 +1,6 @@
 package com.universidad.compuSearch.controller;
 
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import com.universidad.compuSearch.entity.Usuario;
 import com.universidad.compuSearch.service.AuthService;
 import com.universidad.compuSearch.service.RefreshTokenService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +27,8 @@ public class AuthController {
 
     // Endpoint donde el usuario inicia sesion
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request,
+            HttpServletResponse response) {
 
         // Autentica al usuario con su contraseña
         Usuario usuario = authService.authenticate(request.getEmail(), request.getContrasena());
@@ -34,17 +37,29 @@ public class AuthController {
         // Genera el token de refresco
         RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, request.getDispositivo());
 
+        // Guardar refresh token en cookie HttpOnly
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(30 * 24 * 60 * 60)
+                .sameSite("Strict")
+                .build();
+
+        // Añade al header
+        response.addHeader("Set-Cookie", cookie.toString());
+
         // Devuelve los datos necesarios
         return ResponseEntity.ok(
                 new AuthResponse(token,
-                        refreshToken.getToken(),
                         request.getEmail(),
                         usuario.getTipoUsuario().name()));
     }
 
     // Enpoint donde el usuario se registra
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request,
+            HttpServletResponse response) {
 
         // Se extrae el tipo de usuario (siempre sera de tipo usuario USUARIO)
         TipoUsuario tipo = TipoUsuario.valueOf(request.getTipoUsuario().toUpperCase());
@@ -55,10 +70,21 @@ public class AuthController {
         // Genera un token de refresco
         RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, "default");
 
+        // Guardar refresh token en cookie HttpOnly
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(30 * 24 * 60 * 60)
+                .sameSite("Strict")
+                .build();
+
+        // Añade al header
+        response.addHeader("Set-Cookie", cookie.toString());
+
         // Devuelve los datos necesarios
         return ResponseEntity.ok(
                 new AuthResponse(token,
-                        refreshToken.getToken(),
                         request.getEmail(),
                         usuario.getTipoUsuario().name()));
     }

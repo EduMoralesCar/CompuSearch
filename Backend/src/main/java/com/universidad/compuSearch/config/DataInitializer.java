@@ -7,7 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.universidad.compuSearch.entity.Empleado;
 import com.universidad.compuSearch.entity.Rol;
+import com.universidad.compuSearch.entity.Tienda;
 import com.universidad.compuSearch.entity.TipoUsuario;
+import com.universidad.compuSearch.entity.Usuario;
 import com.universidad.compuSearch.repository.UsuarioRepository;
 
 @Configuration
@@ -30,7 +32,37 @@ public class DataInitializer {
 
                 usuarioRepository.save(admin);
 
-                System.out.println("✅ Usuario admin creado con rol ADMIN: admin@test.com / 123!123Aa");
+                System.out.println("Usuario empleado creado con rol ADMIN: admin@test.com / 123!123Aa");
+            }
+
+            if (usuarioRepository.findByEmail("tienda@test.com").isEmpty()) {
+                Tienda tienda = new Tienda();
+                tienda.setEmail("tienda@test.com");
+                tienda.setContrasena(passwordEncoder.encode("123!123Aa"));
+                tienda.setTipoUsuario(TipoUsuario.TIENDA);
+                tienda.setActivo(true);
+
+                // datos de empleado
+                tienda.setNombre("Game Center");
+                tienda.setTelefono("999999999");
+                tienda.setDireccion("Av. Mi Casa");
+                tienda.setRuc("11111111111");
+                
+                usuarioRepository.save(tienda);
+
+                System.out.println("Tienda creado: tienda@test.com / 123!123Aa");
+            }
+
+            if (usuarioRepository.findByEmail("usuario@test.com").isEmpty()) {
+                Usuario user = new Usuario();
+                user.setEmail("usuario@test.com");
+                user.setContrasena(passwordEncoder.encode("123!123Aa"));
+                user.setTipoUsuario(TipoUsuario.USUARIO);
+                user.setActivo(true);
+                
+                usuarioRepository.save(user);
+
+                System.out.println("Usuario creado: usuario@test.com / 123!123Aa");
             }
         };
     }

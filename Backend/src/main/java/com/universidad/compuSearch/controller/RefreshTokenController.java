@@ -1,19 +1,20 @@
 package com.universidad.compuSearch.controller;
 
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.universidad.compuSearch.dto.MessageResponse;
-import com.universidad.compuSearch.dto.RefreshTokenRequest;
 import com.universidad.compuSearch.dto.RefreshTokenResponse;
 import com.universidad.compuSearch.entity.RefreshToken;
 import com.universidad.compuSearch.entity.Usuario;
 import com.universidad.compuSearch.service.AuthService;
 import com.universidad.compuSearch.service.RefreshTokenService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,28 +27,38 @@ public class RefreshTokenController {
 
     // EndPoint para refrescar el token de refresco
     @PostMapping
-    public ResponseEntity<RefreshTokenResponse> refresh(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<RefreshTokenResponse> refresh(@CookieValue("refresh_token") String refreshTokenValue) {
 
         // Valida el token y obtiene el token
-        RefreshToken refreshToken = refreshTokenService.validateAndGetRefreshToken(request.getRefreshToken());
+        RefreshToken refreshToken = refreshTokenService.validateAndGetRefreshToken(refreshTokenValue);
         // Si el token es valido obtiene el usuario
         Usuario usuario = refreshToken.getUsuario();
         // Generar un nuevo token
         String token = authService.generateJwtToken(usuario);
 
-        //Devuelve el token
+        // Devuelve el token
         return ResponseEntity.ok(new RefreshTokenResponse(token));
     }
 
     // Endpoint para revocar el token de refresco del usuario
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<?> logout(@CookieValue("refresh_token") String refreshTokenValue,
+            HttpServletResponse response) {
 
         // Busca y revoca el token del usuario
-        refreshTokenService.revokeRefreshToken(request.getRefreshToken());
+        refreshTokenService.revokeRefreshToken(refreshTokenValue);
+
+        // Borra la cookie en el navegador
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
 
         // Devuelve un mensaje de sesion cerrada
         return ResponseEntity.ok(new MessageResponse("Sesión cerrada"));
     }
 }
-
