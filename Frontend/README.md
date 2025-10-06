@@ -19,7 +19,7 @@ Este directorio contendrá el desarrollo del frontend para **CompuSearch**.
   > con extensiones de React y JavaScript
 - **[WebStorm](https://www.jetbrains.com/webstorm/promo/?msclkid=4429641795d71dcbebea0cdb09c466c7&utm_source=bing&utm_medium=cpc&utm_campaign=AMER_en_AMER_WebStorm_Branded&utm_term=webstorm&utm_content=webstorm)** (opcional)
 
-## 📦 Estructura propuesta
+## 📦 Estructura del Frontend
 
 ```
 Frontend/

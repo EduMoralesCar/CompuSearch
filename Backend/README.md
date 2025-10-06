@@ -34,7 +34,7 @@ Este directorio contiene el backend para el proyecto **CompuSearch**.
 - **[Visual Studio Code (VSCode)](https://code.visualstudio.com/)** 🔵
   > con extensiones de Java y Spring Boot
 
-## 🗂️ Estructura propuesta del Backend
+## 🗂️ Estructura del Backend
 
 ```
 Backend/
@@ -141,8 +141,9 @@ Backend/
     cd CompuSearch/Backend
     ```
 2. Importa el proyecto en tu IDE.
-3. Configura tu base de datos y credenciales en `src/main/resources/application.properties`.
-4. Ejecuta la aplicación desde tu IDE o usando Maven:
+3. Crea una Base de Datos en MySQL llamada: `compusearch`
+4. Configura tu base de datos y credenciales en `src/main/resources/application.properties`.
+5. Ejecuta la aplicación desde tu IDE o usando Maven:
     ```bash
     ./mvnw spring-boot:run
     # Otra manera de Ejecutar
