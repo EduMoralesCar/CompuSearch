@@ -39,23 +39,78 @@ Este directorio contiene el backend para el proyecto **CompuSearch**.
 ```
 Backend/
 │
-├── src/
-│   ├── main/
-│   │   ├── java/com/universidad/compusearch/
-│   │   │   ├── controller/
-│   │   │   ├── model/
-│   │   │   ├── repository/
-│   │   │   ├── service/
-│   │   │   ├── security/
-│   │   │   └── CompuSearchApplication.java
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       └── static/
-│   └── test/
-│       └── java/com/universidad/compusearch/
-│
-├── pom.xml
-└── README.md
+├── 📁 .mvn/
+│   └── 📁 wrapper/
+│       └── 📄 maven-wrapper.properties
+├── 📁 logs/
+│   └── 📋 app.log 🚫 (auto-hidden)
+├── 📁 src/
+│   ├── 📁 main/
+│   │   ├── 📁 java/
+│   │   │   └── 📁 com/
+│   │   │       └── 📁 universidad/
+│   │   │           └── 📁 compuSearch/
+│   │   │               ├── 📁 config/
+│   │   │               │   ├── ☕ CorsConfig.java
+│   │   │               │   ├── ☕ DataInitializer.java
+│   │   │               │   └── ☕ SecurityConfig.java
+│   │   │               ├── 📁 controller/
+│   │   │               │   ├── ☕ AuthController.java
+│   │   │               │   ├── ☕ RefreshTokenController.java
+│   │   │               │   └── ☕ ResetPasswordController.java
+│   │   │               ├── 📁 dto/
+│   │   │               │   ├── ☕ LoginRequest.java
+│   │   │               │   └── ☕ RegisterRequest.java
+│   │   │               ├── 📁 entity/
+│   │   │               │   ├── ☕ Empleado.java
+│   │   │               │   ├── ☕ EstadoToken.java
+│   │   │               │   ├── ☕ RefreshToken.java
+│   │   │               │   ├── ☕ ResetToken.java
+│   │   │               │   ├── ☕ Rol.java
+│   │   │               │   ├── ☕ Tienda.java
+│   │   │               │   ├── ☕ TipoUsuario.java
+│   │   │               │   └── ☕ Usuario.java
+│   │   │               ├── 📁 exception/
+│   │   │               │   ├── ☕ AuthException.java
+│   │   │               │   └── ☕ TokenNotFoundException.java
+│   │   │               ├── 📁 filter/
+│   │   │               │   └── ☕ JwtAuthenticationFilter.java
+│   │   │               ├── 📁 repository/
+│   │   │               │   ├── ☕ RefreshTokenRepository.java
+│   │   │               │   ├── ☕ ResetTokenRepository.java
+│   │   │               │   └── ☕ UsuarioRepository.java
+│   │   │               ├── 📁 service/
+│   │   │               │   ├── ☕ AuthService.java
+│   │   │               │   ├── ☕ EmailService.java
+│   │   │               │   ├── ☕ JwtService.java
+│   │   │               │   ├── ☕ LoginAttemptService.java
+│   │   │               │   ├── ☕ RefreshTokenService.java
+│   │   │               │   ├── ☕ ResetPasswordAttemptService.java
+│   │   │               │   ├── ☕ ResetTokenService.java
+│   │   │               │   └── ☕ UsuarioService.java
+│   │   │               └── ☕ CompuSearchApplication.java
+│   │   └── 📁 resources/
+│   │       ├── 📄 application.properties
+│   │       └── 📄 logback-spring.xml
+│   └── 📁 test/
+│       ├── 📁 java/
+│       │   └── 📁 com/
+│       │       └── 📁 universidad/
+│       │           └── 📁 compuSearch/
+│       │               ├── 📁 repository/
+│       │               │   ├── ☕ RefreshTokenRepositoryTest.java
+│       │               │   ├── ☕ ResetTokenRepositoryTest.java
+│       │               │   └── ☕ UsuarioRepositoryTest.java
+│       │               └── ☕ CompuSearchApplicationTests.java
+│       └── 📁 resources/
+│           └── 📄 application-test.properties
+├── 📁 target/ 🚫 (auto-hidden)
+├── 📄 .gitattributes
+├── 🚫 .gitignore
+├── 📖 README.md
+├── 📄 mvnw
+├── 🐚 mvnw.cmd
+└── 📄 pom.xml
 ```
 
 ### 📁 Descripción de carpetas
@@ -90,6 +145,8 @@ Backend/
 4. Ejecuta la aplicación desde tu IDE o usando Maven:
     ```bash
     ./mvnw spring-boot:run
+    # Otra manera de Ejecutar
+    ./mvnw.cmd clean spring-boot:run
     ```
 
 ## 📝 Notas
