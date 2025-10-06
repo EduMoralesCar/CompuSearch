@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.dto;
+package com.universidad.compusearch.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

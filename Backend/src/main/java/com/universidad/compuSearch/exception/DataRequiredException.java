@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.exception;
+package com.universidad.compusearch.exception;
 
 public class DataRequiredException extends CustomException {
 

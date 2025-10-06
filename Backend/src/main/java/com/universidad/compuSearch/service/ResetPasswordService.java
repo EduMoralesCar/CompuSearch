@@ -1,11 +1,14 @@
-package com.universidad.compuSearch.service;
+package com.universidad.compusearch.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.universidad.compuSearch.entity.ResetToken;
-import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.exception.TooManyAttemptsException;
-import com.universidad.compuSearch.exception.UserException;
+import com.universidad.compusearch.entity.Token;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.exception.TokenException;
+import com.universidad.compusearch.exception.TooManyAttemptsException;
+import com.universidad.compusearch.exception.UserException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,51 +20,51 @@ public class ResetPasswordService {
     private final AuthService authService;
     private final ResetTokenService resetTokenService;
 
-    // Valida el email y devuelve al usuario del email
-    public Usuario validateEmail(String email) {
+    private static final Logger logger = LoggerFactory.getLogger(ResetPasswordService.class);
 
-        // Si el email esta bloqueado sale del metodo
+    // Valida el email y devuelve al usuario si existe
+    public Usuario validateEmail(String email) {
+        logger.info("Validando solicitud de reseteo para email: {}", email);
+
         if (resetPasswordAttemptService.isBlocked(email)) {
+            logger.warn("Email bloqueado por demasiados intentos: {}", email);
             throw new TooManyAttemptsException();
         }
 
-        // Obtiene al usuario
         Usuario usuario = authService.findByEmail(email);
 
-        // Si no lo encuentra aumenta un intento
         if (usuario == null) {
+            logger.warn("Email no encontrado: {}", email);
             resetPasswordAttemptService.requestFailed(email);
             throw UserException.notFound();
         }
 
-        // Si encuentra al email borra los intentos
         resetPasswordAttemptService.requestSucceeded(email);
-
-        // Devuelve al usuario
+        logger.info("Email validado correctamente: {}", email);
         return usuario;
     }
 
-    // Valida el token de reseteo y devuelve al usuario
+    // Valida el token de reseteo y devuelve al usuario asociado
     public Usuario validateResetToken(String token) {
+        logger.debug("Validando token de reseteo: {}", token);
 
-        // Obtenemos el token de reseteo
-        ResetToken resetToken = resetTokenService.findValidToken(token);
-        // Obtenemos el email del token
+        Token resetToken = resetTokenService.findByToken(token)
+                .orElseThrow(() -> {
+                    logger.warn("Token de reseteo no encontrado o inválido: {}", token);
+                    return TokenException.invalid("Reset");
+                });
+
         String email = resetToken.getUsuario().getEmail();
 
-        // Si esta bloqueado salimos del metodo
         if (resetPasswordAttemptService.isBlocked(email)) {
+            logger.warn("Email bloqueado durante validación de token: {}", email);
             throw new TooManyAttemptsException();
         }
 
-        // Si es correcto revocamos este token de reseto
-        resetTokenService.revokeToken(resetToken);
-        // Borramos los intentos
+        resetTokenService.revokeResetToken(token);
         resetPasswordAttemptService.requestSucceeded(email);
-        // Obtenemos el usuario
-        Usuario usuario = resetToken.getUsuario();
 
-        //Devolvemos el usuario
-        return usuario;
+        logger.info("Token de reseteo validado y revocado para usuario {}", resetToken.getUsuario().getIdUsuario());
+        return resetToken.getUsuario();
     }
 }

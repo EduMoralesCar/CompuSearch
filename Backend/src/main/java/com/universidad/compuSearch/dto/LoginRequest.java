@@ -1,6 +1,6 @@
-package com.universidad.compuSearch.dto;
+package com.universidad.compusearch.dto;
 
-import jakarta.validation.constraints.Email;
+import io.micrometer.common.lang.NonNull;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,13 +13,15 @@ import lombok.Setter;
 @Setter
 public class LoginRequest {
 
-    @NotBlank(message = "Email obligatorio")
-    @Email(message = "Email invalido")
-    private String email;
+    @NotBlank(message = "Email o Username obligatorio")
+    private String identificador;
 
     @NotBlank(message = "Contraseña obligatoria")
     private String contrasena;
 
     @NotBlank(message = "Dispositivo es obligatorio")
     private String dispositivo;
+
+    @NonNull
+    private boolean recordar;
 }

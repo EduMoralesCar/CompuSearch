@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.dto;
+package com.universidad.compusearch.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthResponse {
-    private String token;
-    private String email;
+    private String identificador;
     private String tipoUsuario;
 }

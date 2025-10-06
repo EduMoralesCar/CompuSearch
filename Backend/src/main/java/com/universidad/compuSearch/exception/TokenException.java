@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.exception;
+package com.universidad.compusearch.exception;
 
 public class TokenException extends CustomException{
     public TokenException(String message, int status, String code) {
@@ -15,5 +15,13 @@ public class TokenException extends CustomException{
 
     public static TokenException invalid(String type) {
         return new TokenException(type + " token inválido", 401, type.toUpperCase() + "_TOKEN_INVALID");
+    }
+
+    public static TokenException invalidType() {
+        return new TokenException("Token inválido", 401, "TOKEN_INVALID");
+    }
+
+    public static TokenException expiredType() {
+        return new TokenException("Token expirado", 401, "TOKEN_EXPIRED");
     }
 }

@@ -1,10 +1,11 @@
-package com.universidad.compuSearch.util;
+package com.universidad.compusearch.util;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public class Attempt {
-    public int count;
-    public long lastAttemptTime;
+    private int count;
+    private long lastAttemptTime;
 }
-

@@ -1,0 +1,8 @@
+2025-10-06 08:34:56 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-06 08:34:56 [http-nio-8080-exec-6] INFO  c.u.c.service.UsuarioService - Usuario autenticado: juanitopepe770@gmail.com (username: jose) con rol USUARIO
+2025-10-06 08:34:56 [http-nio-8080-exec-6] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: jose
+2025-10-06 08:34:56 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /auth/me
+2025-10-06 08:34:56 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-06 08:34:56 [http-nio-8080-exec-7] INFO  c.u.c.service.UsuarioService - Usuario autenticado: juanitopepe770@gmail.com (username: jose) con rol USUARIO
+2025-10-06 08:34:56 [http-nio-8080-exec-7] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: jose
+2025-10-06 08:34:56 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /auth/me

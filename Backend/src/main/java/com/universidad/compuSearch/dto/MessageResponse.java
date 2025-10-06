@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.dto;
+package com.universidad.compusearch.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

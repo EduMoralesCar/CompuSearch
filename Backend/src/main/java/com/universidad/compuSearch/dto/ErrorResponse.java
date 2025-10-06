@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.dto;
+package com.universidad.compusearch.dto;
 
 import java.util.Map;
 
@@ -15,5 +15,5 @@ public class ErrorResponse {
     private boolean success;
     private String message;
     private int status;
-    private Map<String, String> error; 
+    private Map<String, String> errors; 
 }

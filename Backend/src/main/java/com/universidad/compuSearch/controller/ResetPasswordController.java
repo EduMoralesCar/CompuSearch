@@ -1,20 +1,22 @@
-package com.universidad.compuSearch.controller;
+package com.universidad.compusearch.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.universidad.compuSearch.dto.ForgotPasswordRequest;
-import com.universidad.compuSearch.dto.MessageResponse;
-import com.universidad.compuSearch.dto.ResetPasswordRequest;
-import com.universidad.compuSearch.entity.ResetToken;
-import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.service.AuthService;
-import com.universidad.compuSearch.service.EmailService;
-import com.universidad.compuSearch.service.ResetPasswordService;
-import com.universidad.compuSearch.service.ResetTokenService;
+import com.universidad.compusearch.dto.ForgotPasswordRequest;
+import com.universidad.compusearch.dto.MessageResponse;
+import com.universidad.compusearch.dto.ResetPasswordRequest;
+import com.universidad.compusearch.entity.Token;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.service.AuthService;
+import com.universidad.compusearch.service.EmailService;
+import com.universidad.compusearch.service.ResetPasswordService;
+import com.universidad.compusearch.service.ResetTokenService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,40 +26,35 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResetPasswordController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ResetPasswordController.class);
+
     private final AuthService authService;
     private final ResetTokenService resetTokenService;
     private final EmailService emailService;
     private final ResetPasswordService resetPasswordService;
 
-    // Endpoint que recibe el correo del usuario
+    // Endpoint para iniciar recuperación de contraseña
     @PostMapping("/forgot")
     public ResponseEntity<MessageResponse> forgot(@Valid @RequestBody ForgotPasswordRequest request) {
+        logger.info("Solicitud de recuperación de contraseña para email: {}", request.getEmail());
 
-        // Obtiene el email
-        String email = request.getEmail();
-        // Obtiene el usuario del email
-        Usuario usuario = resetPasswordService.validateEmail(email);
-        // Crea el token de reseteo por el usuario
-        ResetToken resetToken = resetTokenService.createToken(usuario, 3600_000);
-        // Envia el token al email del usuario
-        emailService.sendPasswordResetEmail(email, resetToken.getToken());
+        Usuario usuario = resetPasswordService.validateEmail(request.getEmail());
+        Token resetToken = resetTokenService.createOrUpdateResetToken(usuario, request.getDispositivo());
+        emailService.sendPasswordResetEmail(request.getEmail(), resetToken.getToken());
 
+        logger.info("Token de reseteo generado y enviado para usuario ID: {}", usuario.getIdUsuario());
         return ResponseEntity.ok(new MessageResponse("Se ha enviado un correo con instrucciones para restablecer tu contraseña"));
     }
 
-    // Endpoint para cambiar la contraseña del usuario despues de forgot
+    // Endpoint para aplicar nueva contraseña usando el token
     @PostMapping("/reset")
     public ResponseEntity<MessageResponse> reset(@Valid @RequestBody ResetPasswordRequest request) {
+        logger.info("Solicitud de reseteo de contraseña con token: {}", request.getToken());
 
-        // Obtenemos el token
-        String token = request.getToken();
-        // Obtenemos la contraseña
-        String nuevaContrasena = request.getContrasena();
-        //Obtenemos al usuario
-        Usuario usuario = resetPasswordService.validateResetToken(token);
-        // Actualizamos la contraseña
-        authService.updatePassword(usuario, nuevaContrasena);
+        Usuario usuario = resetPasswordService.validateResetToken(request.getToken());
+        authService.updatePassword(usuario, request.getContrasena());
 
+        logger.info("Contraseña actualizada para usuario ID: {}", usuario.getIdUsuario());
         return ResponseEntity.ok(new MessageResponse("Contraseña restablecida correctamente"));
     }
 }

@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.dto;
+package com.universidad.compusearch.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +14,9 @@ import lombok.Setter;
 @Setter
 public class RegisterRequest {
 
+    @NotBlank(message = "Username es obligatorio")
+    private String username;
+
     @NotBlank(message = "Email es obligatorio")
     @Email(message = "Email inválido")
     private String email;
@@ -26,4 +29,7 @@ public class RegisterRequest {
 
     @NotBlank(message = "Tipo de usuario es obligatorio")
     private String tipoUsuario;
+    
+    @NotBlank(message = "Disposittivo es obligatorio")
+    private String dispositivo;
 }

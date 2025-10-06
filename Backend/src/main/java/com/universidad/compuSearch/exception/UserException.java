@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.exception;
+package com.universidad.compusearch.exception;
 
 public class UserException extends CustomException{
 
@@ -10,8 +10,12 @@ public class UserException extends CustomException{
         return new UserException("Usuario no encontrado por email", 404, "USER_NOT_FOUND_EMAIL");
     }
 
+    public static UserException notFounUsername() {
+        return new UserException("Usuario no encontrado por email", 404, "USER_NOT_FOUND_USERNAME");
+    }
+
     public static UserException notFound() {
-        return new UserException("Cuenta no encontrado", 404, "USER_NOT_FOUND");
+        return new UserException("Usuario no encontrado", 404, "USER_NOT_FOUND");
     }
     
     public static UserException noActive() {

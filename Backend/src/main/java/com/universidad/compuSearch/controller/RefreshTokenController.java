@@ -1,5 +1,7 @@
-package com.universidad.compuSearch.controller;
+package com.universidad.compusearch.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -7,12 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.universidad.compuSearch.dto.MessageResponse;
-import com.universidad.compuSearch.dto.RefreshTokenResponse;
-import com.universidad.compuSearch.entity.RefreshToken;
-import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.service.AuthService;
-import com.universidad.compuSearch.service.RefreshTokenService;
+import com.universidad.compusearch.dto.MessageResponse;
+import com.universidad.compusearch.entity.Token;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.service.AuthService;
+import com.universidad.compusearch.service.RefreshTokenService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,33 +23,43 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RefreshTokenController {
 
+    private static final Logger logger = LoggerFactory.getLogger(RefreshTokenController.class);
+
     private final RefreshTokenService refreshTokenService;
     private final AuthService authService;
 
-    // EndPoint para refrescar el token de refresco
+    // Endpoint para refrescar el access token usando el refresh token
     @PostMapping
-    public ResponseEntity<RefreshTokenResponse> refresh(@CookieValue("refresh_token") String refreshTokenValue) {
+    public ResponseEntity<MessageResponse> refresh(@CookieValue("refresh_token") String refreshTokenValue,
+            HttpServletResponse response) {
+        logger.info("Solicitud de renovación de token con refresh_token");
 
-        // Valida el token y obtiene el token
-        RefreshToken refreshToken = refreshTokenService.validateAndGetRefreshToken(refreshTokenValue);
-        // Si el token es valido obtiene el usuario
+        Token refreshToken = refreshTokenService.validateAndGetRefreshToken(refreshTokenValue);
         Usuario usuario = refreshToken.getUsuario();
-        // Generar un nuevo token
-        String token = authService.generateJwtToken(usuario);
+        String accessToken = authService.generateJwtToken(usuario);
 
-        // Devuelve el token
-        return ResponseEntity.ok(new RefreshTokenResponse(token));
+        ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(10 * 60)
+                .sameSite("Strict")
+                .build();
+
+        response.addHeader("Set-Cookie", accessCookie.toString());
+
+        logger.info("Access token renovado para usuario ID: {}", usuario.getIdUsuario());
+        return ResponseEntity.ok(new MessageResponse("Token de acceso renovado correctamente"));
     }
 
-    // Endpoint para revocar el token de refresco del usuario
+    // Endpoint para cerrar sesión y revocar el refresh token
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@CookieValue("refresh_token") String refreshTokenValue,
+    public ResponseEntity<MessageResponse> logout(@CookieValue("refresh_token") String refreshTokenValue,
             HttpServletResponse response) {
+        logger.info("Solicitud de logout con refresh_token");
 
-        // Busca y revoca el token del usuario
         refreshTokenService.revokeRefreshToken(refreshTokenValue);
 
-        // Borra la cookie en el navegador
         ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
                 .httpOnly(true)
                 .secure(true)
@@ -56,9 +67,10 @@ public class RefreshTokenController {
                 .maxAge(0)
                 .sameSite("Strict")
                 .build();
+
         response.addHeader("Set-Cookie", cookie.toString());
 
-        // Devuelve un mensaje de sesion cerrada
+        logger.info("Sesión cerrada y refresh token revocado");
         return ResponseEntity.ok(new MessageResponse("Sesión cerrada"));
     }
 }

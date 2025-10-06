@@ -1,14 +1,17 @@
-package com.universidad.compuSearch.service;
+package com.universidad.compusearch.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.universidad.compuSearch.entity.TipoUsuario;
-import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.exception.EmailAlreadyRegisteredException;
-import com.universidad.compuSearch.exception.InvalidPasswordException;
-import com.universidad.compuSearch.exception.UserException;
-import com.universidad.compuSearch.repository.UsuarioRepository;
+import com.universidad.compusearch.entity.TipoUsuario;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.exception.AlreadyRegisteredException;
+import com.universidad.compusearch.exception.InvalidPasswordException;
+import com.universidad.compusearch.exception.UserException;
+import com.universidad.compusearch.jwt.JwtTokenFactory;
+import com.universidad.compusearch.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,72 +19,94 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
-    private final JwtService jwtService;
+    private final JwtTokenFactory jwtTokenFactory;
 
-    // Autentica al usuario
-    public Usuario authenticate(String email, String password) {
-        
-        // Si el usuario tiene muchos intentos envio un error
-        if (loginAttemptService.isBlocked(email)) {
+    // Autentica al usuario por email o username
+    public Usuario authenticate(String identificador, String password) {
+        logger.info("Intentando autenticar con identificador: {}", identificador);
+
+        if (loginAttemptService.isBlocked(identificador)) {
+            logger.warn("Identificador bloqueado por intentos fallidos: {}", identificador);
             throw UserException.blocked();
         }
 
-        // Busca el usuario en la base de datos por su email
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> UserException.notFound());
+        Usuario usuario = usuarioRepository.findByEmail(identificador)
+                .or(() -> usuarioRepository.findByUsername(identificador))
+                .orElseThrow(() -> {
+                    logger.warn("Usuario no encontrado con identificador: {}", identificador);
+                    loginAttemptService.loginFailed(identificador);
+                    return UserException.notFound();
+                });
 
-        // Valida la constraseña ingresada con la que esta en la base de datos
         if (!passwordEncoder.matches(password, usuario.getContrasena())) {
-            loginAttemptService.loginFailed(email);
+            logger.warn("Contraseña inválida para identificador: {}", identificador);
+            loginAttemptService.loginFailed(identificador);
             throw new InvalidPasswordException();
         }
 
-        // Si la autenticacion fue exitosa borra los intentos del cache
-        loginAttemptService.loginSucceeded(email);
-
-        // Retorna al usuario
+        loginAttemptService.loginSucceeded(identificador);
+        logger.info("Autenticación exitosa para usuario ID: {}", usuario.getIdUsuario());
         return usuario;
     }
 
-    // Registra al usuario
-    public Usuario register(String email, String contrasena, TipoUsuario tipoUsuario) {
+    // Registra un nuevo usuario
+    public Usuario register(String username, String email, String contrasena, TipoUsuario tipoUsuario) {
+        logger.info("Registrando nuevo usuario con email: {} y username: {}", email, username);
 
-        // Valida si el email del usuario ya esta registrado
         if (usuarioRepository.findByEmail(email).isPresent()) {
-            throw new EmailAlreadyRegisteredException();
+            logger.warn("Email ya registrado: {}", email);
+            throw AlreadyRegisteredException.email();
         }
 
-        // Creamos un usuario y le asignamos sus datos
+        if (usuarioRepository.findByUsername(username).isPresent()) {
+            logger.warn("Username ya registrado: {}", username);
+            throw AlreadyRegisteredException.username();
+        }
+
         Usuario usuario = new Usuario();
+        usuario.setUsername(username);
         usuario.setEmail(email);
         usuario.setContrasena(passwordEncoder.encode(contrasena));
         usuario.setTipoUsuario(tipoUsuario);
 
-        // Guardamos al usuario en la base de datos
-        return usuarioRepository.save(usuario);
+        Usuario saved = usuarioRepository.save(usuario);
+        logger.info("Usuario registrado exitosamente con ID: {}", saved.getIdUsuario());
+        return saved;
     }
 
-    // Implementamos el metodo del respositorio usuario
+    // Busca un usuario por email
     public Usuario findByEmail(String email) {
+        logger.debug("Buscando usuario por email: {}", email);
         return usuarioRepository.findByEmail(email).orElse(null);
     }
 
-    // Actualizamos la contraseña del usuario
+    // Busca un usuario por username
+    public Usuario findByUsername(String username) {
+        logger.debug("Buscando usuario por username: {}", username);
+        return usuarioRepository.findByUsername(username).orElse(null);
+    }
+
+    // Actualiza la contraseña del usuario
     public Usuario updatePassword(Usuario usuario, String nuevaContrasena) {
+        logger.info("Actualizando contraseña para usuario ID: {}", usuario.getIdUsuario());
         usuario.setContrasena(passwordEncoder.encode(nuevaContrasena));
         return usuarioRepository.save(usuario);
     }
 
-    // Generar un token del usuario
+    // Genera un token JWT de acceso
     public String generateJwtToken(Usuario usuario) {
-        return jwtService.generateAccessToken(usuario);
+        logger.debug("Generando token de acceso para usuario ID: {}", usuario.getIdUsuario());
+        return jwtTokenFactory.generateAccessToken(usuario);
     }
 
-    // Generar un token de refresco del usuario
+    // Genera un token de refresco
     public String generateRefreshToken(Usuario usuario) {
-        return jwtService.generateRefreshToken(usuario);
+        logger.debug("Generando token de refresco para usuario ID: {}", usuario.getIdUsuario());
+        return jwtTokenFactory.generateRefreshToken(usuario);
     }
 }

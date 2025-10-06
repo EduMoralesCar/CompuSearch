@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.exception;
+package com.universidad.compusearch.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

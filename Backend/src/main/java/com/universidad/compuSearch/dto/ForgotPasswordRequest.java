@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.dto;
+package com.universidad.compusearch.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,4 +16,7 @@ public class ForgotPasswordRequest {
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "Email invalido")
     private String email;
+
+    @NotBlank(message = "Dispositivo es obligatorio")
+    private String dispositivo;
 }

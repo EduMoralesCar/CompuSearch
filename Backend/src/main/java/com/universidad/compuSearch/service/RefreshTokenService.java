@@ -1,16 +1,20 @@
-package com.universidad.compuSearch.service;
+package com.universidad.compusearch.service;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.universidad.compuSearch.entity.EstadoToken;
-import com.universidad.compuSearch.entity.RefreshToken;
-import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.exception.TokenException;
-import com.universidad.compuSearch.repository.RefreshTokenRepository;
+import com.universidad.compusearch.entity.EstadoToken;
+import com.universidad.compusearch.entity.TipoToken;
+import com.universidad.compusearch.entity.Token;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.exception.TokenException;
+import com.universidad.compusearch.jwt.JwtConfigHelper;
+import com.universidad.compusearch.repository.TokenRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,65 +22,88 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RefreshTokenService {
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenRepository tokenRepository;
+    private final JwtConfigHelper jwtConfigHelper;
 
-    @Value("${jwt.refresh-expiration}")
-    private long refreshExpirationMillis;
+    private static final Logger logger = LoggerFactory.getLogger(RefreshTokenService.class);
 
-    // Crea o actualiza segun encuentra o no el token de refresco en la base de datos
-    public RefreshToken createOrUpdateRefreshToken(Usuario usuario, String device) {
-        return refreshTokenRepository
-                .findByUsuarioAndDispositivoAndEstado(usuario, device, EstadoToken.ACTIVO)
-                .map(this::updateRefreshToken)
-                .orElseGet(() -> createRefreshToken(usuario, device));
+    // Crea o actualiza el token de refresco según el estado del existente
+    public Token createOrUpdateRefreshToken(Usuario usuario, String dispositivo) {
+        logger.info("Procesando token de refresco para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
+
+        return findByUsuarioAndDispositivo(usuario, dispositivo)
+                .map(existingToken -> {
+                    if (existingToken.isExpired() || existingToken.getEstado() == EstadoToken.REVOCADO) {
+                        return updateRefreshToken(existingToken);
+                    }
+                    return existingToken;
+                })
+                .orElseGet(() -> createRefreshToken(usuario, dispositivo));
     }
 
     // Actualiza el token de refresco
-    private RefreshToken updateRefreshToken(RefreshToken existingToken) {
+    private Token updateRefreshToken(Token existingToken) {
+        logger.info("Actualizando token de refresco ID={} para usuario {}", existingToken.getIdToken(), existingToken.getUsuario().getIdUsuario());
+
         existingToken.setToken(UUID.randomUUID().toString());
         existingToken.setFechaCreacion(Instant.now());
-        existingToken.setFechaExpiracion(Instant.now().plusMillis(refreshExpirationMillis));
-        return refreshTokenRepository.save(existingToken);
+        existingToken.setFechaExpiracion(Instant.now().plusMillis(jwtConfigHelper.getRefreshTokenExpiration()));
+        existingToken.setEstado(EstadoToken.ACTIVO);
+
+        return save(existingToken);
     }
 
     // Crea un nuevo token de refresco
-    private RefreshToken createRefreshToken(Usuario usuario, String device) {
-        RefreshToken refreshToken = new RefreshToken();
+    private Token createRefreshToken(Usuario usuario, String dispositivo) {
+        logger.info("Creando nuevo token de refresco para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
+
+        Token refreshToken = new Token();
         refreshToken.setUsuario(usuario);
-        refreshToken.setDispositivo(device);
+        refreshToken.setIpDispositivo(dispositivo);
         refreshToken.setToken(UUID.randomUUID().toString());
         refreshToken.setFechaCreacion(Instant.now());
-        refreshToken.setFechaExpiracion(Instant.now().plusMillis(refreshExpirationMillis));
+        refreshToken.setFechaExpiracion(Instant.now().plusMillis(jwtConfigHelper.getRefreshTokenExpiration()));
+        refreshToken.setTipo(TipoToken.REFRESH);
         refreshToken.setEstado(EstadoToken.ACTIVO);
 
-        return refreshTokenRepository.save(refreshToken);
+        return save(refreshToken);
     }
 
-    // Retorna el token existe y no esta expirado o revocado
-    public RefreshToken validateAndGetRefreshToken(String token) {
-    return refreshTokenRepository.findByToken(token)
-            .filter(rt -> !rt.isExpired() && rt.getEstado() == EstadoToken.ACTIVO)
-            .orElseThrow(() -> TokenException.invalid("Refresh"));
-}
+    // Valida que el token esté activo y no expirado
+    public Token validateAndGetRefreshToken(String token) {
+        logger.debug("Validando token de refresco: {}", token);
 
-
-    // Encuentra el token de refresco de la base de datos
-    public RefreshToken findByToken(String token) {
-        return refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> TokenException.notFound("Refresh"));
+        return findByToken(token)
+                .filter(t -> !t.isExpired() && t.getEstado() == EstadoToken.ACTIVO)
+                .orElseThrow(() -> TokenException.invalid("Refresh"));
     }
 
-    // Guarda el token de refresco en la base de datos
-    public RefreshToken save(RefreshToken refreshToken) {
-        return refreshTokenRepository.save(refreshToken);
-    }
-
-    // Revoca el token de refresco en la base de datos    
+    // Revoca el token de refresco
     public void revokeRefreshToken(String token) {
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
+        logger.warn("Revocando token de refresco: {}", token);
+
+        Token refreshToken = findByToken(token)
                 .orElseThrow(() -> TokenException.invalid("Refresh"));
 
         refreshToken.setEstado(EstadoToken.REVOCADO);
-        refreshTokenRepository.save(refreshToken);
+        save(refreshToken);
+    }
+
+    // Guarda el token
+    public Token save(Token token) {
+        logger.debug("Guardando token de refresco ID={}", token.getIdToken());
+        return tokenRepository.save(token);
+    }
+
+    // Busca por token y tipo
+    public Optional<Token> findByToken(String token) {
+        logger.debug("Buscando token de refresco: {}", token);
+        return tokenRepository.findByTokenAndTipo(token, TipoToken.REFRESH);
+    }
+
+    // Busca por usuario, dispositivo y tipo
+    public Optional<Token> findByUsuarioAndDispositivo(Usuario usuario, String dispositivo) {
+        logger.debug("Buscando token de refresco para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
+        return tokenRepository.findByUsuarioAndIpDispositivoAndTipo(usuario, dispositivo, TipoToken.REFRESH);
     }
 }
