@@ -19,58 +19,77 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth/refresh")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class RefreshTokenController {
 
-    private static final Logger logger = LoggerFactory.getLogger(RefreshTokenController.class);
+        private static final Logger logger = LoggerFactory.getLogger(RefreshTokenController.class);
 
-    private final RefreshTokenService refreshTokenService;
-    private final AuthService authService;
+        private final RefreshTokenService refreshTokenService;
+        private final AuthService authService;
 
-    // Endpoint para refrescar el access token usando el refresh token
-    @PostMapping
-    public ResponseEntity<MessageResponse> refresh(@CookieValue("refresh_token") String refreshTokenValue,
-            HttpServletResponse response) {
-        logger.info("Solicitud de renovación de token con refresh_token");
+        @PostMapping("/refresh")
+        public ResponseEntity<MessageResponse> refresh(@CookieValue("refresh_token") String refreshTokenValue,
+                        HttpServletResponse response) {
+                logger.info("Solicitud de renovación de token con refresh_token");
 
-        Token refreshToken = refreshTokenService.validateAndGetRefreshToken(refreshTokenValue);
-        Usuario usuario = refreshToken.getUsuario();
-        String accessToken = authService.generateJwtToken(usuario);
+                Token refreshToken = refreshTokenService.validateAndGetRefreshToken(refreshTokenValue);
+                Usuario usuario = refreshToken.getUsuario();
+                String accessToken = authService.generateJwtToken(usuario);
+                Token newRefreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario,
+                                refreshToken.getIpDispositivo());
 
-        ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(10 * 60)
-                .sameSite("Strict")
-                .build();
+                ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(10 * 60)
+                                .sameSite("Strict")
+                                .build();
 
-        response.addHeader("Set-Cookie", accessCookie.toString());
+                ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", newRefreshToken.getToken())
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(7 * 24 * 60 * 60)
+                                .sameSite("Strict")
+                                .build();
 
-        logger.info("Access token renovado para usuario ID: {}", usuario.getIdUsuario());
-        return ResponseEntity.ok(new MessageResponse("Token de acceso renovado correctamente"));
-    }
+                response.addHeader("Set-Cookie", refreshCookie.toString());
+                response.addHeader("Set-Cookie", accessCookie.toString());
 
-    // Endpoint para cerrar sesión y revocar el refresh token
-    @PostMapping("/logout")
-    public ResponseEntity<MessageResponse> logout(@CookieValue("refresh_token") String refreshTokenValue,
-            HttpServletResponse response) {
-        logger.info("Solicitud de logout con refresh_token");
+                logger.info("Access token renovado para usuario ID: {}", usuario.getIdUsuario());
+                return ResponseEntity.ok(new MessageResponse("Token de acceso renovado correctamente"));
+        }
 
-        refreshTokenService.revokeRefreshToken(refreshTokenValue);
+        @PostMapping("/logout")
+        public ResponseEntity<MessageResponse> logout(@CookieValue("refresh_token") String refreshTokenValue,
+                        HttpServletResponse response) {
+                logger.info("Solicitud de logout con refresh_token");
 
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
+                refreshTokenService.revokeRefreshToken(refreshTokenValue);
 
-        response.addHeader("Set-Cookie", cookie.toString());
+                ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", "")
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(0)
+                                .sameSite("Strict")
+                                .build();
 
-        logger.info("Sesión cerrada y refresh token revocado");
-        return ResponseEntity.ok(new MessageResponse("Sesión cerrada"));
-    }
+                ResponseCookie accessCookie = ResponseCookie.from("access_token", "")
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(0)
+                                .sameSite("Strict")
+                                .build();
+
+                response.addHeader("Set-Cookie", refreshCookie.toString());
+                response.addHeader("Set-Cookie", accessCookie.toString());
+
+                logger.info("Sesión cerrada y tokens eliminados");
+                return ResponseEntity.ok(new MessageResponse("Sesión cerrada"));
+        }
+
 }
