@@ -1,0 +1,52 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex-grow: 1;
+}
+
+
+/*banner1-header*/
+#banner1-header{
+ position: relative;
+  background-image: url(/src/assets/categorias/cat_banner.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* capa semitransparente para la opacidad */
+#banner1-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.45); /* <- control de la opacidad */
+  z-index: 1;
+}
+
+/* el texto queda encima del overlay */
+#banner1-header > * {
+  position: relative;
+  z-index: 2;
+}
+
+
+
+
+
