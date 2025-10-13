@@ -30,7 +30,7 @@ public class FiltroController {
     public ResponseEntity<List<String>> obtenerCategorias() {
         logger.info("Solicitud recibida para obtener categorías habilitadas");
 
-        List<String> categorias = categoriaService.obtenerTodas();
+        List<String> categorias = categoriaService.obtenerTodasLosNombres();
 
         if (categorias.isEmpty()) {
             logger.warn("No se encontraron categorías habilitadas");

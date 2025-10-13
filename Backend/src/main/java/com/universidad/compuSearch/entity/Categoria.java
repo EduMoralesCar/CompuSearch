@@ -25,4 +25,10 @@ public class Categoria {
 
     @Column(nullable = false, unique = true)
     private String nombre;
+
+    @Column(nullable = false)
+    private String descripcion;
+
+    @Column(nullable = false)
+    private String nombreImagen;
 }

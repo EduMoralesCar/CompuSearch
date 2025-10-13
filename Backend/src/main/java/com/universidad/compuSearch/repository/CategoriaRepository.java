@@ -14,4 +14,6 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     @Query("SELECT c.nombre FROM Categoria c")
     List<String> findAllNombres();
 
+    List<Categoria> findAll();
+
 }

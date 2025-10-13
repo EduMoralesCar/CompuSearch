@@ -49,7 +49,7 @@ public class SecurityConfig {
                         // Las paginas de navegacion estan disponibles
                         .requestMatchers("/", "/categorias/**", "/componentes/**", "/tiendas/**", 
                         "/builds/**", "/etiquetas/**", "/productos/**", "/filtro/**",
-                        "/productosTiendas/**").permitAll()
+                        "/productosTiendas/**", "/categorias").permitAll()
                         // Todo lo demás requiere autenticación
                         .anyRequest().authenticated())
 

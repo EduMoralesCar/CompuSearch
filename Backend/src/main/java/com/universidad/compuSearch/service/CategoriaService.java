@@ -19,9 +19,16 @@ public class CategoriaService {
     private static final Logger logger = LoggerFactory.getLogger(CategoriaService.class);
     private final CategoriaRepository categoriaRepository;
 
-    public List<String> obtenerTodas() {
+    public List<String> obtenerTodasLosNombres() {
         logger.debug("Buscando todas las etiquetas en la base de datos...");
         List<String> categorias = categoriaRepository.findAllNombres();
+        logger.info("Se encontraron {} etiquetas", categorias.size());
+        return categorias;
+    }
+
+    public List<Categoria> obtenerTodos() {
+        logger.debug("Buscando todas las etiquetas en la base de datos...");
+        List<Categoria> categorias = categoriaRepository.findAll();
         logger.info("Se encontraron {} etiquetas", categorias.size());
         return categorias;
     }
