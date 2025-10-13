@@ -10,6 +10,7 @@ import com.universidad.compusearch.repository.EtiquetaRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,15 +27,16 @@ public class EtiquetaService {
         return etiquetas;
     }
 
-    public List<Etiqueta> buscarPorNombre(String nombre) {
-        logger.debug("Buscando etiquetas con nombre exacto: {}", nombre);
-        List<Etiqueta> etiquetas = etiquetaRepository.findByNombre(nombre);
-        if (etiquetas.isEmpty()) {
-            logger.warn("No se encontraron etiquetas con el nombre: {}", nombre);
+    public Etiqueta buscarPorNombre(String nombre) {
+        logger.debug("Buscando etiqueta con nombre exacto: {}", nombre);
+        Optional<Etiqueta> etiqueta = etiquetaRepository.findByNombre(nombre);
+
+        if (etiqueta.isEmpty()) {
+            logger.warn("No se encontró ninguna etiqueta con el nombre: {}", nombre);
+            return null;
         } else {
-            logger.info("Se encontraron {} etiquetas con el nombre: {}", etiquetas.size(), nombre);
+            logger.info("Etiqueta encontrada: {}", etiqueta.get().getNombre());
+            return etiqueta.get();
         }
-        return etiquetas;
     }
 }
-

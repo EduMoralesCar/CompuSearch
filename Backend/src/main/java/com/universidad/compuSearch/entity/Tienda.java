@@ -8,12 +8,15 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -57,6 +60,10 @@ public class Tienda extends Usuario {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "tienda_etiqueta", joinColumns = @JoinColumn(name = "tienda_id", referencedColumnName = "idUsuario"), inverseJoinColumns = @JoinColumn(name = "etiqueta_id", referencedColumnName = "idEtiqueta"))
     private List<Etiqueta> etiquetas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "tienda")
+    @JsonManagedReference 
+    private List<ProductoTienda> productos;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

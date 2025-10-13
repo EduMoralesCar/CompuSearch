@@ -12,18 +12,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "etiqueta")
+@Table(name = "categoria")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Etiqueta {
+@AllArgsConstructor
+public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idEtiqueta;
+    private Long idCategoria;
 
     @Column(nullable = false, unique = true)
     private String nombre;
 }
-
