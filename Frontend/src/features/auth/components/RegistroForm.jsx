@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Button, Spinner } from "react-bootstrap";
+import { Form, Button, Spinner, Alert } from "react-bootstrap";
 
 const RegistroForm = ({
     username,
