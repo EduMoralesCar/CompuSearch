@@ -8,7 +8,7 @@ export default function useCategorias() {
     useEffect(() => {
         fetch("http://localhost:8080/categorias")
             .then((res) => {
-                if (!res.ok) throw new Error("Error al cargar tiendas");
+                if (!res.ok) throw new Error("Error al cargar las categorias");
                 return res.json();
             })
             .then((data) => {

@@ -45,7 +45,7 @@ public class ProductoTiendaController {
 
                 if (productos.isEmpty()) {
                         logger.warn("No se encontraron productos con los filtros aplicados");
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
@@ -76,7 +76,7 @@ public class ProductoTiendaController {
 
                 if (resultados.isEmpty()) {
                         logger.warn("No se encontraron tarjetas de video con los filtros aplicados");
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} tarjetas de video", resultados.getTotalElements());
@@ -104,7 +104,7 @@ public class ProductoTiendaController {
 
                 if (resultados.isEmpty()) {
                         logger.warn("No se encontraron procesadores con los filtros aplicados");
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} procesadores", resultados.getTotalElements());
@@ -134,7 +134,7 @@ public class ProductoTiendaController {
 
                 if (resultados.isEmpty()) {
                         logger.warn("No se encontraron almacenamientos con los filtros aplicados");
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} almacenamientos", resultados.getTotalElements());
@@ -166,7 +166,7 @@ public class ProductoTiendaController {
 
                 if (resultados.isEmpty()) {
                         logger.warn("No se encontraron memorias con los filtros aplicados");
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} memorias", resultados.getTotalElements());
@@ -195,7 +195,7 @@ public class ProductoTiendaController {
 
                 if (resultados.isEmpty()) {
                         logger.warn("No se encontraron placas madres con los filtros aplicados");
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} placas madres", resultados.getTotalElements());
@@ -226,7 +226,7 @@ public class ProductoTiendaController {
 
                 if (resultados.isEmpty()) {
                         logger.warn("No se encontraron placas madres con los filtros aplicados");
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} placas madres", resultados.getTotalElements());
@@ -257,7 +257,7 @@ public class ProductoTiendaController {
 
                 if (resultados.isEmpty()) {
                         logger.warn("No se encontraron refrigeraciones con los filtros aplicados");
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} refrigeraciones", resultados.getTotalElements());
@@ -278,7 +278,7 @@ public class ProductoTiendaController {
 
                 if (resultados.isEmpty()) {
                         logger.warn("No se encontraron productos con el nombre: '{}'", nombre);
-                        return ResponseEntity.noContent().build();
+                        return ResponseEntity.ok(Page.empty());
                 }
 
                 logger.info("Se encontraron {} productos que coinciden con '{}'", resultados.getTotalElements(),

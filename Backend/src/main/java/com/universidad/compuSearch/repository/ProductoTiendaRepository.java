@@ -36,4 +36,16 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         AND (:nombreCategoria IS NULL OR c.nombre = :nombreCategoria)
                         """)
         List<String> findDistinctMarcasByCategoria(@Param("nombreCategoria") String nombreCategoria);
+
+        @Query("""
+                        SELECT DISTINCT t.nombre
+                        FROM ProductoTienda pt
+                        JOIN pt.tienda t
+                        JOIN pt.producto p
+                        JOIN p.categoria c
+                        WHERE pt.habilitado = true
+                        AND (:nombreCategoria IS NULL OR c.nombre = :nombreCategoria)
+                        """)
+        List<String> findDistinctTiendasWithHabilitadosByCategoria(@Param("nombreCategoria") String nombreCategoria);
+
 }

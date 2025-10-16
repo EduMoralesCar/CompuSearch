@@ -15,7 +15,6 @@ public class ProductoTiendaResponse {
     private String nombreProducto;
     private BigDecimal precio;
     private int stock;
-    private String urlProducto;
     private String urlImagen;
     private String nombreTienda;
 }

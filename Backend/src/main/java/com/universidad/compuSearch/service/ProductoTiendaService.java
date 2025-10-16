@@ -42,7 +42,7 @@ public class ProductoTiendaService {
                         int size) {
 
                 logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}",
-                                nombreTienda,
+                                nombreTienda, marca, precioMin,
                                 precioMax, disponible);
 
                 Pageable pageable = PageRequest.of(page, size);
@@ -316,7 +316,6 @@ public class ProductoTiendaService {
                                 productoTienda.getProducto().getNombre(),
                                 productoTienda.getPrecio(),
                                 productoTienda.getStock(),
-                                productoTienda.getUrlProducto(),
                                 productoTienda.getUrlImagen(),
                                 productoTienda.getTienda().getNombre());
         }

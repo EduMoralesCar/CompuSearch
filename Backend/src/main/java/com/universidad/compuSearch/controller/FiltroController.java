@@ -40,7 +40,7 @@ public class FiltroController {
         logger.debug("Categorías encontradas: {}", categorias.size());
         return ResponseEntity.ok(categorias);
     }
-    
+
     @GetMapping("/marcas")
     public ResponseEntity<List<String>> obtenerMarcas(
             @RequestParam(required = false) String categoria) {
@@ -74,4 +74,22 @@ public class FiltroController {
         logger.debug("Rango de precios → min: {}, max: {}", rango.getPrecioMin(), rango.getPrecioMax());
         return ResponseEntity.ok(rango);
     }
+
+    @GetMapping("/tiendas")
+    public ResponseEntity<List<String>> obtenerTiendasPorCategoria(
+            @RequestParam(required = false) String categoria) {
+
+        logger.info("Solicitud recibida para obtener tiendas (categoria = {})", categoria);
+
+        List<String> tiendas = filtroService.obtenerTiendasConProductosHabilitadosPorCategoria(categoria);
+
+        if (tiendas.isEmpty()) {
+            logger.warn("No se encontraron tiendas para la categoría: {}", categoria);
+            return ResponseEntity.noContent().build();
+        }
+
+        logger.debug("Tiendas encontradas: {}", tiendas.size());
+        return ResponseEntity.ok(tiendas);
+    }
+
 }

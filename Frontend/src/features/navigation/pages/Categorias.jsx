@@ -33,7 +33,7 @@ export default function Categorias() {
                 </h4>
 
                 {loading && <p>Cargando categorías...</p>}
-                {error && <p className="text-danger">Error: {error}</p>}
+                {error && <p className="text-danger">Error al cargar los datos</p>}
 
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
                     {categorias.map((c) => (

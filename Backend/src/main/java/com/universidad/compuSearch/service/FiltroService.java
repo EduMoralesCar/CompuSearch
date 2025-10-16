@@ -47,4 +47,17 @@ public class FiltroService {
 
         return marcas;
     }
+
+    public List<String> obtenerTiendasConProductosHabilitadosPorCategoria(String nombreCategoria) {
+        logger.info("Obteniendo tiendas con productos habilitados para categoría: {}",
+                nombreCategoria != null ? nombreCategoria : "TODAS");
+
+        List<String> tiendas = productoTiendaRepository.findDistinctTiendasWithHabilitadosByCategoria(nombreCategoria);
+
+        logger.debug("Total de tiendas encontradas: {}", tiendas.size());
+        logger.trace("Tiendas encontradas: {}", tiendas);
+
+        return tiendas;
+    }
+
 }
