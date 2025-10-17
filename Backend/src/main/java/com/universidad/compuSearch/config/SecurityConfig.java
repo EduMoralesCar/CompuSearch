@@ -47,9 +47,9 @@ public class SecurityConfig {
                         // Endpoints públicos: login, registro, refresh token, etc.
                         .requestMatchers("/auth/**").permitAll()
                         // Las paginas de navegacion estan disponibles
-                        .requestMatchers("/", "/categorias/**", "/componentes/**", "/tiendas/**", 
+                        .requestMatchers("/", "/categorias/**", "/productos/**", "/tiendas/**", 
                         "/builds/**", "/etiquetas/**", "/productos/**", "/filtro/**",
-                        "/productosTiendas/**", "/categorias").permitAll()
+                        "/componentes/**", "/categorias").permitAll()
                         // Todo lo demás requiere autenticación
                         .anyRequest().authenticated())
 

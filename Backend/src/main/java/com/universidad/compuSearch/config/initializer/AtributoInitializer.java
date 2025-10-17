@@ -18,11 +18,11 @@ public class AtributoInitializer {
 
     public void init() {
         String[] nombresAtributos = {
-                "Socket", "TDP", "Fabricante",
+                "Socket", "Socket de Motherboard", "TDP", "Fabricante",
                 "Núcleos", "Hilos", "Frecuencia Base", "Frecuencia Turbo", "Caché L3",
                 "Tipo de Enfriamiento", "Tamaño", "Compatibilidad Socket", "Nivel de Ruido", "ARGB",
-                "Tipo de Almacenamiento", "Capacidad", "Interfaz", "Velocidad Lectura", "Velocidad Escritura",
-                "Tipo de RAM", "Capacidad", "Frecuencia", "Latencia CAS", "Perfil XMP",
+                "Tipo de Almacenamiento", "Capacidad", "Capacidad RAM", "Interfaz", "Velocidad Lectura", "Velocidad Escritura",
+                "Tipo de RAM", "Compatibilidad de RAM", "Capacidad", "Frecuencia", "Latencia CAS", "Perfil XMP",
                 "Chipset", "Factor de Forma", "Slots RAM", "RAM Máxima", "Puertos M.2", "Puertos SATA", "Wi-Fi",
                 "Memoria VRAM", "Tipo de VRAM", "Interfaz de Memoria", "Frecuencia Base", "Frecuencia Boost",
                 "Salidas de Video", "Tipo de RAM",

@@ -1,6 +1,5 @@
-// utils/categoriasMap.js
 export const categoriasMap = {
-  "Todas": "",                     // no agrega nada al endpoint
+  "Todas": "",
   "Almacenamiento": "almacenamiento",
   "Fuente de Poder": "fuente-poder",
   "Memoria RAM": "memoria",

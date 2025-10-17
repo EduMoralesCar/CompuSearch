@@ -92,4 +92,20 @@ public class FiltroController {
         return ResponseEntity.ok(tiendas);
     }
 
+    @GetMapping("/valores")
+    public ResponseEntity<List<String>> obtenerAtributosPorNombre(
+            @RequestParam(required = true) String nombreAtributo) {
+
+        logger.info("Solicitud recibida para obtener atributos (atributo = {})", nombreAtributo);
+
+        List<String> atributos = filtroService.obtenerValoresDeAtributosPorNombre(nombreAtributo);
+
+        if (atributos.isEmpty()) {
+            logger.warn("No se encontraron atributos para el atributo: {}", atributos);
+            return ResponseEntity.noContent().build();
+        }
+
+        logger.debug("Atributos encontradss: {}", atributos.size());
+        return ResponseEntity.ok(atributos);
+    }
 }

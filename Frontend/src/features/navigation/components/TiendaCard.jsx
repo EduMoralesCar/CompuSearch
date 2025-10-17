@@ -1,4 +1,3 @@
-import noBannerTienda from "../../../assets/no_logo_tienda.png";
 
 export default function TiendaCard({
     nombre,
@@ -9,18 +8,12 @@ export default function TiendaCard({
     urlPagina,
     etiquetas = [],
 }) {
-    const tieneLogo = logo && logo.trim() !== "";
-
     return (
         <article className="card h-100 rounded-3 border shadow-sm">
             <div className="p-3">
                 <div className="ratio ratio-16x9">
                     <img
-                        src={
-                            tieneLogo
-                                ? `data:image/png;base64,${logo}`
-                                : noBannerTienda
-                        }
+                        src={`data:image/png;base64,${logo}`}
                         alt={nombre}
                         className="img-fluid object-fit-cover rounded"
                     />

@@ -17,7 +17,7 @@ import com.universidad.compusearch.service.ProductoTiendaService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/productosTiendas")
+@RequestMapping("/componentes")
 @RequiredArgsConstructor
 public class ProductoTiendaController {
 

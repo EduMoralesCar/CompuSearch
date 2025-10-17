@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+
 import { categoriasMap } from "../utils/categoriasMap";
 import FiltrosSidebar from "../components/FiltroSidebar";
-import useFiltros from "../hooks/useFiltros";
-import useProductosTiendas from "../hooks/useProductoTienda";
 import ProductoTiendaCard from "../components/ProductoTiendaCard";
-import Paginacion from "../components/Paginacion"
-import { useSearchParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import Paginacion from "../components/Paginacion";
+
+import useFiltros from "../hooks/useFiltros";
+import useFiltrosAdicionales from "../hooks/useFiltrosAdicionales";
+import useProductosTiendas from "../hooks/useProductoTienda";
 
 const Componentes = () => {
-  const { filtroCategoria, filtroMarca, rangoPrecio, filtroTienda, loading, error } = useFiltros();
-
-  // Estados de edición (sidebar)
   const [categoria, setCategoria] = useState("Todas");
   const [precioMax, setPrecioMax] = useState(0);
   const [precioMin, setPrecioMin] = useState(0);
@@ -19,12 +18,10 @@ const Componentes = () => {
   const [tienda, setTienda] = useState("Todas");
   const [disponibilidad, setDisponibilidad] = useState("Todas");
   const [page, setPage] = useState(0);
-  const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get("search") || "";
-  const navigate = useNavigate();
+  const [filtrosExtra, setFiltrosExtra] = useState({});
+  const [categoriaDesdeUrl, setCategoriaDesdeUrl] = useState(false);
+  const [filtrosPorDefecto, setFiltrosPorDefecto] = useState(true);
 
-
-  // Estado de filtros aplicados
   const [filtrosAplicados, setFiltrosAplicados] = useState({
     categoria: "",
     nombreTienda: "",
@@ -32,8 +29,82 @@ const Componentes = () => {
     precioMin: 0,
     disponible: "",
     marca: "",
-    page: 0
+    page: 0,
   });
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const navigate = useNavigate();
+
+  const {
+    filtroCategoria,
+    filtroMarca,
+    rangoPrecio,
+    filtroTienda,
+    loading,
+    error,
+  } = useFiltros(categoria);
+
+  const { valoresAtributos, loading: loadingAdicionales } =
+    useFiltrosAdicionales(categoria);
+
+  useEffect(() => {
+    const filtrosExtraActivos = Object.values(filtrosExtra).some(
+      (valor) => valor !== "Todas" && valor !== ""
+    );
+
+    const esPorDefecto =
+      categoria === "Todas" &&
+      marca === "Todas" &&
+      tienda === "Todas" &&
+      disponibilidad === "Todas" &&
+      precioMin === (rangoPrecio?.precioMin ?? 0) &&
+      precioMax === (rangoPrecio?.precioMax ?? 0) &&
+      !filtrosExtraActivos;
+
+    setFiltrosPorDefecto(esPorDefecto);
+  }, [categoria, marca, tienda, disponibilidad, precioMin, precioMax, filtrosExtra, rangoPrecio]);
+
+
+  useEffect(() => {
+    const categoriaParam = searchParams.get("categoria");
+    if (categoriaParam) {
+      setCategoria(categoriaParam);
+      setCategoriaDesdeUrl(true); // ⬅️ marca que vino desde URL
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (categoriaDesdeUrl && categoria && categoria !== "Todas") {
+      const nuevos = {
+        categoria: categoriasMap[categoria] || categoria,
+        nombreTienda: tienda !== "Todas" ? tienda : "",
+        precioMax,
+        precioMin,
+        disponible: disponibilidad,
+        marca,
+        page: 0,
+        ...Object.entries(filtrosExtra)
+          .filter(([, valor]) => valor !== "Todas" && valor !== "")
+          .reduce((acc, [clave, valor]) => ({ ...acc, [clave]: valor }), {}),
+      };
+
+      setFiltrosAplicados(nuevos);
+      setPage(0);
+      setCategoriaDesdeUrl(false);
+    }
+  }, [categoriaDesdeUrl, categoria, tienda, precioMax, precioMin, disponibilidad, marca, filtrosExtra]);
+
+  useEffect(() => {
+    if (Object.keys(valoresAtributos).length > 0) {
+      const nuevosFiltros = {};
+      Object.keys(valoresAtributos).forEach((atributo) => {
+        const valorParam = searchParams.get(atributo);
+        nuevosFiltros[atributo] = valorParam || "Todas";
+      });
+      setFiltrosExtra(nuevosFiltros);
+    }
+  }, [valoresAtributos, searchParams]);
 
   useEffect(() => {
     if (rangoPrecio) {
@@ -43,57 +114,83 @@ const Componentes = () => {
   }, [rangoPrecio]);
 
   const aplicarFiltros = () => {
-    console.log("Aplicando filtros:", { tienda, categoria, precioMax, precioMin, marca, disponibilidad });
-    setFiltrosAplicados({
+    const filtrosLimpios = {};
+    Object.entries(filtrosExtra).forEach(([clave, valor]) => {
+      if (valor && valor !== "Todas") filtrosLimpios[clave] = valor;
+    });
 
-
+    const nuevos = {
       categoria: categoriasMap[categoria],
       nombreTienda: tienda !== "Todas" ? tienda : "",
       precioMax,
       precioMin,
       disponible: disponibilidad,
       marca,
-      page: 0
-    });
+      page: 0,
+      ...filtrosLimpios,
+    };
+
+    setFiltrosAplicados(nuevos);
     setPage(0);
-    navigate("/componentes", { replace: true });
+
+    const params = new URLSearchParams();
+    params.set("categoria", categoria);
+    if (marca !== "Todas") params.set("marca", marca);
+    if (tienda !== "Todas") params.set("tienda", tienda);
+    if (disponibilidad !== "Todas") params.set("disponibilidad", disponibilidad);
+    params.set("precioMin", precioMin.toString());
+    params.set("precioMax", precioMax.toString());
+    params.set("page", "0");
+    if (searchQuery) params.set("search", searchQuery);
+
+    Object.entries(filtrosLimpios).forEach(([clave, valor]) => {
+      params.set(clave, valor);
+    });
+
+    setSearchParams(params);
   };
 
   const resetearFiltros = () => {
+    const defaultMax = rangoPrecio?.precioMax ?? 0;
+    const defaultMin = rangoPrecio?.precioMin ?? 0;
+
     setCategoria("Todas");
-    if (rangoPrecio) {
-      setPrecioMax(rangoPrecio.precioMax);
-      setPrecioMin(rangoPrecio.precioMin);
-    }
+    setPrecioMax(defaultMax);
+    setPrecioMin(defaultMin);
     setMarca("Todas");
     setTienda("Todas");
     setDisponibilidad("Todas");
+    setFiltrosExtra({});
     setPage(0);
-    navigate("/componentes", { replace: true });
 
-    // También reseteamos los filtros aplicados
     setFiltrosAplicados({
-      categoria: "",
+      categoria: "Todas",
       nombreTienda: "",
-      precioMax: rangoPrecio ? rangoPrecio.precioMax : 0,
-      precioMin: rangoPrecio ? rangoPrecio.precioMin : 0,
-      disponible: null,
-      marca: "",
-      page: 0
+      precioMax: defaultMax,
+      precioMin: defaultMin,
+      disponible: "Todas",
+      marca: "Todas",
+      page: 0,
     });
+
+    setSearchParams(new URLSearchParams());
+    navigate("/componentes", { replace: true });
   };
 
-  // Hook de productos SOLO usa filtrosAplicados
-  const { productos, totalPages, loading: loadingProductos, error: errorProductos } = useProductosTiendas({
+  const {
+    productos,
+    totalPages,
+    loading: loadingProductos,
+    error: errorProductos,
+  } = useProductosTiendas({
     ...filtrosAplicados,
     nombreProducto: searchQuery,
-    page
+    page,
   });
 
   return (
     <div className="container mt-4">
       <div className="row">
-        {/* Sidebar de filtros */}
         <div className="col-md-3">
           <FiltrosSidebar
             categoria={categoria}
@@ -114,27 +211,30 @@ const Componentes = () => {
             filtroTienda={filtroTienda}
             loading={loading}
             error={error}
+            valoresAtributos={valoresAtributos}
+            filtrosExtra={filtrosExtra}
+            setFiltrosExtra={setFiltrosExtra}
+            loadingAdicionales={loadingAdicionales}
+            filtrosPorDefecto={filtrosPorDefecto}
           />
         </div>
 
-        {/* Listado de productos */}
         <div className="col-md-9">
           <h3>Listado de productos</h3>
 
           {loadingProductos && <p>Cargando productos...</p>}
-          {errorProductos && <p>Error al cargar productos: {errorProductos.message}</p>}
-          {!loadingProductos && productos.length === 0 && <p>No se encontraron productos</p>}
+          {errorProductos && (
+            <p className="text-danger">Error al cargar productos</p>
+          )}
+          {!loadingProductos && productos.length === 0 && (
+            <p>No se encontraron productos</p>
+          )}
 
-          {productos.map((p, i) => (
-            <ProductoTiendaCard key={i} producto={p} />
+          {productos.map((producto, i) => (
+            <ProductoTiendaCard key={i} producto={producto} />
           ))}
 
-          {/* Paginación */}
-          <Paginacion
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+          <Paginacion page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       </div>
     </div>

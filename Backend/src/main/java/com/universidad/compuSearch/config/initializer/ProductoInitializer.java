@@ -80,7 +80,6 @@ public class ProductoInitializer {
                         crearProductoAtributo(producto, "Frecuencia Base", "3.8 GHz");
                         crearProductoAtributo(producto, "Frecuencia Turbo", "4.7 GHz");
                         crearProductoAtributo(producto, "TDP", "105 W");
-                        crearProductoAtributo(producto, "Fabricante", "AMD");
                         crearProductoAtributo(producto, "Caché L3", "32 MB");
 
                         logger.info("Procesador creado: {} con sus atributos.", productoProcesador);
@@ -109,7 +108,6 @@ public class ProductoInitializer {
                         crearProductoAtributo(producto, "Interfaz", "PCIe 4.0 x4 NVMe");
                         crearProductoAtributo(producto, "Velocidad Lectura", "3500 MB/s");
                         crearProductoAtributo(producto, "Velocidad Escritura", "2100 MB/s");
-                        crearProductoAtributo(producto, "Fabricante", "Kingston");
 
                         logger.info("SSD creado: {} con sus atributos.", productoAlmacenamiento);
                 } else {
@@ -136,7 +134,6 @@ public class ProductoInitializer {
                         crearProductoAtributo(producto, "Certificación", "80+ Gold");
                         crearProductoAtributo(producto, "Formato", "ATX");
                         crearProductoAtributo(producto, "Modularidad", "Full Modular");
-                        crearProductoAtributo(producto, "Fabricante", "Corsair");
 
                         logger.info("Fuente de poder creada: {}", productoFuentePoder);
                 } else {
@@ -164,7 +161,6 @@ public class ProductoInitializer {
                         crearProductoAtributo(producto, "Compatibilidad Socket", "AM4");
                         crearProductoAtributo(producto, "Tamaño", "120 mm");
                         crearProductoAtributo(producto, "Nivel de Ruido", "26 dBA");
-                        crearProductoAtributo(producto, "Fabricante", "Cooler Master");
 
                         logger.info("Refrigeración CPU creada: {}", productoRefrigeracion);
                 } else {
@@ -188,11 +184,10 @@ public class ProductoInitializer {
                         productoRepository.save(producto);
 
                         crearProductoAtributo(producto, "Tipo de RAM", "DDR4");
-                        crearProductoAtributo(producto, "Capacidad", "16 GB (2x8)");
+                        crearProductoAtributo(producto, "Capacidad RAM", "16 GB (2x8)");
                         crearProductoAtributo(producto, "Frecuencia", "3600 MHz");
                         crearProductoAtributo(producto, "Latencia CAS", "18-22-22-42");
                         crearProductoAtributo(producto, "Perfil XMP", "Sí");
-                        crearProductoAtributo(producto, "Fabricante", "Corsair");
 
                         logger.info("Memoria RAM creada: {}", productoRAM);
                 } else {
@@ -215,7 +210,7 @@ public class ProductoInitializer {
                         producto.setCategoria(categoriaPlaca);
                         productoRepository.save(producto);
 
-                        crearProductoAtributo(producto, "Socket", "AM4");
+                        crearProductoAtributo(producto, "Socket de Motherboard", "AM4");
                         crearProductoAtributo(producto, "Chipset", "B550");
                         crearProductoAtributo(producto, "Factor de Forma", "ATX");
                         crearProductoAtributo(producto, "Slots RAM", "4");
@@ -223,8 +218,7 @@ public class ProductoInitializer {
                         crearProductoAtributo(producto, "Puertos M.2", "2");
                         crearProductoAtributo(producto, "Puertos SATA", "6");
                         crearProductoAtributo(producto, "Wi-Fi", "Sí");
-                        crearProductoAtributo(producto, "Tipo de RAM", "DDR4");
-                        crearProductoAtributo(producto, "Fabricante", "ASUS");
+                        crearProductoAtributo(producto, "Compatibilidad de RAM", "DDR4");
 
                         logger.info("Placa madre creada: {}", productoPlacaMadre);
                 } else {

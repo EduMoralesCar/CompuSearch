@@ -13,10 +13,15 @@ const FiltrosSidebar = ({
   filtroMarca,
   rangoPrecio,
   loading,
-  error
+  error,
+  valoresAtributos,
+  filtrosExtra,
+  setFiltrosExtra,
+  filtrosPorDefecto
 }) => {
+
   if (loading) return <p>Cargando filtros...</p>;
-  if (error) return <p>Error al cargar filtros: {error.message}</p>;
+  if (error) return <p className="text-danger">Error al cargar filtros</p>;
 
   const { precioMin: minRango, precioMax: maxRango } = rangoPrecio;
 
@@ -54,7 +59,12 @@ const FiltrosSidebar = ({
           filtroMarca={filtroMarca}
           minRango={minRango}
           maxRango={maxRango}
+          valoresAtributos={valoresAtributos}
+          filtrosExtra={filtrosExtra}
+          setFiltrosExtra={setFiltrosExtra}
+          filtrosPorDefecto={filtrosPorDefecto}
         />
+
       </div>
 
       {/* Offcanvas para móviles */}
@@ -90,7 +100,12 @@ const FiltrosSidebar = ({
             filtroMarca={filtroMarca}
             minRango={minRango}
             maxRango={maxRango}
+            valoresAtributos={valoresAtributos}
+            filtrosExtra={filtrosExtra}
+            setFiltrosExtra={setFiltrosExtra}
+            filtrosPorDefecto={filtrosPorDefecto}
           />
+
         </div>
       </div>
     </>
@@ -110,13 +125,18 @@ const FiltrosContent = ({
   filtroTienda,
   filtroMarca,
   minRango,
-  maxRango
+  maxRango,
+  valoresAtributos,
+  filtrosExtra,
+  setFiltrosExtra,
+  filtrosPorDefecto
 }) => (
+
   <div>
     <button className="btn btn-primary w-100 mb-3" onClick={aplicarFiltros} data-bs-dismiss="offcanvas">
       Aplicar filtros
     </button>
-    <button className="btn btn-outline-primary w-100 mb-3" onClick={resetearFiltros}>
+    <button className="btn btn-outline-primary w-100 mb-3" onClick={resetearFiltros} disabled={filtrosPorDefecto}>
       Resetear filtros
     </button>
 
@@ -184,6 +204,29 @@ const FiltrosContent = ({
         disabled={minRango === maxRango}
       />
     </div>
+
+    {/* Filtros adicionales dinámicos */}
+    {Object.entries(valoresAtributos).map(([atributo, opciones]) => (
+      <div key={atributo} className="mb-3">
+        <label>{atributo}:</label>
+        <select
+          className="form-select"
+          value={filtrosExtra[atributo] || "Todas"}
+          onChange={(e) =>
+            setFiltrosExtra((prev) => ({
+              ...prev,
+              [atributo]: e.target.value
+            }))
+          }
+        >
+          <option value="Todas">Todas</option>
+          {opciones.map((opcion, idx) => (
+            <option key={idx} value={opcion}>{opcion}</option>
+          ))}
+        </select>
+      </div>
+    ))}
+
 
   </div>
 );

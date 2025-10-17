@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.universidad.compusearch.dto.RangoPrecioResponse;
+import com.universidad.compusearch.repository.AtributoRepository;
 import com.universidad.compusearch.repository.ProductoTiendaRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class FiltroService {
     private static final Logger logger = LoggerFactory.getLogger(FiltroService.class);
 
     private final ProductoTiendaRepository productoTiendaRepository;
+    private final AtributoRepository atributoRepository;
 
     public RangoPrecioResponse obtenerRangoPrecio(String nombreCategoria) {
         Object result = productoTiendaRepository.obtenerRangoPrecioPorCategoria(nombreCategoria);
@@ -58,6 +60,17 @@ public class FiltroService {
         logger.trace("Tiendas encontradas: {}", tiendas);
 
         return tiendas;
+    }
+
+    public List<String> obtenerValoresDeAtributosPorNombre(String nombreAtributo) {
+        logger.info("Obteniendo atributos de {}", nombreAtributo);
+
+        List<String> atributos = atributoRepository.findDistinctValoresByAtributo(nombreAtributo);
+
+        logger.debug("Total de atributos encontradas: {}", atributos.size());
+        logger.trace("Atributos encontradas: {}", atributos);
+
+        return atributos;
     }
 
 }

@@ -35,7 +35,7 @@ export default function useProductosTiendas({
                     params.append("disponible", false);
                 }
 
-                const baseUrl = "http://localhost:8080/productosTiendas";
+                const baseUrl = "http://localhost:8080/componentes";
                 let url;
 
                 if (nombreProducto && nombreProducto.trim() !== "") {

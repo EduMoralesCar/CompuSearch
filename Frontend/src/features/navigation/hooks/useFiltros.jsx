@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function useFiltros() {
+export default function useFiltros(categoriaSeleccionada) {
     const [filtroCategoria, setFiltroCategoria] = useState([]);
     const [filtroMarca, setFiltroMarca] = useState([]);
     const [rangoPrecio, setRangoPrecio] = useState(null);
@@ -11,11 +11,15 @@ export default function useFiltros() {
     useEffect(() => {
         const cargarFiltros = async () => {
             try {
+                const categoriaParam = categoriaSeleccionada && categoriaSeleccionada !== "Todas"
+                    ? `?categoria=${encodeURIComponent(categoriaSeleccionada)}`
+                    : "";
+
                 const [resCat, resPre, resMar, resTie] = await Promise.all([
-                    fetch("http://localhost:8080/filtro/categorias"),
-                    fetch("http://localhost:8080/filtro/precios"),
-                    fetch("http://localhost:8080/filtro/marcas"),
-                    fetch("http://localhost:8080/filtro/tiendas")
+                    fetch(`http://localhost:8080/filtro/categorias`),
+                    fetch(`http://localhost:8080/filtro/precios${categoriaParam}`),
+                    fetch(`http://localhost:8080/filtro/marcas${categoriaParam}`),
+                    fetch(`http://localhost:8080/filtro/tiendas${categoriaParam}`)
                 ]);
 
                 if (!resCat.ok || !resPre.ok || !resMar.ok || !resTie.ok) {
@@ -32,7 +36,7 @@ export default function useFiltros() {
                 setFiltroCategoria(dataCat);
                 setRangoPrecio(dataPre);
                 setFiltroMarca(dataMar);
-                setFiltroTienda(dataTie)
+                setFiltroTienda(dataTie);
             } catch (err) {
                 setError(err);
             } finally {
@@ -41,7 +45,7 @@ export default function useFiltros() {
         };
 
         cargarFiltros();
-    }, []);
+    }, [categoriaSeleccionada]);
 
     return { filtroCategoria, filtroMarca, rangoPrecio, filtroTienda, loading, error };
 }
