@@ -6,6 +6,7 @@ import com.universidad.compusearch.entity.ProductoTienda;
 
 import jakarta.persistence.criteria.JoinType;
 
+// Especificaciones de la memoria
 public class MemoriaSpecification {
     public static Specification<ProductoTienda> porFrecuencia(String frecuencia) {
         return (root, query, cb) -> {
@@ -18,7 +19,7 @@ public class MemoriaSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Frecuencia"),
+                cb.equal(joinAtributo.get("nombre"), "Frecuencia RAM"),
                 cb.equal(joinProductoAtributos.get("valor"), frecuencia)
             );
         };
@@ -35,7 +36,7 @@ public class MemoriaSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Tipo de RAM"),
+                cb.equal(joinAtributo.get("nombre"), "Tipo RAM"),
                 cb.equal(joinProductoAtributos.get("valor"), tipo)
             );
         };
@@ -52,7 +53,7 @@ public class MemoriaSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Capacidad"),
+                cb.equal(joinAtributo.get("nombre"), "Capacidad RAM"),
                 cb.equal(joinProductoAtributos.get("valor"), capacidad)
             );
         };

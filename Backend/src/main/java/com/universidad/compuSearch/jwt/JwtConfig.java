@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import lombok.Getter;
 import lombok.Setter;
 
+// Clase auxliar para obtener los datos del jwt del
+// aplication.properties
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
 @Getter

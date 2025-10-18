@@ -21,7 +21,7 @@ export default function CategoriaCard({ nombre, descripcion, nombreImagen }) {
 
                 <div className="mt-auto">
                     <Link
-                        to={`/componentes?categoria=${encodeURIComponent(nombre)}`}
+                        to={`/componentes?categorias=${encodeURIComponent(nombre)}`}
                         className="btn btn-primary btn-sm fw-semibold rounded-pill px-3"
                         aria-label={`Ver ${nombre}`}
                     >

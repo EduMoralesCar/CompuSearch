@@ -6,6 +6,7 @@ import com.universidad.compusearch.entity.ProductoTienda;
 
 import jakarta.persistence.criteria.JoinType;
 
+// Especificaciones de la placa madre
 public class PlacaMadreSpecification {
     public static Specification<ProductoTienda> porSocket(String socket) {
         return (root, query, cb) -> {
@@ -18,7 +19,7 @@ public class PlacaMadreSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Socket"),
+                cb.equal(joinAtributo.get("nombre"), "Socket Motherboard"),
                 cb.equal(joinProductoAtributos.get("valor"), socket)
             );
         };
@@ -35,7 +36,7 @@ public class PlacaMadreSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Factor de Forma"),
+                cb.equal(joinAtributo.get("nombre"), "Factor de Forma Motherboard"),
                 cb.equal(joinProductoAtributos.get("valor"), factor)
             );
         };

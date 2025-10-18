@@ -1,7 +1,13 @@
 import React from "react";
 
 const ProductoTiendaCard = ({ producto }) => {
-  const placeholder = "https://via.placeholder.com/200x150?text=Sin+Imagen"; // 👈 placeholder
+  const placeholder = "https://via.placeholder.com/200x150?text=Sin+Imagen";
+
+  const handleVerProducto = () => {
+    console.log("Ver producto:", producto.idProductoTienda);
+    // Aquí puedes hacer una llamada al backend o navegar a otra ruta
+    // Por ejemplo: navigate(`/producto/${producto.idProductoTienda}`)
+  };
 
   return (
     <div className="card mb-3 shadow-sm">
@@ -9,8 +15,8 @@ const ProductoTiendaCard = ({ producto }) => {
         <div className="col-md-4 d-flex align-items-center justify-content-center">
           <div
             style={{
-              width: "200px",   // 👈 ancho fijo
-              height: "150px",  // 👈 alto fijo
+              width: "200px",
+              height: "150px",
               overflow: "hidden",
               borderRadius: "0.25rem"
             }}
@@ -21,7 +27,7 @@ const ProductoTiendaCard = ({ producto }) => {
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover" // 👈 recorta sin deformar
+                objectFit: "cover"
               }}
             />
           </div>
@@ -40,6 +46,9 @@ const ProductoTiendaCard = ({ producto }) => {
                 {producto.stock > 0 ? `Stock: ${producto.stock}` : "Sin stock"}
               </small>
             </p>
+            <button className="btn btn-outline-primary mt-2" onClick={handleVerProducto}>
+              Ver producto
+            </button>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ package com.universidad.compusearch.exception;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,14 +12,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.universidad.compusearch.dto.ErrorResponse;
 
+
+// Manejo de errores globales
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
+        String message = StringUtils.defaultIfBlank(ex.getMessage(), "Ha ocurrido un error");
         ErrorResponse response = new ErrorResponse(
                 false,
-                ex.getMessage(),
+                message,
                 ex.getStatus(),
                 Map.of("code", ex.getCode()));
 
@@ -50,5 +54,4 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
-
 }

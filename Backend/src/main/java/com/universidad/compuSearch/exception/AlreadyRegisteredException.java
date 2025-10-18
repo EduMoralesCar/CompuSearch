@@ -1,5 +1,6 @@
 package com.universidad.compusearch.exception;
 
+// Excepciones de datos ya registrados
 public class AlreadyRegisteredException extends CustomException {
 
     public AlreadyRegisteredException(String message, int status, String code) {

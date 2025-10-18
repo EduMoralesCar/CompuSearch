@@ -67,10 +67,10 @@ const Componentes = () => {
 
 
   useEffect(() => {
-    const categoriaParam = searchParams.get("categoria");
+    const categoriaParam = searchParams.get("categorias");
     if (categoriaParam) {
       setCategoria(categoriaParam);
-      setCategoriaDesdeUrl(true); // ⬅️ marca que vino desde URL
+      setCategoriaDesdeUrl(true);
     }
   }, [searchParams]);
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function useEtiquetas() {
     const [etiquetas, setEtiquetas] = useState([]);
@@ -7,15 +8,14 @@ export default function useEtiquetas() {
 
     useEffect(() => {
         const cargarEtiquetas = async () => {
+            setLoading(true);
+            setError(null);
+
             try {
-                const response = await fetch("http://localhost:8080/etiquetas");
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
-                }
-                const data = await response.json();
-                setEtiquetas(data);
+                const response = await axios.get("http://localhost:8080/etiquetas");
+                setEtiquetas(response.data || []);
             } catch (err) {
-                setError(err);
+                setError(err.message || "Error al cargar etiquetas");
             } finally {
                 setLoading(false);
             }

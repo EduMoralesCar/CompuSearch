@@ -1,7 +1,5 @@
 package com.universidad.compusearch.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,13 +18,13 @@ import com.universidad.compusearch.service.RefreshTokenService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
-
-        private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
         private final AuthService authService;
         private final RefreshTokenService refreshTokenService;
@@ -35,7 +33,7 @@ public class AuthController {
         @PostMapping("/login")
         public ResponseEntity<MessageResponse> login(@Valid @RequestBody LoginRequest request,
                         HttpServletResponse response) {
-                logger.info("Intento de login para identificador: {}", request.getIdentificador());
+                log.info("Intento de login para identificador: {}", request.getIdentificador());
 
                 Usuario usuario = authService.authenticate(request.getIdentificador(), request.getContrasena());
                 String accessToken = authService.generateJwtToken(usuario);
@@ -62,7 +60,7 @@ public class AuthController {
                 response.addHeader("Set-Cookie", accessCookie.toString());
                 response.addHeader("Set-Cookie", refreshCookie.toString());
 
-                logger.info("Login exitoso para usuario ID: {}", usuario.getIdUsuario());
+                log.info("Login exitoso para usuario ID: {}", usuario.getIdUsuario());
 
                 return ResponseEntity.ok(new MessageResponse("Usuario logueado correctamente"));
         }
@@ -71,7 +69,7 @@ public class AuthController {
         @PostMapping("/register")
         public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest request,
                         HttpServletResponse response) {
-                logger.info("Registro solicitado para email: {}", request.getEmail());
+                log.info("Registro solicitado para email: {}", request.getEmail());
 
                 TipoUsuario tipo = TipoUsuario.valueOf(request.getTipoUsuario().toUpperCase());
                 Usuario usuario = authService.register(request.getUsername(), request.getEmail(),
@@ -84,7 +82,7 @@ public class AuthController {
                                 .httpOnly(true)
                                 .secure(true)
                                 .path("/")
-                                .maxAge(30 * 24 * 60 * 60)
+                                .maxAge(10 * 60)
                                 .sameSite("Strict")
                                 .build();
 
@@ -99,13 +97,13 @@ public class AuthController {
                 response.addHeader("Set-Cookie", accessCookie.toString());
                 response.addHeader("Set-Cookie", refreshCookie.toString());
 
-                logger.info("Usuario registrado con ID: {}", usuario.getIdUsuario());
+                log.info("Usuario registrado con ID: {}", usuario.getIdUsuario());
 
                 return ResponseEntity.ok(new MessageResponse("Usuario registrado correctamente"));
         }
 
         @GetMapping("/me")
         public ResponseEntity<AuthResponse> getAuthenticatedUser(@AuthenticationPrincipal Usuario usuario) {
-                return ResponseEntity.ok(new AuthResponse(usuario.getUsername(), usuario.getTipoUsuario().name()));
+                return ResponseEntity.ok(new AuthResponse(usuario.getIdUsuario(), usuario.getUsername(), usuario.getTipoUsuario().name()));
         }
 }

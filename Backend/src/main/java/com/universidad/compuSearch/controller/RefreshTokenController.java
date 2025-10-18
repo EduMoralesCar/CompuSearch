@@ -1,7 +1,5 @@
 package com.universidad.compusearch.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -17,13 +15,13 @@ import com.universidad.compusearch.service.RefreshTokenService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class RefreshTokenController {
-
-        private static final Logger logger = LoggerFactory.getLogger(RefreshTokenController.class);
 
         private final RefreshTokenService refreshTokenService;
         private final AuthService authService;
@@ -31,7 +29,7 @@ public class RefreshTokenController {
         @PostMapping("/refresh")
         public ResponseEntity<MessageResponse> refresh(@CookieValue("refresh_token") String refreshTokenValue,
                         HttpServletResponse response) {
-                logger.info("Solicitud de renovación de token con refresh_token");
+                log.info("Solicitud de renovación de token con refresh_token");
 
                 Token refreshToken = refreshTokenService.validateAndGetRefreshToken(refreshTokenValue);
                 Usuario usuario = refreshToken.getUsuario();
@@ -58,14 +56,14 @@ public class RefreshTokenController {
                 response.addHeader("Set-Cookie", refreshCookie.toString());
                 response.addHeader("Set-Cookie", accessCookie.toString());
 
-                logger.info("Access token renovado para usuario ID: {}", usuario.getIdUsuario());
+                log.info("Access token renovado para usuario ID: {}", usuario.getIdUsuario());
                 return ResponseEntity.ok(new MessageResponse("Token de acceso renovado correctamente"));
         }
 
         @PostMapping("/logout")
         public ResponseEntity<MessageResponse> logout(@CookieValue("refresh_token") String refreshTokenValue,
                         HttpServletResponse response) {
-                logger.info("Solicitud de logout con refresh_token");
+                log.info("Solicitud de logout con refresh_token");
 
                 refreshTokenService.revokeRefreshToken(refreshTokenValue);
 
@@ -88,7 +86,7 @@ public class RefreshTokenController {
                 response.addHeader("Set-Cookie", refreshCookie.toString());
                 response.addHeader("Set-Cookie", accessCookie.toString());
 
-                logger.info("Sesión cerrada y tokens eliminados");
+                log.info("Sesión cerrada y tokens eliminados");
                 return ResponseEntity.ok(new MessageResponse("Sesión cerrada"));
         }
 

@@ -3,28 +3,18 @@ import { Link } from "react-router-dom";
 import CategoriaCard from "../components/CategoriaCard";
 import useCategorias from "../hooks/useCategorias";
 import bannerCategorias from "../../../assets/banners/banner_categorias.jpg"
+import BannerHeader from "../components/BannerHeader"
 
 export default function Categorias() {
     const { categorias, loading, error } = useCategorias();
 
     return (
         <section>
-            <header className="bg-primary text-white py-5"
-                style={{
-                    backgroundImage: `url(${bannerCategorias})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                }}>
-                <div className="container text-center">
-                    <h1 className="display-6 fw-bold text-uppercase">
-                        Categorías de Componentes
-                    </h1>
-                    <p className="lead mb-0 fw-italic">
-                        Explora y compara precios de todos los componentes de computadora en un
-                        solo lugar.
-                    </p>
-                </div>
-            </header>
+            <BannerHeader
+                title="Arma tu computadora"
+                description="Crea tu PC personalizada con los mejores componentes."
+                background={bannerCategorias}
+            />
 
             <main className="container my-5">
 

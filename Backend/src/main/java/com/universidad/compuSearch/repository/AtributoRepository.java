@@ -13,8 +13,10 @@ import com.universidad.compusearch.entity.Atributo;
 public interface AtributoRepository extends JpaRepository<Atributo, Long>,
         JpaSpecificationExecutor<Atributo> {
 
+    // Obtiene atributos por su nombre
     Optional<Atributo> findByNombre(String nombre);
-
+    
+    // Obtiene una lista de los diferentes valores por atributo
     @Query("""
                 SELECT DISTINCT pa.valor
                 FROM ProductoTienda pt
@@ -25,5 +27,4 @@ public interface AtributoRepository extends JpaRepository<Atributo, Long>,
                 AND pt.habilitado = true
             """)
     List<String> findDistinctValoresByAtributo(@Param("nombreAtributo") String nombreAtributo);
-
 }

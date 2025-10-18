@@ -6,6 +6,7 @@ import com.universidad.compusearch.entity.ProductoTienda;
 
 import jakarta.persistence.criteria.JoinType;
 
+// Especificaciones de la tarjeta de video
 public class TarjetaVideoSpecification {
 
     public static Specification<ProductoTienda> porFabricante(String fabricante) {
@@ -19,7 +20,7 @@ public class TarjetaVideoSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Fabricante"),
+                cb.equal(joinAtributo.get("nombre"), "Fabricante GPU"),
                 cb.equal(joinProductoAtributos.get("valor"), fabricante)
             );
         };

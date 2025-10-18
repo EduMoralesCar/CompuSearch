@@ -12,20 +12,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// Entidad que representa al empleado
 @Entity
 @Table(name = "empleado")
 @PrimaryKeyJoinColumn(name = "idUsuario")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Empleado extends Usuario {
 
@@ -40,7 +38,7 @@ public class Empleado extends Usuario {
     private Rol rol;
 
     @Column(nullable = false)
-    private LocalDateTime fechaAsignacion;
+    private LocalDateTime fechaAsignacion = LocalDateTime.now();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -48,12 +46,5 @@ public class Empleado extends Usuario {
         authorities.add(new SimpleGrantedAuthority("ROLE_" + getTipoUsuario().name()));
         authorities.add(new SimpleGrantedAuthority("ROLE_" + rol.name()));
         return authorities;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (fechaAsignacion == null) {
-            fechaAsignacion = LocalDateTime.now();
-        }
     }
 }

@@ -6,6 +6,7 @@ import com.universidad.compusearch.entity.ProductoTienda;
 
 import jakarta.persistence.criteria.JoinType;
 
+// Especificaciones de la fuente de poder
 public class FuentePoderSpecification {
     public static Specification<ProductoTienda> porPotencia(String potencia) {
         return (root, query, cb) -> {
@@ -18,7 +19,7 @@ public class FuentePoderSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Potencia"),
+                cb.equal(joinAtributo.get("nombre"), "Potencia PSU"),
                 cb.equal(joinProductoAtributos.get("valor"), potencia)
             );
         };
@@ -35,7 +36,7 @@ public class FuentePoderSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Certificación"),
+                cb.equal(joinAtributo.get("nombre"), "Certificación PSU"),
                 cb.equal(joinProductoAtributos.get("valor"), certificacion)
             );
         };

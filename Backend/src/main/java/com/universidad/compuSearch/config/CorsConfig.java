@@ -1,16 +1,16 @@
 package com.universidad.compusearch.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-public class CorsConfig {
+import lombok.extern.slf4j.Slf4j;
 
-    private static final Logger logger = LoggerFactory.getLogger(CorsConfig.class);
+// Configuracion para aceptar peticiones desde otro origen
+@Configuration
+@Slf4j
+public class CorsConfig {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -27,7 +27,7 @@ public class CorsConfig {
                         // Permite enviar cookies o cabeceras de autenticación 
                         .allowCredentials(true); 
 
-                logger.info("CORS configurado para origen: http://localhost:5173");
+                log.info("CORS configurado para origen: http://localhost:5173");
             }
         };
     }

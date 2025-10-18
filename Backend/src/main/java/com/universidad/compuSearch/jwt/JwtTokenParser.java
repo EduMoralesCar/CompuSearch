@@ -24,7 +24,6 @@ public class JwtTokenParser {
     public Claims extractAllClaims(String token) {
 
         try {
-            
             return Jwts.parser()
                     .verifyWith(jwtConfigHelper.getSigningKey())
                     .build()

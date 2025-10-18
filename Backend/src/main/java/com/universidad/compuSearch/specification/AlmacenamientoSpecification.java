@@ -6,6 +6,7 @@ import com.universidad.compusearch.entity.ProductoTienda;
 
 import jakarta.persistence.criteria.JoinType;
 
+// Especificaciones del almacenamiento
 public class AlmacenamientoSpecification {
 
     public static Specification<ProductoTienda> porTipo(String tipo) {
@@ -36,7 +37,7 @@ public class AlmacenamientoSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                cb.equal(joinAtributo.get("nombre"), "Capacidad"),
+                cb.equal(joinAtributo.get("nombre"), "Capacidad Almacenamiento"),
                 cb.equal(joinProductoAtributos.get("valor"), capacidad)
             );
         };

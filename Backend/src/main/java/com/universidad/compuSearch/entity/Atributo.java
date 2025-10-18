@@ -1,22 +1,30 @@
 package com.universidad.compusearch.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+// Entidad que representa las especificaciones
+// de los productos
 @Entity
 @Table(name = "atributo")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Atributo {
 
     @Id
@@ -25,4 +33,9 @@ public class Atributo {
 
     @Column(nullable = false, unique = true)
     private String nombre;
+
+    @OneToMany(mappedBy = "atributo", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<ProductoAtributo> productos = new ArrayList<>();
+
 }

@@ -3,6 +3,7 @@ package com.universidad.compusearch.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+// Clase auxiliar para errores customizados
 @AllArgsConstructor
 @Getter
 public class CustomException extends RuntimeException{

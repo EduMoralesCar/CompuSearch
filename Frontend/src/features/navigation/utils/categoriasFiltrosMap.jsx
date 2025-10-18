@@ -1,4 +1,4 @@
-export const categoriasFiltros = {
+export const categoriasFiltrosMap = {
     "Todas": [],
     "Almacenamiento": ["Capacidad", "Tipo de Almacenamiento"],
     "Fuente de Poder": ["Certificación", "Potencia"],

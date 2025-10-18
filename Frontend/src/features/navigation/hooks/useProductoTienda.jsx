@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function useProductosTiendas({
     categoria,
@@ -35,35 +36,32 @@ export default function useProductosTiendas({
                     params.append("disponible", false);
                 }
 
-                const baseUrl = "http://localhost:8080/componentes";
+                const baseUrl = "http://localhost:8080/componentes/filtrar";
                 let url;
 
                 if (nombreProducto && nombreProducto.trim() !== "") {
-                    // endpoint de búsqueda
                     params.append("nombre", nombreProducto);
                     params.append("page", page);
                     params.append("size", size);
                     url = `${baseUrl}/buscar?${params.toString()}`;
                 } else if (categoria && categoria !== "Todas") {
+                    params.append("categoria", categoria);
                     params.append("page", page);
                     params.append("size", size);
-                    url = `${baseUrl}/${categoria}?${params.toString()}`;
+                    url = `${baseUrl}?${params.toString()}`;
                 } else {
                     params.append("page", page);
                     params.append("size", size);
                     url = `${baseUrl}?${params.toString()}`;
                 }
 
-                const res = await fetch(url);
-                if (!res.ok) throw new Error("Error al cargar productos");
-
-                const data = await res.json();
+                const { data } = await axios.get(url);
 
                 setProductos(data.content || []);
                 setTotalPages(data.totalPages);
                 setTotalElements(data.totalElements);
             } catch (err) {
-                setError(err);
+                setError(err.message || "Error al cargar productos");
             } finally {
                 setLoading(false);
             }

@@ -1,34 +1,58 @@
 package com.universidad.compusearch.config.initializer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.universidad.compusearch.entity.Atributo;
 import com.universidad.compusearch.repository.AtributoRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+// Crear atributos al inicio
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AtributoInitializer {
 
-    private static final Logger logger = LoggerFactory.getLogger(CategoriaInitializer.class);
     private final AtributoRepository atributoRepository;
 
     public void init() {
+
+        // Nombre de los atributos
         String[] nombresAtributos = {
-                "Socket", "Socket de Motherboard", "TDP", "Fabricante",
-                "Núcleos", "Hilos", "Frecuencia Base", "Frecuencia Turbo", "Caché L3",
-                "Tipo de Enfriamiento", "Tamaño", "Compatibilidad Socket", "Nivel de Ruido", "ARGB",
-                "Tipo de Almacenamiento", "Capacidad", "Capacidad RAM", "Interfaz", "Velocidad Lectura", "Velocidad Escritura",
-                "Tipo de RAM", "Compatibilidad de RAM", "Capacidad", "Frecuencia", "Latencia CAS", "Perfil XMP",
-                "Chipset", "Factor de Forma", "Slots RAM", "RAM Máxima", "Puertos M.2", "Puertos SATA", "Wi-Fi",
-                "Memoria VRAM", "Tipo de VRAM", "Interfaz de Memoria", "Frecuencia Base", "Frecuencia Boost",
-                "Salidas de Video", "Tipo de RAM",
-                "Potencia", "Certificación", "Formato", "Modularidad"
+                // CPU
+                "Socket CPU", "Núcleos CPU", "Hilos CPU", "Frecuencia Base CPU",
+                "Frecuencia Turbo CPU", "Caché L3 CPU", "Consumo CPU",
+
+                // Motherboard
+                "Socket Motherboard", "Chipset Motherboard", "Factor de Forma Motherboard",
+                "Slots RAM", "RAM Máxima", "Tipo RAM Compatible", "Puertos M.2", "Puertos SATA",
+                "Consumo Motherboard",
+
+                // RAM
+                "Tipo RAM", "Capacidad RAM", "Frecuencia RAM", "Latencia CAS RAM",
+                "Perfil XMP RAM", "Número de Módulos RAM", "Consumo RAM",
+
+                // Almacenamiento
+                "Tipo de Almacenamiento", "Capacidad Almacenamiento",
+                "Interfaz Almacenamiento",
+                "Velocidad Lectura", "Velocidad Escritura", "Consumo Almacenamiento",
+
+                // GPU
+                "Interfaz PCIe GPU", "Conectores Energía GPU", "Factor de Forma GPU",
+                "Memoria VRAM", "Tipo de VRAM", "Frecuencia Base GPU", "Frecuencia Boost GPU",
+                "Salidas de Video GPU", "Consumo GPU", "Fabricante GPU",
+
+                // Enfriamiento
+                "Tipo de Enfriamiento", "Compatibilidad Socket Cooler",
+                "Tamaño Ventilador", "Nivel de Ruido Cooler", "ARGB Cooler", "Consumo Cooler",
+
+                // Fuente de Poder / PSU
+                "Potencia PSU", "Certificación PSU", "Formato PSU", "Modularidad PSU", "Eficiencia PSU",
+                "Consumo PSU"
         };
 
+        // Insercion de los atributos
         int nuevas = 0, existentes = 0;
         for (String nombre : nombresAtributos) {
             if (atributoRepository.findByNombre(nombre).isEmpty()) {
@@ -40,7 +64,6 @@ public class AtributoInitializer {
                 existentes++;
             }
         }
-        logger.info("Atributos: {} nuevos, {} existentes, total {}", nuevas, existentes, nombresAtributos.length);
+        log.info("Atributos: {} nuevos, {} existentes, total {}", nuevas, existentes, nombresAtributos.length);
     }
 }
-

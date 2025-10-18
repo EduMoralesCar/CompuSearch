@@ -1,7 +1,7 @@
 package com.universidad.compusearch.dto;
 
-import io.micrometer.common.lang.NonNull;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +22,6 @@ public class LoginRequest {
     @NotBlank(message = "Dispositivo es obligatorio")
     private String dispositivo;
 
-    @NonNull
+    @NotNull(message = "El campo recordar es obligatorio")
     private boolean recordar;
 }

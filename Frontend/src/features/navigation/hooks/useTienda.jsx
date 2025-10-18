@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function useTiendas() {
     const [tiendas, setTiendas] = useState([]);
@@ -6,19 +7,18 @@ export default function useTiendas() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch("http://localhost:8080/tiendas/verificadas")
-            .then((res) => {
-                if (!res.ok) throw new Error("Error al cargar tiendas");
-                return res.json();
-            })
-            .then((data) => {
-                setTiendas(data);
+        const obtenerTiendas = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/tiendas/verificadas");
+                setTiendas(response.data);
+            } catch (err) {
+                setError(err.response?.data?.message || err.message);
+            } finally {
                 setLoading(false);
-            })
-            .catch((err) => {
-                setError(err.message);
-                setLoading(false);
-            });
+            }
+        };
+
+        obtenerTiendas();
     }, []);
 
     return { tiendas, loading, error };

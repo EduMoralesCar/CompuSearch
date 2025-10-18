@@ -3,7 +3,8 @@ import useTiendas from "../hooks/useTienda";
 import useEtiquetas from "../hooks/useEtiquetas";
 import TiendaFilters from "../components/TiendaFilters";
 import TiendaCard from "../components/TiendaCard";
-import bannerTienda from "../../../assets/banners/banner_tiendas.jpg";
+import bannerTiendas from "../../../assets/banners/banner_tiendas.jpg";
+import BannerHeader from "../components/BannerHeader"
 
 export default function Tiendas() {
     const { tiendas, loading, error } = useTiendas();
@@ -26,21 +27,11 @@ export default function Tiendas() {
 
     return (
         <section>
-            <header
-                className="bg-primary text-white py-5 shadow-sm"
-                style={{
-                    backgroundImage: `url(${bannerTienda})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                }}
-            >
-                <div className="container text-center">
-                    <h1 className="display-6 fw-bold mb-2">Tiendas Asociadas</h1>
-                    <p className="lead mb-0 opacity-75">
-                        Descubre nuestras tiendas colaboradoras, ofertas y promociones exclusivas.
-                    </p>
-                </div>
-            </header>
+            <BannerHeader
+                title="Arma tu computadora"
+                description="Crea tu PC personalizada con los mejores componentes."
+                background={bannerTiendas}
+            />
 
             <main className="container my-5">
                 <TiendaFilters

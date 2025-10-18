@@ -70,8 +70,8 @@ class TokenRepositoryTest {
         token.setUsuario(usuario);
         tokenRepository.save(token);
 
-        Optional<Token> result = tokenRepository.findByUsuarioAndIpDispositivoAndTipo(
-                usuario, "192.168.1.100", TipoToken.RESET);
+        Optional<Token> result = tokenRepository.findByUsuario_IdUsuarioAndIpDispositivoAndTipo(
+                usuario.getIdUsuario(), "192.168.1.100", TipoToken.RESET);
 
         assertTrue(result.isPresent());
         assertEquals("xyz789", result.get().getToken());
