@@ -30,6 +30,11 @@ public class ProductoTiendaInitializer {
                 crearProductoTienda("Tarjeta Gráfica ASUS TUF Gaming GeForce RTX 4070 12GB GDDR6X", "tienda1@test.com",
                                 "1299.90", 10, "https://www.google.com/",
                                 "https://www.impacto.com.pe/storage/products/md/173834431364422.webp", "GPU-ASUS-4070");
+
+                crearProductoTienda("Tarjeta Gráfica ASUS TUF Gaming GeForce RTX 4070 12GB GDDR6X", "tienda2@test.com",
+                                "1499.90", 5, "https://www.google.com/",
+                                "https://www.impacto.com.pe/storage/products/md/173834431364422.webp", "GPU-ASUS-4070");
+
                 crearProductoTienda("Placa Madre ASRock B450M-HDV R4.0", "tienda2@test.com", "89.90", 15,
                                 "https://www.google.com/",
                                 "https://www.impacto.com.pe/storage/products/md/173834431364422.webp",
@@ -42,7 +47,7 @@ public class ProductoTiendaInitializer {
                                 "499.90", 12, "https://www.google.com/",
                                 "https://www.impacto.com.pe/storage/products/md/173834431364422.webp",
                                 "GPU-GIGABYTE-3060");
-                                
+
                 crearProductoTienda("Tarjeta Gráfica ASUS Dual GeForce GTX 1650 OC 4GB", "tienda2@test.com", "189.90",
                                 20, "https://www.google.com/",
                                 "https://www.impacto.com.pe/storage/products/md/173834431364422.webp", "GPU-ASUS-1650");

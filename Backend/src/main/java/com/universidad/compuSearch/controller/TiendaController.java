@@ -27,12 +27,11 @@ public class TiendaController {
         log.info("GET /tiendas/verificadas - solicitando tiendas verificadas");
 
         List<TiendaResponse> tiendasResponse = tiendaService.obtenerTiendasVerificadas()
-            .stream()
-            .map(tiendaService::mapToTienda)
-            .toList();
+                .stream()
+                .map(tiendaService::mapToTienda)
+                .toList();
 
         log.info("Se retornaron {} tiendas verificadas.", tiendasResponse.size());
         return ResponseEntity.ok(tiendasResponse);
     }
 }
-

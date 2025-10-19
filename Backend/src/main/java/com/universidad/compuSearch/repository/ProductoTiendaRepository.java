@@ -12,9 +12,9 @@ import com.universidad.compusearch.entity.ProductoTienda;
 
 public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, Long>,
                 JpaSpecificationExecutor<ProductoTienda> {
-        
-        // Obtener un producto de una tienda por el id del usuario
-        // y el id de la tienda
+
+        // Obtener un producto de una tienda por el id del usuario (tienda)
+        // y el id del producto
         Optional<ProductoTienda> findByProducto_IdProductoAndTienda_IdUsuario(Long idProducto, Long idTienda);
 
         // Obtener un objeto con el precio maximo y minimo
@@ -28,7 +28,7 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         AND (:nombreCategoria IS NULL OR c.nombre = :nombreCategoria)
                         """)
         Object obtenerRangoPrecioPorCategoria(@Param("nombreCategoria") String nombreCategoria);
-        
+
         // Obtener una lista del nombre de las distintas marcas
         // por categoria
         @Query("""
@@ -40,7 +40,7 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         AND (:nombreCategoria IS NULL OR c.nombre = :nombreCategoria)
                         """)
         List<String> findDistinctMarcasByCategoria(@Param("nombreCategoria") String nombreCategoria);
-        
+
         // Obtener una lista del nombre todas las tiendas
         // habilitadas por categoria
         @Query("""
@@ -53,4 +53,28 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         AND (:nombreCategoria IS NULL OR c.nombre = :nombreCategoria)
                         """)
         List<String> findDistinctTiendasWithHabilitadosByCategoria(@Param("nombreCategoria") String nombreCategoria);
+
+        @Query("""
+                        SELECT pt
+                        FROM ProductoTienda pt
+                        JOIN pt.producto p
+                        JOIN pt.tienda t
+                        WHERE pt.habilitado = true
+                        AND p.nombre = :nombreProducto
+                        AND t.nombre = :nombreTienda
+                        """)
+        Optional<ProductoTienda> findByNombreProductoAndNombreTienda(
+                        @Param("nombreProducto") String nombreProducto,
+                        @Param("nombreTienda") String nombreTienda);
+
+        @Query("""
+                        SELECT pt
+                        FROM ProductoTienda pt
+                        JOIN pt.producto p
+                        JOIN pt.tienda t
+                        WHERE pt.habilitado = true
+                        AND p.nombre = :nombreProducto
+                        """)
+        List<ProductoTienda> findByNombreProducto(@Param("nombreProducto") String nombreProducto);
+
 }

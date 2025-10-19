@@ -1,7 +1,9 @@
 package com.universidad.compusearch.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,11 +11,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.universidad.compusearch.dto.DetalleAtributoResponse;
+import com.universidad.compusearch.dto.ProductoInfoResponse;
 import com.universidad.compusearch.dto.ProductoTiendaResponse;
+import com.universidad.compusearch.dto.TiendaProductoDisponibleResponse;
+import com.universidad.compusearch.entity.ProductoAtributo;
 import com.universidad.compusearch.entity.ProductoTienda;
+import com.universidad.compusearch.exception.ProductoTiendaException;
 import com.universidad.compusearch.repository.ProductoTiendaRepository;
 import com.universidad.compusearch.specification.*;
 
+import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,6 +58,8 @@ public class ProductoTiendaService {
                         log.info("Sin categoría especificada, devolviendo todos los productos con filtros comunes");
                         return productoTiendaRepository.findAll(spec, pageable);
                 }
+
+                System.out.println(filtrosExtra);
                 // Selecciona los filtros específicos según la categoría
                 switch (categoria.toLowerCase()) {
                         case "tarjeta-video":
@@ -136,5 +146,57 @@ public class ProductoTiendaService {
                                 productoTienda.getStock(),
                                 productoTienda.getUrlImagen(),
                                 productoTienda.getTienda().getNombre());
+        }
+
+        // Búsqueda de un producto específico en una tienda específica
+        public ProductoTienda buscarPorNombreProductoEspecifico(String nombreProducto, String nombreTienda) {
+                log.info("Buscando producto '{}' en la tienda '{}'", nombreProducto, nombreTienda);
+
+                return productoTiendaRepository.findByNombreProductoAndNombreTienda(nombreProducto, nombreTienda)
+                                .orElseThrow(() -> ProductoTiendaException.notFoundProductoOrShop());
+        }
+
+        public ProductoInfoResponse mapToInfoProducto(ProductoTienda productoTienda) {
+                ProductoInfoResponse dto = new ProductoInfoResponse();
+                dto.setNombreProducto(productoTienda.getProducto().getNombre());
+                dto.setMarca(productoTienda.getProducto().getMarca());
+                dto.setModelo(productoTienda.getProducto().getModelo());
+                dto.setDescripcion(productoTienda.getProducto().getDescripcion());
+                dto.setUrlImagen(productoTienda.getUrlImagen());
+                dto.setNombreTienda(productoTienda.getTienda().getNombre());
+                dto.setStock(productoTienda.getStock());
+                dto.setPrecio(productoTienda.getPrecio());
+                dto.setUrlProducto(productoTienda.getUrlProducto());
+
+                if (productoTienda.getProducto().getAtributos() != null) {
+                        dto.setAtributos(matToDetalleAtributo(productoTienda.getProducto().getAtributos()));
+                } else {
+                        dto.setAtributos(Collections.emptyList());
+                }
+
+                return dto;
+        }
+
+        public List<DetalleAtributoResponse> matToDetalleAtributo(List<ProductoAtributo> atributos) {
+                return atributos.stream()
+                                .map(atributo -> {
+                                        DetalleAtributoResponse dto = new DetalleAtributoResponse();
+                                        dto.setNombreAtributo(atributo.getAtributo().getNombre());
+                                        dto.setValor(atributo.getValor());
+                                        return dto;
+                                })
+                                .collect(Collectors.toList());
+        }
+
+        public List<TiendaProductoDisponibleResponse> obtenerTiendasPorNombreProducto(String nombreProducto) {
+                List<ProductoTienda> productosTienda = productoTiendaRepository.findByNombreProducto(nombreProducto);
+
+                return productosTienda.stream()
+                                .map(pt -> new TiendaProductoDisponibleResponse(
+                                                pt.getTienda().getNombre(),
+                                                pt.getPrecio(),
+                                                pt.getStock(),
+                                                pt.getUrlProducto()))
+                                .collect(Collectors.toList());
         }
 }

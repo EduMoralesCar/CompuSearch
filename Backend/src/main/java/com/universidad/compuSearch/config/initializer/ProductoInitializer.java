@@ -60,7 +60,7 @@ public class ProductoInitializer {
                                 Map.of(
                                                 "Socket Motherboard", "AM4",
                                                 "Chipset Motherboard", "B450",
-                                                "Factor de Forma Motherboard", "Micro ATX",
+                                                "Factor de Forma Motherboard", "Micro-ATX",
                                                 "Slots RAM", "2",
                                                 "RAM Máxima", "64 GB",
                                                 "Tipo RAM Compatible", "DDR4",

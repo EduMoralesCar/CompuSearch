@@ -47,4 +47,15 @@ public class ProductoService {
         }
         return productoOpt;
     }
+
+    public Optional<Producto> obtenerPorNombre(String nombreProducto) {
+        log.info("Buscando producto con nombre: {}", nombreProducto);
+        Optional<Producto> productoOpt = productoRepository.findByNombre(nombreProducto);
+        if (productoOpt.isPresent()) {
+            log.info("Producto encontrado: {}", productoOpt.get().getNombre());
+        } else {
+            log.warn("No se encontró producto con nombre: {}", nombreProducto);
+        }
+        return productoOpt;
+    }
 }

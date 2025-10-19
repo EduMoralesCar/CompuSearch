@@ -10,7 +10,7 @@ export default function useProductosTiendas({
     marca,
     nombreProducto,
     page = 0,
-    size = 15
+    size = 15,
 }) {
     const [productos, setProductos] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -26,40 +26,39 @@ export default function useProductosTiendas({
             try {
                 const params = new URLSearchParams();
 
+                // Filtros generales
                 if (nombreTienda && nombreTienda !== "Todas") params.append("nombreTienda", nombreTienda);
                 if (marca && marca !== "Todas") params.append("marca", marca);
                 if (precioMax) params.append("precioMax", precioMax);
                 if (precioMin) params.append("precioMin", precioMin);
-                if (disponible === "Disponible") {
-                    params.append("disponible", true);
-                } else if (disponible === "No disponible") {
-                    params.append("disponible", false);
-                }
 
-                const baseUrl = "http://localhost:8080/componentes/filtrar";
-                let url;
+                if (disponible === "Disponible") params.append("disponible", true);
+                else if (disponible === "No disponible") params.append("disponible", false);
 
-                if (nombreProducto && nombreProducto.trim() !== "") {
+                // Paginación
+                params.append("page", page);
+                params.append("size", size);
+
+                const baseUrl = "http://localhost:8080/componentes";
+                let endpoint = "/filtrar"; // Por defecto
+
+                // Si hay búsqueda por nombre
+                if (nombreProducto?.trim()) {
                     params.append("nombre", nombreProducto);
-                    params.append("page", page);
-                    params.append("size", size);
-                    url = `${baseUrl}/buscar?${params.toString()}`;
-                } else if (categoria && categoria !== "Todas") {
-                    params.append("categoria", categoria);
-                    params.append("page", page);
-                    params.append("size", size);
-                    url = `${baseUrl}?${params.toString()}`;
-                } else {
-                    params.append("page", page);
-                    params.append("size", size);
-                    url = `${baseUrl}?${params.toString()}`;
+                    endpoint = "/buscar";
                 }
+                // Si hay categoría específica
+                else if (categoria && categoria !== "Todas") {
+                    params.append("categoria", categoria);
+                }
+
+                const url = `${baseUrl}${endpoint}?${params.toString()}`;
 
                 const { data } = await axios.get(url);
 
                 setProductos(data.content || []);
-                setTotalPages(data.totalPages);
-                setTotalElements(data.totalElements);
+                setTotalPages(data.totalPages || 0);
+                setTotalElements(data.totalElements || 0);
             } catch (err) {
                 setError(err.message || "Error al cargar productos");
             } finally {

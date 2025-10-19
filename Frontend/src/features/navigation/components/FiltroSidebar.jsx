@@ -209,6 +209,7 @@ const FiltrosContent = ({
     {Object.entries(valoresAtributos).map(([atributo, opciones]) => (
       <div key={atributo} className="mb-3">
         <label>{atributo}:</label>
+
         <select
           className="form-select"
           value={filtrosExtra[atributo] || "Todas"}
@@ -221,13 +222,14 @@ const FiltrosContent = ({
         >
           <option value="Todas">Todas</option>
           {opciones.map((opcion, idx) => (
-            <option key={idx} value={opcion}>{opcion}</option>
+            <option key={idx} value={opcion.value}>
+              {opcion.label}
+            </option>
           ))}
         </select>
+
       </div>
     ))}
-
-
   </div>
 );
 

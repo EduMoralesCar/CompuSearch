@@ -15,6 +15,7 @@ import Categorias from "../features/navigation/pages/Categorias";
 import Builds from "../features/navigation/pages/Builds";
 import Componentes from "../features/navigation/pages/Componentes";
 import TiendasAfiliadas from "../features/navigation/pages/Tiendas";
+import ProductoDetalle from "../features/navigation/pages/ProductoDetalle"
 
 // Perfil
 import PerfilUsuario from "../features/perfil/pages/PerfilUsuario";
@@ -67,6 +68,7 @@ const AppRoute = () => {
             <Route path="/builds" element={<Builds />} />
             <Route path="/componentes" element={<Componentes />} />
             <Route path="/tiendas" element={<TiendasAfiliadas />} />
+            <Route path="/producto/:slug" element={<ProductoDetalle />} />
 
             {/* Perfil */}
             <Route

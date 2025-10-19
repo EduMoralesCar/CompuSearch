@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import { categoriasMap } from "../utils/categoriasMap";
 import FiltrosSidebar from "../components/FiltroSidebar";
@@ -19,22 +19,27 @@ const Componentes = () => {
   const [disponibilidad, setDisponibilidad] = useState("Todas");
   const [page, setPage] = useState(0);
   const [filtrosExtra, setFiltrosExtra] = useState({});
-  const [categoriaDesdeUrl, setCategoriaDesdeUrl] = useState(false);
-  const [filtrosPorDefecto, setFiltrosPorDefecto] = useState(true);
 
   const [filtrosAplicados, setFiltrosAplicados] = useState({
-    categoria: "",
+    categoria: "Todas",
     nombreTienda: "",
     precioMax: 0,
     precioMin: 0,
-    disponible: "",
-    marca: "",
+    disponible: "Todas",
+    marca: "Todas",
     page: 0,
   });
 
+  const [filtrosPorDefecto, setFiltrosPorDefecto] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
-  const navigate = useNavigate();
+
+  // const [categoriaDesdeUrl, setCategoriaDesdeUrl] = useState(false);
+  //  const [filtrosPorDefecto, setFiltrosPorDefecto] = useState(true);
+
+  // const navigate = useNavigate();
 
   const {
     filtroCategoria,
@@ -45,10 +50,134 @@ const Componentes = () => {
     error,
   } = useFiltros(categoria);
 
-  const { valoresAtributos, loading: loadingAdicionales } =
-    useFiltrosAdicionales(categoria);
+  const {
+    valoresAtributos,
+    loading: loadingAdicionales
+  } = useFiltrosAdicionales(categoria);
+
+
+  const {
+    productos,
+    totalPages,
+    loading: loadingProductos,
+    error: errorProductos,
+  } = useProductosTiendas({
+    ...filtrosAplicados,
+    nombreProducto: searchQuery,
+    page,
+  });
 
   useEffect(() => {
+    const categoriaParam = searchParams.get("categoria") || "Todas";
+    const marcaParam = searchParams.get("marca") || "Todas";
+    const tiendaParam = searchParams.get("tienda") || "Todas";
+    const disponibilidadParam = searchParams.get("disponibilidad") || "Todas";
+    const pageParam = parseInt(searchParams.get("page") || "0", 10);
+    const precioMinParam = searchParams.get("precioMin");
+    const precioMaxParam = searchParams.get("precioMax");
+
+    setCategoria(categoriaParam);
+    setMarca(marcaParam);
+    setTienda(tiendaParam);
+    setDisponibilidad(disponibilidadParam);
+    setPage(pageParam);
+
+    if (precioMinParam !== null) setPrecioMin(parseInt(precioMinParam, 10));
+    if (precioMaxParam !== null) setPrecioMax(parseInt(precioMaxParam, 10));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+
+    if (
+      rangoPrecio &&
+      precioMax === 0 &&
+      precioMin === 0 &&
+      !searchParams.has("precioMin") &&
+      !searchParams.has("precioMax")
+    ) {
+      setPrecioMax(rangoPrecio.precioMax);
+      setPrecioMin(rangoPrecio.precioMin);
+    }
+  }, [rangoPrecio, precioMax, precioMin, searchParams]);
+
+  useEffect(() => {
+    if (Object.keys(valoresAtributos).length > 0) {
+      const nuevosFiltros = {};
+      Object.keys(valoresAtributos).forEach((atributo) => {
+        const valorParam = searchParams.get(atributo);
+        nuevosFiltros[atributo] = valorParam || "Todas";
+      });
+      setFiltrosExtra(nuevosFiltros);
+    }
+  }, [valoresAtributos, searchParams]);
+
+  useEffect(() => {
+    const filtrosExtraActivos = Object.values(filtrosExtra).some(
+      (valor) => valor !== "Todas" && valor !== ""
+    );
+
+    const esPorDefecto =
+      categoria === "Todas" &&
+      marca === "Todas" &&
+      tienda === "Todas" &&
+      disponibilidad === "Todas" &&
+      precioMin === (rangoPrecio?.precioMin ?? 0) &&
+      precioMax === (rangoPrecio?.precioMax ?? 0) &&
+      !filtrosExtraActivos &&
+      searchQuery === "";
+
+    setFiltrosPorDefecto(esPorDefecto);
+  }, [
+    categoria,
+    marca,
+    tienda,
+    disponibilidad,
+    precioMin,
+    precioMax,
+    filtrosExtra,
+    rangoPrecio,
+    searchQuery,
+  ]);
+
+  useEffect(() => {
+    if (isInitialLoad && !loading && !loadingAdicionales) {
+
+      const filtrosLimpios = {};
+      Object.entries(filtrosExtra).forEach(([clave, valor]) => {
+        if (valor && valor !== "Todas") filtrosLimpios[clave] = valor;
+      });
+
+      const nuevos = {
+        categoria: categoriasMap[categoria] || categoria,
+        nombreTienda: tienda !== "Todas" ? tienda : "",
+        precioMax,
+        precioMin,
+        disponible: disponibilidad,
+        marca,
+        page,
+        ...filtrosLimpios,
+      };
+
+      setFiltrosAplicados(nuevos);
+      setIsInitialLoad(false);
+    }
+  }, [
+    isInitialLoad,
+    loading,
+    loadingAdicionales,
+    categoria,
+    marca,
+    tienda,
+    disponibilidad,
+    precioMin,
+    precioMax,
+    filtrosExtra,
+    page,
+  ]);
+
+  /*useEffect(() => {
     const filtrosExtraActivos = Object.values(filtrosExtra).some(
       (valor) => valor !== "Todas" && valor !== ""
     );
@@ -64,54 +193,48 @@ const Componentes = () => {
 
     setFiltrosPorDefecto(esPorDefecto);
   }, [categoria, marca, tienda, disponibilidad, precioMin, precioMax, filtrosExtra, rangoPrecio]);
+*/
 
+  /*
+    useEffect(() => {
+      const categoriaParam = searchParams.get("categorias");
+      if (categoriaParam) {
+        setCategoria(categoriaParam);
+        setCategoriaDesdeUrl(true);
+      }
+    }, [searchParams]);
+  
+    useEffect(() => {
+      if (categoriaDesdeUrl && categoria && categoria !== "Todas") {
+        const nuevos = {
+          categoria: categoriasMap[categoria] || categoria,
+          nombreTienda: tienda !== "Todas" ? tienda : "",
+          precioMax,
+          precioMin,
+          disponible: disponibilidad,
+          marca,
+          page: 0,
+          ...Object.entries(filtrosExtra)
+            .filter(([, valor]) => valor !== "Todas" && valor !== "")
+            .reduce((acc, [clave, valor]) => ({ ...acc, [clave]: valor }), {}),
+        };
+  
+        setFiltrosAplicados(nuevos);
+        setPage(0);
+        setCategoriaDesdeUrl(false);
+      }
+    }, [categoriaDesdeUrl, categoria, tienda, precioMax, precioMin, disponibilidad, marca, filtrosExtra]);
+  
+  */
 
-  useEffect(() => {
-    const categoriaParam = searchParams.get("categorias");
-    if (categoriaParam) {
-      setCategoria(categoriaParam);
-      setCategoriaDesdeUrl(true);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (categoriaDesdeUrl && categoria && categoria !== "Todas") {
-      const nuevos = {
-        categoria: categoriasMap[categoria] || categoria,
-        nombreTienda: tienda !== "Todas" ? tienda : "",
-        precioMax,
-        precioMin,
-        disponible: disponibilidad,
-        marca,
-        page: 0,
-        ...Object.entries(filtrosExtra)
-          .filter(([, valor]) => valor !== "Todas" && valor !== "")
-          .reduce((acc, [clave, valor]) => ({ ...acc, [clave]: valor }), {}),
-      };
-
-      setFiltrosAplicados(nuevos);
-      setPage(0);
-      setCategoriaDesdeUrl(false);
-    }
-  }, [categoriaDesdeUrl, categoria, tienda, precioMax, precioMin, disponibilidad, marca, filtrosExtra]);
-
-  useEffect(() => {
-    if (Object.keys(valoresAtributos).length > 0) {
-      const nuevosFiltros = {};
-      Object.keys(valoresAtributos).forEach((atributo) => {
-        const valorParam = searchParams.get(atributo);
-        nuevosFiltros[atributo] = valorParam || "Todas";
-      });
-      setFiltrosExtra(nuevosFiltros);
-    }
-  }, [valoresAtributos, searchParams]);
-
-  useEffect(() => {
-    if (rangoPrecio) {
-      setPrecioMax(rangoPrecio.precioMax);
-      setPrecioMin(rangoPrecio.precioMin);
-    }
-  }, [rangoPrecio]);
+  /*
+    useEffect(() => {
+      if (rangoPrecio) {
+        setPrecioMax(rangoPrecio.precioMax);
+        setPrecioMin(rangoPrecio.precioMin);
+      }
+    }, [rangoPrecio]);
+  */
 
   const aplicarFiltros = () => {
     const filtrosLimpios = {};
@@ -163,6 +286,11 @@ const Componentes = () => {
     setFiltrosExtra({});
     setPage(0);
 
+    const resetFiltrosExtraVisual = Object.fromEntries(
+      Object.keys(filtrosExtra).map((key) => [key, "Todas"])
+    );
+    setFiltrosExtra(resetFiltrosExtraVisual);
+
     setFiltrosAplicados({
       categoria: "Todas",
       nombreTienda: "",
@@ -174,19 +302,8 @@ const Componentes = () => {
     });
 
     setSearchParams(new URLSearchParams());
-    navigate("/componentes", { replace: true });
+    // navigate("/componentes", { replace: true });
   };
-
-  const {
-    productos,
-    totalPages,
-    loading: loadingProductos,
-    error: errorProductos,
-  } = useProductosTiendas({
-    ...filtrosAplicados,
-    nombreProducto: searchQuery,
-    page,
-  });
 
   return (
     <div className="container mt-4">
@@ -220,7 +337,7 @@ const Componentes = () => {
         </div>
 
         <div className="col-md-9">
-          <h3>Listado de productos</h3>
+          <h3 className="mb-3">Listado de productos</h3>
 
           {loadingProductos && <p>Cargando productos...</p>}
           {errorProductos && (
@@ -230,9 +347,13 @@ const Componentes = () => {
             <p>No se encontraron productos</p>
           )}
 
-          {productos.map((producto, i) => (
-            <ProductoTiendaCard key={i} producto={producto} />
-          ))}
+          <div className="row">
+            {productos.map((producto, i) => (
+              <div key={i} className="col-12 col-md-6 col-lg-4 mb-3">
+                <ProductoTiendaCard producto={producto} />
+              </div>
+            ))}
+          </div>
 
           <Paginacion page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
