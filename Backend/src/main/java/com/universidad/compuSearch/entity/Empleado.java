@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.entity;
+package com.universidad.compusearch.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,9 +12,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,20 +29,18 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Empleado extends Usuario {
 
-    @Column(nullable = false)
-    private LocalDateTime fechaAsignacion = LocalDateTime.now();
-
-    @Column(nullable = false)
-    @NotBlank
+    @Column(nullable = false, length = 50)
     private String nombre;
 
-    @Column(nullable = false)
-    @NotBlank
+    @Column(nullable = false, length = 50)
     private String apellido;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rol rol;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaAsignacion;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -52,4 +50,10 @@ public class Empleado extends Usuario {
         return authorities;
     }
 
+    @PrePersist
+    public void prePersist() {
+        if (fechaAsignacion == null) {
+            fechaAsignacion = LocalDateTime.now();
+        }
+    }
 }

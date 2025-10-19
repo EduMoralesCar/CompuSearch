@@ -1,20 +1,23 @@
-package com.universidad.compuSearch.controller;
+package com.universidad.compusearch.controller;
 
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import com.universidad.compuSearch.dto.LoginRequest;
-import com.universidad.compuSearch.dto.RegisterRequest;
-import com.universidad.compuSearch.entity.RefreshToken;
-import com.universidad.compuSearch.entity.TipoUsuario;
-import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.exception.AuthException;
-import com.universidad.compuSearch.service.AuthService;
-import com.universidad.compuSearch.service.RefreshTokenService;
+import com.universidad.compusearch.dto.RegisterRequest;
+import com.universidad.compusearch.dto.AuthResponse;
+import com.universidad.compusearch.dto.LoginRequest;
+import com.universidad.compusearch.dto.MessageResponse;
+import com.universidad.compusearch.entity.TipoUsuario;
+import com.universidad.compusearch.entity.Token;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.service.AuthService;
+import com.universidad.compusearch.service.RefreshTokenService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -23,70 +26,86 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
-    private final RefreshTokenService refreshTokenService;
+        private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        try {
-            Usuario usuario = authService.authenticate(request.getEmail(), request.getContrasena());
+        private final AuthService authService;
+        private final RefreshTokenService refreshTokenService;
 
-            String token = authService.generateJwtToken(usuario);
+        // Endpoint de login
+        @PostMapping("/login")
+        public ResponseEntity<MessageResponse> login(@Valid @RequestBody LoginRequest request,
+                        HttpServletResponse response) {
+                logger.info("Intento de login para identificador: {}", request.getIdentificador());
 
-            RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario,
-                    request.getDispositivo());
+                Usuario usuario = authService.authenticate(request.getIdentificador(), request.getContrasena());
+                String accessToken = authService.generateJwtToken(usuario);
+                Token refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario,
+                                request.getDispositivo());
 
-            return ResponseEntity.ok(Map.of(
-                    "token", token,
-                    "refreshToken", refreshToken.getToken(),
-                    "data", Map.of(
-                            "email", usuario.getEmail(),
-                            "rol", usuario.getTipoUsuario().name(),
-                            "device", request.getDispositivo())));
-        } catch (AuthException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of(
-                            "success", false,
-                            "error", "Credenciales inválidas"));
+                // Cookies HttpOnly
+                ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(10 * 60)
+                                .sameSite("Strict")
+                                .build();
+
+                ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(request.isRecordar() ? 30 * 24 * 60 * 60 : -1)
+                                .sameSite("Strict")
+                                .build();
+
+                response.addHeader("Set-Cookie", accessCookie.toString());
+                response.addHeader("Set-Cookie", refreshCookie.toString());
+
+                logger.info("Login exitoso para usuario ID: {}", usuario.getIdUsuario());
+
+                return ResponseEntity.ok(new MessageResponse("Usuario logueado correctamente"));
         }
-    }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-        try {
-            TipoUsuario tipo = TipoUsuario.valueOf(request.getTipoUsuario().toUpperCase());
-            Usuario usuario = authService.register(request.getEmail(), request.getContrasena(), tipo);
-            String token = authService.generateJwtToken(usuario);
-            RefreshToken refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, "default");
+        // Endpoint de registro
+        @PostMapping("/register")
+        public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest request,
+                        HttpServletResponse response) {
+                logger.info("Registro solicitado para email: {}", request.getEmail());
 
-            return ResponseEntity.ok(Map.of(
-                    "success", true,
-                    "data", Map.of(
-                            "token", token,
-                            "refreshToken", refreshToken.getToken(),
-                            "user", Map.of(
-                                    "email", usuario.getEmail(),
-                                    "rol", usuario.getTipoUsuario().name()))));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of(
-                            "success", false,
-                            "error", "Tipo de usuario inválido"));
-        } catch (AuthException e) {
-            String mensajeError;
-            if (e.getMessage().contains("email")) {
-                mensajeError = "El email ya está en uso";
-            } else if (e.getMessage().contains("contraseña")) {
-                mensajeError = "Contraseña no válida";
-            } else {
-                mensajeError = "No se pudo registrar el usuario";
-            }
+                TipoUsuario tipo = TipoUsuario.valueOf(request.getTipoUsuario().toUpperCase());
+                Usuario usuario = authService.register(request.getUsername(), request.getEmail(),
+                                request.getContrasena(), tipo);
 
-            return ResponseEntity.badRequest()
-                    .body(Map.of(
-                            "success", false,
-                            "error", mensajeError));
+                String accessToken = authService.generateJwtToken(usuario);
+                Token refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, request.getDispositivo());
+
+                ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(30 * 24 * 60 * 60)
+                                .sameSite("Strict")
+                                .build();
+
+                ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(30 * 24 * 60 * 60)
+                                .sameSite("Strict")
+                                .build();
+
+                response.addHeader("Set-Cookie", accessCookie.toString());
+                response.addHeader("Set-Cookie", refreshCookie.toString());
+
+                logger.info("Usuario registrado con ID: {}", usuario.getIdUsuario());
+
+                return ResponseEntity.ok(new MessageResponse("Usuario registrado correctamente"));
         }
-    }
 
+        @GetMapping("/me")
+        public ResponseEntity<AuthResponse> getAuthenticatedUser(@AuthenticationPrincipal Usuario usuario) {
+                return ResponseEntity.ok(new AuthResponse(usuario.getUsername(), usuario.getTipoUsuario().name()));
+        }
 }

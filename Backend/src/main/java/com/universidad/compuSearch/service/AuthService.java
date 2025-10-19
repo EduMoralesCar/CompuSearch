@@ -1,12 +1,17 @@
-package com.universidad.compuSearch.service;
+package com.universidad.compusearch.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.universidad.compuSearch.entity.TipoUsuario;
-import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.exception.AuthException;
-import com.universidad.compuSearch.repository.UsuarioRepository;
+import com.universidad.compusearch.entity.TipoUsuario;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.exception.AlreadyRegisteredException;
+import com.universidad.compusearch.exception.InvalidPasswordException;
+import com.universidad.compusearch.exception.UserException;
+import com.universidad.compusearch.jwt.JwtTokenFactory;
+import com.universidad.compusearch.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,55 +19,94 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
-    private final JwtService jwtService;
+    private final JwtTokenFactory jwtTokenFactory;
 
-    public Usuario authenticate(String email, String password) {
-        if (loginAttemptService.isBlocked(email)) {
-            throw new AuthException("Usuario bloqueado temporalmente por múltiples intentos fallidos");
+    // Autentica al usuario por email o username
+    public Usuario authenticate(String identificador, String password) {
+        logger.info("Intentando autenticar con identificador: {}", identificador);
+
+        if (loginAttemptService.isBlocked(identificador)) {
+            logger.warn("Identificador bloqueado por intentos fallidos: {}", identificador);
+            throw UserException.blocked();
         }
 
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepository.findByEmail(identificador)
+                .or(() -> usuarioRepository.findByUsername(identificador))
+                .orElseThrow(() -> {
+                    logger.warn("Usuario no encontrado con identificador: {}", identificador);
+                    loginAttemptService.loginFailed(identificador);
+                    return UserException.notFound();
+                });
 
         if (!passwordEncoder.matches(password, usuario.getContrasena())) {
-            loginAttemptService.loginFailed(email);
-            throw new AuthException("Contraseña incorrecta");
+            logger.warn("Contraseña inválida para identificador: {}", identificador);
+            loginAttemptService.loginFailed(identificador);
+            throw new InvalidPasswordException();
         }
 
-        loginAttemptService.loginSucceeded(email);
+        loginAttemptService.loginSucceeded(identificador);
+        logger.info("Autenticación exitosa para usuario ID: {}", usuario.getIdUsuario());
         return usuario;
     }
 
-    public Usuario register(String email, String contrasena, TipoUsuario tipoUsuario) {
+    // Registra un nuevo usuario
+    public Usuario register(String username, String email, String contrasena, TipoUsuario tipoUsuario) {
+        logger.info("Registrando nuevo usuario con email: {} y username: {}", email, username);
+
         if (usuarioRepository.findByEmail(email).isPresent()) {
-            throw new AuthException("El email ya está registrado");
+            logger.warn("Email ya registrado: {}", email);
+            throw AlreadyRegisteredException.email();
+        }
+
+        if (usuarioRepository.findByUsername(username).isPresent()) {
+            logger.warn("Username ya registrado: {}", username);
+            throw AlreadyRegisteredException.username();
         }
 
         Usuario usuario = new Usuario();
+        usuario.setUsername(username);
         usuario.setEmail(email);
         usuario.setContrasena(passwordEncoder.encode(contrasena));
         usuario.setTipoUsuario(tipoUsuario);
 
-        return usuarioRepository.save(usuario);
+        Usuario saved = usuarioRepository.save(usuario);
+        logger.info("Usuario registrado exitosamente con ID: {}", saved.getIdUsuario());
+        return saved;
     }
 
+    // Busca un usuario por email
     public Usuario findByEmail(String email) {
+        logger.debug("Buscando usuario por email: {}", email);
         return usuarioRepository.findByEmail(email).orElse(null);
     }
 
+    // Busca un usuario por username
+    public Usuario findByUsername(String username) {
+        logger.debug("Buscando usuario por username: {}", username);
+        return usuarioRepository.findByUsername(username).orElse(null);
+    }
+
+    // Actualiza la contraseña del usuario
     public Usuario updatePassword(Usuario usuario, String nuevaContrasena) {
+        logger.info("Actualizando contraseña para usuario ID: {}", usuario.getIdUsuario());
         usuario.setContrasena(passwordEncoder.encode(nuevaContrasena));
         return usuarioRepository.save(usuario);
     }
 
+    // Genera un token JWT de acceso
     public String generateJwtToken(Usuario usuario) {
-        return jwtService.generateAccessToken(usuario);
+        logger.debug("Generando token de acceso para usuario ID: {}", usuario.getIdUsuario());
+        return jwtTokenFactory.generateAccessToken(usuario);
     }
 
+    // Genera un token de refresco
     public String generateRefreshToken(Usuario usuario) {
-        return jwtService.generateRefreshToken(usuario);
+        logger.debug("Generando token de refresco para usuario ID: {}", usuario.getIdUsuario());
+        return jwtTokenFactory.generateRefreshToken(usuario);
     }
 }

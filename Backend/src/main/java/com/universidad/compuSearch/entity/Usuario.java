@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.entity;
+package com.universidad.compusearch.entity;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -36,6 +36,9 @@ public class Usuario implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idUsuario;
 
+    @Column(nullable = false, unique = true)
+    private String username;
+
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
@@ -45,12 +48,12 @@ public class Usuario implements UserDetails{
     @Column(nullable = false)
     private boolean activo = true;
 
-    @Column(nullable = false)
-    private LocalDateTime fechaRegistro = LocalDateTime.now();
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoUsuario tipoUsuario;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaRegistro = LocalDateTime.now();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -64,7 +67,7 @@ public class Usuario implements UserDetails{
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

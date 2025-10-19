@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.entity;
+package com.universidad.compusearch.entity;
 
 public enum Rol {
     ADMIN,
