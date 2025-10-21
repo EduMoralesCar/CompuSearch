@@ -59,7 +59,7 @@ const ProductoModal = ({
                 </Button>
                 <Button
                     variant="outline-secondary"
-                    disabled={productos.length < 15}
+                    disabled={productos.length < 8}
                     onClick={() => setPage(page + 1)}
                 >
                     Siguiente →

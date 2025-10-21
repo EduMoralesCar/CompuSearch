@@ -3,6 +3,8 @@ package com.universidad.compusearch.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,5 +34,6 @@ public class Etiqueta {
     private String nombre;
 
     @ManyToMany(mappedBy = "etiquetas", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Tienda> tiendas = new ArrayList<>();
 }

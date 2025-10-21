@@ -2,6 +2,8 @@ package com.universidad.compusearch.entity;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,10 +33,12 @@ public class DetalleBuild {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_producto_tienda", nullable = false)
+    @JsonBackReference
     private ProductoTienda productoTienda;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_build", nullable = false)
+    @JsonBackReference
     private Build build;
 
     @Column(nullable = false)

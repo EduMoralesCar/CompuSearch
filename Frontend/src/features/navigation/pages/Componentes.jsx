@@ -36,11 +36,6 @@ const Componentes = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
 
-  // const [categoriaDesdeUrl, setCategoriaDesdeUrl] = useState(false);
-  //  const [filtrosPorDefecto, setFiltrosPorDefecto] = useState(true);
-
-  // const navigate = useNavigate();
-
   const {
     filtroCategoria,
     filtroMarca,
@@ -176,65 +171,6 @@ const Componentes = () => {
     filtrosExtra,
     page,
   ]);
-
-  /*useEffect(() => {
-    const filtrosExtraActivos = Object.values(filtrosExtra).some(
-      (valor) => valor !== "Todas" && valor !== ""
-    );
-
-    const esPorDefecto =
-      categoria === "Todas" &&
-      marca === "Todas" &&
-      tienda === "Todas" &&
-      disponibilidad === "Todas" &&
-      precioMin === (rangoPrecio?.precioMin ?? 0) &&
-      precioMax === (rangoPrecio?.precioMax ?? 0) &&
-      !filtrosExtraActivos;
-
-    setFiltrosPorDefecto(esPorDefecto);
-  }, [categoria, marca, tienda, disponibilidad, precioMin, precioMax, filtrosExtra, rangoPrecio]);
-*/
-
-  /*
-    useEffect(() => {
-      const categoriaParam = searchParams.get("categorias");
-      if (categoriaParam) {
-        setCategoria(categoriaParam);
-        setCategoriaDesdeUrl(true);
-      }
-    }, [searchParams]);
-  
-    useEffect(() => {
-      if (categoriaDesdeUrl && categoria && categoria !== "Todas") {
-        const nuevos = {
-          categoria: categoriasMap[categoria] || categoria,
-          nombreTienda: tienda !== "Todas" ? tienda : "",
-          precioMax,
-          precioMin,
-          disponible: disponibilidad,
-          marca,
-          page: 0,
-          ...Object.entries(filtrosExtra)
-            .filter(([, valor]) => valor !== "Todas" && valor !== "")
-            .reduce((acc, [clave, valor]) => ({ ...acc, [clave]: valor }), {}),
-        };
-  
-        setFiltrosAplicados(nuevos);
-        setPage(0);
-        setCategoriaDesdeUrl(false);
-      }
-    }, [categoriaDesdeUrl, categoria, tienda, precioMax, precioMin, disponibilidad, marca, filtrosExtra]);
-  
-  */
-
-  /*
-    useEffect(() => {
-      if (rangoPrecio) {
-        setPrecioMax(rangoPrecio.precioMax);
-        setPrecioMin(rangoPrecio.precioMin);
-      }
-    }, [rangoPrecio]);
-  */
 
   const aplicarFiltros = () => {
     const filtrosLimpios = {};

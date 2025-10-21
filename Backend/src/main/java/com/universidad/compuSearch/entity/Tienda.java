@@ -58,6 +58,7 @@ public class Tienda extends Usuario {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "tienda_etiqueta", joinColumns = @JoinColumn(name = "tienda_id", referencedColumnName = "idUsuario"), inverseJoinColumns = @JoinColumn(name = "etiqueta_id", referencedColumnName = "idEtiqueta"))
+    @JsonManagedReference
     private List<Etiqueta> etiquetas = new ArrayList<>();
 
     @OneToMany(mappedBy = "tienda", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

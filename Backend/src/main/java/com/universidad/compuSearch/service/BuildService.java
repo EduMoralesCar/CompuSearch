@@ -1,11 +1,17 @@
 package com.universidad.compusearch.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 import com.universidad.compusearch.dto.BuildRequest;
+import com.universidad.compusearch.dto.BuildsInfoResponse;
+import com.universidad.compusearch.dto.DetalleAtributoResponse;
+import com.universidad.compusearch.dto.DetalleBuildResponse;
 import com.universidad.compusearch.entity.Build;
 import com.universidad.compusearch.entity.DetalleBuild;
 import com.universidad.compusearch.entity.ProductoTienda;
@@ -35,6 +41,7 @@ public class BuildService {
         build.setNombre(request.getNombre());
         build.setCompatible(request.isCompatible());
         build.setCostoTotal(request.getCostoTotal());
+        build.setConsumoTotal(request.getConsumoTotal());
         build.setUsuario(usuario);
 
         List<DetalleBuild> detalles = Lists.newArrayList(
@@ -71,14 +78,6 @@ public class BuildService {
                 });
     }
 
-    // Obtiene todas las buidls del usuario
-    public List<Build> obtenerBuildsPorUsuario(Long idUsuario) {
-        log.info("Obteniendo builds del usuario con ID: {}", idUsuario);
-        List<Build> builds = buildRepository.findAllByUsuarioId(idUsuario);
-        log.info("Se encontraron {} builds para el usuario ID: {}", builds.size(), idUsuario);
-        return builds;
-    }
-
     // Elimina una build del usuario
     public void eliminarBuild(Long idBuild) {
         log.info("Intentando eliminar build con ID: {}", idBuild);
@@ -88,4 +87,67 @@ public class BuildService {
 
         log.info("Build con ID: {} eliminada correctamente", idBuild);
     }
+
+    // Actualizar la build del usuario
+    public Build actualizarBuild(Long idBuild, BuildRequest buildRequest) {
+        Build buildExistente = buildRepository.findById(idBuild)
+                .orElseThrow(() -> BuildException.notFound());
+
+        buildExistente.setNombre(buildRequest.getNombre());
+        buildExistente.setCostoTotal(buildRequest.getCostoTotal());
+        buildExistente.setConsumoTotal(buildRequest.getConsumoTotal());
+        buildExistente.setCompatible(buildRequest.isCompatible());
+        buildExistente.setDetalles(buildExistente.getDetalles());
+        // Si tienes detalles de componentes, también los puedes actualizar aquí.
+
+        return buildRepository.save(buildExistente);
+    }
+
+    public Page<BuildsInfoResponse> obtenerBuildsInfoPorUsuario(Long idUsuario, Pageable pageable) {
+        log.info("Obteniendo builds con detalles para el usuario con ID: {}", idUsuario);
+
+        Page<Build> buildsPage = buildRepository.findAllByUsuarioId(idUsuario, pageable);
+
+        if (buildsPage.isEmpty()) {
+            log.warn("No se encontraron builds para el usuario con ID: {}", idUsuario);
+            return Page.empty(pageable);
+        }
+
+        return buildsPage.map(build -> {
+            BuildsInfoResponse response = new BuildsInfoResponse();
+            response.setIdBuild(build.getIdBuild());
+            response.setNombre(build.getNombre());
+            response.setIdUsuario(build.getUsuario().getIdUsuario());
+            response.setCompatible(build.isCompatible());
+            response.setCostoTotal(build.getCostoTotal());
+
+            List<DetalleBuildResponse> detalleResponses = build.getDetalles().stream().map(detalle -> {
+                DetalleBuildResponse detalleResponse = new DetalleBuildResponse();
+                detalleResponse.setIdProductoTienda(detalle.getProductoTienda().getIdProductoTienda());
+                detalleResponse.setNombreProducto(detalle.getProductoTienda().getProducto().getNombre());
+                detalleResponse.setNombreTienda(detalle.getProductoTienda().getTienda().getNombre());
+                detalleResponse.setStock(detalle.getProductoTienda().getStock());
+                detalleResponse.setPrecio(detalle.getProductoTienda().getPrecio());
+                detalleResponse.setSubTotal(detalle.getSubTotal());
+                detalleResponse.setCantidad(detalle.getCantidad());
+                detalleResponse.setCategoria(detalle.getProductoTienda().getProducto().getCategoria().getNombre());
+                detalleResponse.setUrlProducto(detalle.getProductoTienda().getUrlProducto());
+
+                // Mapear atributos
+                List<DetalleAtributoResponse> atributos = detalle.getProductoTienda().getProducto().getAtributos()
+                        .stream()
+                        .map(attr -> new DetalleAtributoResponse(
+                                attr.getAtributo().getNombre(),
+                                attr.getValor()))
+                        .collect(Collectors.toList());
+
+                detalleResponse.setDetalles(atributos);
+                return detalleResponse;
+            }).collect(Collectors.toList());
+
+            response.setDetalles(detalleResponses);
+            return response;
+        });
+    }
+
 }

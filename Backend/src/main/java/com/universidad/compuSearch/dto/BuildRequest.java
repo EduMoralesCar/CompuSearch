@@ -25,6 +25,9 @@ public class BuildRequest {
     @NotBlank(message = "El costo total de la build es obligatoria")
     private BigDecimal costoTotal;
 
+    @NotBlank(message = "El consumo es obligatorio")
+    private String consumoTotal;
+
     @NotBlank(message = "El id del usuario de la build es obligatoria")
     private Long idUsuario;
 

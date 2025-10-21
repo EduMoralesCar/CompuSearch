@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.universidad.compusearch.dto.DetalleAtributoResponse;
+import com.universidad.compusearch.dto.ProductoBuildResponse;
 import com.universidad.compusearch.dto.ProductoInfoResponse;
 import com.universidad.compusearch.dto.ProductoTiendaResponse;
 import com.universidad.compusearch.dto.TiendaProductoDisponibleResponse;
@@ -59,55 +60,63 @@ public class ProductoTiendaService {
                         return productoTiendaRepository.findAll(spec, pageable);
                 }
 
-                System.out.println(filtrosExtra);
                 // Selecciona los filtros específicos según la categoría
                 switch (categoria.toLowerCase()) {
                         case "tarjeta-video":
                                 spec = spec.and(ProductoTiendaSpecification.porCategoria("Tarjeta de Video"))
                                                 .and(TarjetaVideoSpecification
-                                                                .porFabricante(filtrosExtra.get("fabricante")))
+                                                                .porFabricante(filtrosExtra.get("Fabricante GPU")))
                                                 .and(TarjetaVideoSpecification
-                                                                .porMemoriaVRAM(filtrosExtra.get("memoriaVRAM")));
+                                                                .porMemoriaVRAM(filtrosExtra.get("Memoria VRAM")));
                                 break;
 
                         case "procesador":
                                 spec = spec.and(ProductoTiendaSpecification.porCategoria("Procesador"))
-                                                .and(ProcesadorSpecification.porSocket(filtrosExtra.get("socket")));
+                                                .and(ProcesadorSpecification.porSocket(filtrosExtra.get("Socket CPU")));
                                 break;
 
                         case "almacenamiento":
                                 spec = spec.and(ProductoTiendaSpecification.porCategoria("Almacenamiento"))
                                                 .and(AlmacenamientoSpecification
-                                                                .porCapacidad(filtrosExtra.get("capacidad")))
-                                                .and(AlmacenamientoSpecification.porTipo(filtrosExtra.get("tipo")));
+                                                                .porCapacidad(filtrosExtra
+                                                                                .get("Capacidad Almacenamiento")))
+                                                .and(AlmacenamientoSpecification
+                                                                .porTipo(filtrosExtra.get("Tipo de Almacenamiento")));
                                 break;
 
                         case "memoria":
                                 spec = spec.and(ProductoTiendaSpecification.porCategoria("Memoria RAM"))
-                                                .and(MemoriaSpecification.porCapacidad(filtrosExtra.get("capacidad")))
-                                                .and(MemoriaSpecification.porFrecuencia(filtrosExtra.get("frecuencia")))
-                                                .and(MemoriaSpecification.porTipo(filtrosExtra.get("tipo")));
+                                                .and(MemoriaSpecification
+                                                                .porCapacidad(filtrosExtra.get("Capacidad RAM")))
+                                                .and(MemoriaSpecification
+                                                                .porFrecuencia(filtrosExtra.get("Frecuencia RAM")))
+                                                .and(MemoriaSpecification.porTipo(filtrosExtra.get("Tipo RAM")));
                                 break;
 
                         case "placa-madre":
                                 spec = spec.and(ProductoTiendaSpecification.porCategoria("Placa Madre"))
-                                                .and(PlacaMadreSpecification.porSocket(filtrosExtra.get("socket")))
-                                                .and(PlacaMadreSpecification.porFactor(filtrosExtra.get("factor")));
+                                                .and(PlacaMadreSpecification
+                                                                .porSocket(filtrosExtra.get("Socket Motherboard")))
+                                                .and(PlacaMadreSpecification.porFactor(
+                                                                filtrosExtra.get("Factor de Forma Motherboard")));
                                 break;
 
                         case "fuente-poder":
                                 spec = spec.and(ProductoTiendaSpecification.porCategoria("Fuente de Poder"))
                                                 .and(FuentePoderSpecification
-                                                                .porCertificacion(filtrosExtra.get("certificacion")))
+                                                                .porCertificacion(
+                                                                                filtrosExtra.get("Certificación PSU")))
                                                 .and(FuentePoderSpecification
-                                                                .porPotencia(filtrosExtra.get("potencia")));
+                                                                .porPotencia(filtrosExtra.get("Potencia PSU")));
                                 break;
 
                         case "refrigeracion":
                                 spec = spec.and(ProductoTiendaSpecification.porCategoria("Refrigeración CPU"))
-                                                .and(RefrigeracionSpecification.porTipo(filtrosExtra.get("tipo")))
                                                 .and(RefrigeracionSpecification
-                                                                .porCompatibilidad(filtrosExtra.get("compatibilidad")));
+                                                                .porTipo(filtrosExtra.get("Tipo de Enfriamiento")))
+                                                .and(RefrigeracionSpecification
+                                                                .porCompatibilidad(filtrosExtra
+                                                                                .get("Compatibilidad Socket Cooler")));
                                 break;
 
                         default:
@@ -199,4 +208,46 @@ public class ProductoTiendaService {
                                                 pt.getUrlProducto()))
                                 .collect(Collectors.toList());
         }
+
+        public Page<ProductoBuildResponse> obtenerProductosBuilds(
+                        String categoria,
+                        int page,
+                        int size) {
+
+                log.info("Buscanco productos para build de categoria: ", categoria);
+                Pageable pageable = PageRequest.of(page, size);
+
+                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(true)
+                                .and(ProductoTiendaSpecification.porCategoria(categoria));
+
+                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
+
+                return productos.map(this::mapToProductoBuildResponse);
+        }
+
+        private ProductoBuildResponse mapToProductoBuildResponse(ProductoTienda productoTienda) {
+                ProductoBuildResponse response = new ProductoBuildResponse();
+                response.setIdProductoTienda(productoTienda.getIdProductoTienda());
+                response.setNombreProducto(productoTienda.getProducto().getNombre());
+                response.setPrecio(productoTienda.getPrecio());
+                response.setStock(productoTienda.getStock());
+                response.setNombreTienda(productoTienda.getTienda().getNombre());
+                response.setUrlProducto(productoTienda.getUrlProducto());
+
+                if (productoTienda.getProducto().getAtributos() != null) {
+                        List<DetalleAtributoResponse> atributos = productoTienda.getProducto()
+                                        .getAtributos()
+                                        .stream()
+                                        .map(attr -> new DetalleAtributoResponse(attr.getAtributo().getNombre(), attr.getValor()))
+                                        .collect(Collectors.toList());
+                        response.setDetalles(atributos);
+                } else {
+                        response.setDetalles(Collections.emptyList());
+                }
+
+                return response;
+        }
+
+        
+
 }

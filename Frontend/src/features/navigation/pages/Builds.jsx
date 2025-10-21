@@ -1,37 +1,69 @@
-import React, { useState } from "react";
-import { Container, Modal, Button } from "react-bootstrap";
+import { useState } from "react";
+import { Container } from "react-bootstrap";
 import BannerHeader from "../components/BannerHeader";
 import BuildsSummary from "../components/BuildsSummary";
 import BuildsTable from "../components/BuildsTable";
 import bannerBuilds from "../../../assets/banners/banner_builds.png";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 import useCategorias from "../hooks/useCategorias";
-import useProductosTienda from "../hooks/useProductoTienda";
 import useBuilds from "../hooks/useBuilds";
-import { categoriasMap } from "../utils/categoriasMap";
 import BuildAuthModal from "../components/BuildAuthModal";
 import BuildProductModal from "../components/BuildProductModal";
+import BuildsModal from "../components/BuildsModal";
+import { validarCompatibilidad } from "../validation/validarCompatibilidad"
+import CompatibilidadModal from "../components/CompatibilidadModal"
 
 const Builds = () => {
+    // Obtener si el usuario inicio sesion
     const { isAuthenticated, sessionReady, idUsuario } = useAuthStatus();
 
-    const [showAuthModal, setShowAuthModal] = useState(false);
-    const [showModal, setShowModal] = useState(false);
+    // Modales
+    const [showAuthModal, setShowAuthModal] = useState(false); // Autenticacion
+    const [showModalProductos, setShowModalProductos] = useState(false); // Ver Productos
+    const [showModalBuild, setShowModalBuild] = useState(false); // Cargar Builds
+
+    // Datos de Hooks
+    const { categorias } = useCategorias(); // Cargar categorias para elegir componentes
+
+    // Productos
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
-    const [page, setPage] = useState(0);
-    const [armado, setArmado] = useState({});
-    const [mensajeBuild, setMensajeBuild] = useState(null);
+    const [productos, setProductos] = useState([]);
+    const [totalElements, setTotalElements] = useState(0);
+    const [loadingProductos, setLoadingProductos] = useState(false);
+    const [errorProductos, setErrorProductos] = useState(null);
 
-    const { categorias } = useCategorias("");
-    const nombresCategorias = categorias.map((c) => c.nombre);
+    const [showCompatModal, setShowCompatModal] = useState(false);
+    const [erroresCompatibilidad, setErroresCompatibilidad] = useState([]);
 
-    const { productos, totalElements, loading, error } = useProductosTienda({
-        categoria: categoriasMap[categoriaSeleccionada],
-        page
-    });
 
-    const { guardarBuild, loading: loadingBuild } = useBuilds();
+    const [page, setPage] = useState(0); // Paginacion del modal de productos
 
+    const [idBuild, SetIdBuild] = useState(null); // id de la build actual
+
+    // Datos del estado de la build actualizandose
+    const [buildActualizada, setBuildActualizada] = useState({});
+    const [nombreActualizado, setNombreActualizado] = useState("");
+
+    // Datos del estado de la build actual
+    const [buildActual, setbuildActual] = useState({});
+    const [nombreActual, setNombreActual] = useState("");
+
+    const [mensajeBuild, setMensajeBuild] = useState(null); // Mensaje de log
+
+    const nombresCategorias = categorias.map((c) => c.nombre); // Mapea las categorias
+
+    // Funciones para las buiilds
+    const {
+        obtenerProductosBuilds,
+        crearBuild,
+        exportarBuild,
+        eliminarBuild,
+        actualizarBuild,
+        obtenerBuildsPorUsuario,
+        loading: loadingBuild
+    } = useBuilds();
+
+    // Componentes minimos para guardar la build
     const componentesObligatorios = [
         "Procesador",
         "Placa Madre",
@@ -39,18 +71,44 @@ const Builds = () => {
         "Almacenamiento",
         "Fuente de Poder"
     ];
-    const componentesSeleccionados = Object.keys(armado);
-    const faltantes = componentesObligatorios.filter(
-        (c) => !componentesSeleccionados.includes(c)
-    );
-    const armadoIncompleto =
-        componentesSeleccionados.length === 0 || faltantes.length > 0;
 
-    const totalArmado = Object.values(armado).reduce(
+    // Saber si hay una build 
+    const buildPresente = idBuild != null;
+
+    // Obtiene las categorias de la build actualizada
+    const catSeleccionadas = Object.keys(buildActualizada);
+
+    // Obtiene las categorias que faltan en la build actualizada
+    const catFaltantes = componentesObligatorios.filter(
+        (c) => !catSeleccionadas.includes(c)
+    );
+
+    // Compara el tamaño de las categorias seleccionas y las faltantas
+    // para determinar si la build esta incompleta
+    const buildIncompleta = catSeleccionadas.length === 0 || catFaltantes.length > 0;
+
+    const totalCosto = Object.values(buildActualizada).reduce(
         (acc, item) => acc + item.subtotal,
         0
     );
 
+    const totalConsumo = Object.entries(buildActualizada).reduce((acc, [categoria, item]) => {
+        if (categoria === "Fuente de Poder") return acc;
+
+        const atributoConsumo = item.detalles.find((attr) =>
+            attr.nombreAtributo.toLowerCase().includes("consumo")
+        );
+
+        if (!atributoConsumo) return acc;
+
+        const valor = atributoConsumo.valor.replace(/[^\d.]/g, "");
+        const consumoWatts = parseFloat(valor);
+
+        return acc + (isNaN(consumoWatts) ? 0 : consumoWatts);
+    }, 0);
+
+
+    // Valida si el usuario inicio sesion
     const validarAutenticacion = () => {
         if (!sessionReady || !isAuthenticated) {
             setShowAuthModal(true);
@@ -59,14 +117,39 @@ const Builds = () => {
         return true;
     };
 
-    const handleAbrirModal = (categoria) => {
+    // Modal de productos
+    const handleAbrirModalPro = async (categoria) => {
         setCategoriaSeleccionada(categoria);
         setPage(0);
-        setShowModal(true);
+        setShowModalProductos(true);
+        await cargarProductos(categoria, 0);
     };
 
+    const cargarProductos = async (categoria, pagina = 0) => {
+        setLoadingProductos(true);
+        setErrorProductos(null);
+
+        try {
+            const result = await obtenerProductosBuilds(categoria, pagina);
+
+            if (result && result.success) {
+                setProductos(result.data.content || []);
+                setTotalElements(result.data.totalElements || 0);
+            } else {
+                setProductos([]);
+                setTotalElements(0);
+            }
+            // eslint-disable-next-line no-unused-vars
+        } catch (err) {
+            setErrorProductos("Error al obtener productos");
+        } finally {
+            setLoadingProductos(false);
+        }
+    };
+
+    // Selecciona un producto y actualiza la build actualizada
     const handleSeleccionarProducto = (producto) => {
-        setArmado((prev) => ({
+        setBuildActualizada((prev) => ({
             ...prev,
             [categoriaSeleccionada]: {
                 ...producto,
@@ -74,38 +157,108 @@ const Builds = () => {
                 subtotal: producto.precio
             }
         }));
-        handleCerrarModal();
+        handleCerrarModalPro();
     };
 
+    // Cerrar el modal de productos
+    const handleCerrarModalPro = () => {
+        setShowModalProductos(false);
+        setCategoriaSeleccionada(null);
+    };
+
+    // Selecciona un producto y lo elimina la build actualizada
     const handleReiniciarCategoria = (categoria) => {
-        setArmado((prev) => {
+        setBuildActualizada((prev) => {
             const nuevo = { ...prev };
             delete nuevo[categoria];
             return nuevo;
         });
     };
 
-    const handleCerrarModal = () => {
-        setShowModal(false);
-        setCategoriaSeleccionada(null);
+    // Funcion para exportar la build
+    const handleExport = async () => {
+        if (!validarAutenticacion()) return;
+        if (!buildPresente) {
+            setMensajeBuild("Seleccione una build antes.")
+        };
+
+        const result = await exportarBuild(idBuild);
+
+        setMensajeBuild(result.success ?
+            "¡Build exportado con exito!" :
+            "Error al exportar la build");
     };
 
+    const resultadoCompat = validarCompatibilidad(buildActualizada);
+
+    // Funcion para guardar la build
     const handleGuardarBuild = async () => {
         if (!validarAutenticacion()) return;
 
-        if (armadoIncompleto) {
-            setMensajeBuild("Tu armado está incompleto. No se puede guardar.");
+        if (buildIncompleta) {
+            setMensajeBuild("Tu build está incompleta. Guarda los componentes principales.");
             return;
         }
 
+        if (!nombreActualizado || nombreActualizado.trim() === "") {
+            setMensajeBuild("Debes ingresar un nombre para tu build.");
+            return;
+        }
+
+        if (!resultadoCompat.compatible) {
+            setErroresCompatibilidad(resultadoCompat.errores);
+            setShowCompatModal(true);
+            return;
+        }
+
+        await guardarBuildFinal();
+    };
+
+    // Reestablece los componentes de la tabla a los de la build actual
+    const handleReestablcerActual = () => {
+        if (buildPresente) {
+            setBuildActualizada(buildActual);
+            setNombreActualizado(nombreActual);
+        } else {
+            setNombreActualizado("");
+            setBuildActualizada({});
+        }
+    };
+
+    // Reestablece los componentes de la tabla
+    const handleRestablecerTotal = () => {
+        setNombreActualizado("");
+        setBuildActualizada({});
+        SetIdBuild(null);
+        setNombreActual("");
+        setbuildActual({});
+    }
+
+    const guardarBuildFinal = async () => {
+        const detalles = Object.values(buildActualizada).map(item => ({
+            idProductoTienda: item.idProductoTienda,
+            cantidad: item.cantidad,
+            precioUnitario: item.precio,
+            subTotal: item.subtotal
+        }));
+
         const buildData = {
-            nombre: "Mi PC personalizada",
-            compatible: true,
-            costoTotal: totalArmado,
-            idUsuario
+            nombre: nombreActualizado,
+            compatible: resultadoCompat.compatible,
+            costoTotal: totalCosto,
+            idUsuario,
+            detalles,
+            consumoTotal: `${totalConsumo} W`,
         };
 
-        const result = await guardarBuild(buildData);
+        const result = await crearBuild(buildData);
+
+        if (result.success && result.data) {
+            SetIdBuild(result.data.idBuild);
+            setbuildActual(buildActualizada);
+            setNombreActual(nombreActualizado);
+        }
+
         setMensajeBuild(
             result.success
                 ? "¡Tu armado fue guardado exitosamente!"
@@ -113,10 +266,115 @@ const Builds = () => {
         );
     };
 
-    const handleDescargarBuild = () => {
+    // Actualiza la build
+    const handleActualizar = async () => {
         if (!validarAutenticacion()) return;
-        console.log("Armado descargado");
-        // Aquí iría la lógica real de descarga (PDF/Excel)
+
+        if (!buildPresente) {
+            setMensajeBuild("Seleccione una build antes.")
+        };
+
+        if (buildIncompleta) {
+            setMensajeBuild("Tu build está incompleta. Guarda los componentes principales.");
+            return;
+        }
+
+        if (!nombreActualizado || nombreActualizado.trim() === "") {
+            setMensajeBuild("Debes ingresar un nombre para tu build.");
+            return;
+        }
+
+        if (!resultadoCompat.compatible) {
+            setErroresCompatibilidad(resultadoCompat.errores);
+            setShowCompatModal(true);
+            return;
+        }
+
+        const detalles = Object.values(buildActualizada).map(item => ({
+            idProductoTienda: item.idProductoTienda,
+            cantidad: item.cantidad,
+            precioUnitario: item.precio,
+            subTotal: item.subtotal
+        }));
+
+        const buildData = {
+            nombre: nombreActualizado,
+            compatible: resultadoCompat.compatible,
+            costoTotal: totalCosto,
+            consumoTotal: `${totalConsumo} W`,
+            idUsuario,
+            detalles
+        };
+
+        const result = await actualizarBuild(idBuild, buildData);
+
+        setMensajeBuild(
+            result.success
+                ? "¡Tu build fue actualizado exitosamente!"
+                : "Error al actualizar tu build. Intenta nuevamente."
+        );
+    }
+
+    // Elimina la build
+    const handleEliminar = async () => {
+        if (!validarAutenticacion()) return;
+
+        if (!buildPresente) {
+            setMensajeBuild("Seleccione una build antes.")
+        };
+
+        const result = await eliminarBuild(idBuild);
+
+        if (result.success) {
+            if (result.data != null) {
+                SetIdBuild(null);
+                setbuildActual({});
+                setNombreActual("");
+            }
+        }
+
+        setMensajeBuild(
+            result.success
+                ? "¡Tu armado fue eliminado exitosamente!"
+                : "Error al eliminar el armado. Intenta nuevamente."
+        );
+    }
+
+
+    const handleSeleccionarBuild = (build) => {
+        const armado = convertirBuildADisplay(build.detalles);
+
+        setNombreActualizado(build.nombre);
+        setBuildActualizada(armado);
+        SetIdBuild(build.idBuild);
+        setbuildActual(armado);
+        setNombreActual(build.nombre);
+        setShowModalBuild(false);
+    };
+
+
+    const convertirBuildADisplay = (detalles) => {
+        const armadoTransformado = {};
+
+        detalles.forEach((item) => {
+            const categoria = item.categoria; // ✅ ya viene en el response
+
+            if (!categoria) return;
+
+            armadoTransformado[categoria] = {
+                idProductoTienda: item.idProductoTienda,
+                nombreProducto: item.nombreProducto || "Componente",
+                precio: item.precio ?? 0,
+                cantidad: item.cantidad ?? 0,
+                subtotal: item.subTotal ?? 0,
+                stock: item.stock ?? 0,
+                nombreTienda: item.nombreTienda || "Tienda",
+                urlProducto: item.urlProducto || "",
+                detalles: item.detalles || []
+            };
+        });
+
+        return armadoTransformado;
     };
 
     return (
@@ -127,16 +385,35 @@ const Builds = () => {
                 background={bannerBuilds}
             />
 
+            <CompatibilidadModal
+                show={showCompatModal}
+                errores={erroresCompatibilidad}
+                onConfirmar={() => {
+                    setShowCompatModal(false);
+                    guardarBuildFinal();
+                }}
+                onCancelar={() => setShowCompatModal(false)}
+            />
+
+
+            <BuildsModal
+                show={showModalBuild}
+                onClose={() => setShowModalBuild(false)}
+                onSeleccionarBuild={handleSeleccionarBuild}
+                idUsuario={idUsuario}
+                obtenerBuildsPorUsuario={obtenerBuildsPorUsuario}
+            />
+
             <BuildAuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
             <BuildProductModal
-                show={showModal}
-                onClose={handleCerrarModal}
+                show={showModalProductos}
+                onClose={handleCerrarModalPro}
                 categoria={categoriaSeleccionada}
                 productos={productos}
                 totalElements={totalElements}
-                loading={loading}
-                error={error}
+                loading={loadingProductos}
+                error={errorProductos}
                 onSelect={handleSeleccionarProducto}
                 page={page}
                 setPage={setPage}
@@ -146,23 +423,33 @@ const Builds = () => {
                 <Container className="my-5">
                     <section className="mb-4">
                         <BuildsSummary
-                            totalArmado={totalArmado}
-                            armadoIncompleto={armadoIncompleto}
-                            faltantes={faltantes}
+                            totalCosto={totalCosto}
+                            totalConsumo={totalConsumo}
+                            resultadoCompat={resultadoCompat}
+                            buildPresente={buildPresente}
+                            armadoIncompleto={buildIncompleta}
+                            faltantes={catFaltantes}
                             componentesObligatorios={componentesObligatorios}
                             mensajeBuild={mensajeBuild}
                             loadingBuild={loadingBuild}
                             onGuardarBuild={handleGuardarBuild}
-                            onDescargarBuild={handleDescargarBuild}
+                            onDescargarBuild={handleExport}
+                            onActualizarBuild={handleActualizar}
+                            onEliminarBuild={handleEliminar}
+                            setShowModalBuild={setShowModalBuild}
                         />
                     </section>
 
                     <section>
                         <BuildsTable
                             categorias={nombresCategorias}
-                            onSelectCategoria={handleAbrirModal}
-                            armado={armado}
+                            onSelectCategoria={handleAbrirModalPro}
+                            armado={buildActualizada}
                             onReiniciarCategoria={handleReiniciarCategoria}
+                            nombreBuild={nombreActualizado}
+                            onCambiarNombreBuild={setNombreActualizado}
+                            onResetArmado={handleReestablcerActual}
+                            onRestablecerTabla={handleRestablecerTotal}
                         />
                     </section>
                 </Container>
