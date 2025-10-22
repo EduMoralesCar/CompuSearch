@@ -243,9 +243,6 @@ const Componentes = () => {
   // Resetear Filtros (Botón)
   const resetearFiltros = () => {
 
-    const defaultPrecioMin = rangoPrecio?.precioMin ?? 0;
-    const defaultPrecioMax = rangoPrecio?.precioMax ?? 1000000;
-
     // Resetea el estado visual
     setCategoria("Todas");
     setMarca("Todas");
@@ -265,8 +262,8 @@ const Componentes = () => {
     setFiltrosAplicados({
       categoria: "Todas",
       nombreTienda: "",
-      precioMax: defaultPrecioMax,
-      precioMin: defaultPrecioMin,
+      precioMax: 0,
+      precioMin: 0,
       disponible: "Todas",
       marca: "Todas",
       page: 0,
