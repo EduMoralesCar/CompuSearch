@@ -11,6 +11,7 @@ import useFiltrosAdicionales from "../hooks/useFiltrosAdicionales";
 import useProductosTiendas from "../hooks/useProductoTienda";
 
 const Componentes = () => {
+  // --- Estados para el control visual de los filtros ---
   const [categoria, setCategoria] = useState("Todas");
   const [precioMax, setPrecioMax] = useState(0);
   const [precioMin, setPrecioMin] = useState(0);
@@ -20,6 +21,7 @@ const Componentes = () => {
   const [page, setPage] = useState(0);
   const [filtrosExtra, setFiltrosExtra] = useState({});
 
+  // --- Estado para los filtros que se envían al hook de búsqueda ---
   const [filtrosAplicados, setFiltrosAplicados] = useState({
     categoria: "Todas",
     nombreTienda: "",
@@ -30,12 +32,14 @@ const Componentes = () => {
     page: 0,
   });
 
+  // --- Estados de control ---
   const [filtrosPorDefecto, setFiltrosPorDefecto] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
 
+  // --- Hooks de datos ---
   const {
     filtroCategoria,
     filtroMarca,
@@ -45,11 +49,8 @@ const Componentes = () => {
     error,
   } = useFiltros(categoria);
 
-  const {
-    valoresAtributos,
-    loading: loadingAdicionales
-  } = useFiltrosAdicionales(categoria);
-
+  const { valoresAtributos, loading: loadingAdicionales } =
+    useFiltrosAdicionales(categoria);
 
   const {
     productos,
@@ -58,9 +59,19 @@ const Componentes = () => {
     error: errorProductos,
   } = useProductosTiendas({
     ...filtrosAplicados,
+    filtrosExtra,
     nombreProducto: searchQuery,
     page,
   });
+
+  // --- Efectos de Ciclo de Vida ---
+
+  // Efecto de inicialización: Lee la URL una sola vez al montar
+
+  // --- Efectos de Ciclo de Vida ---
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
 
   useEffect(() => {
     const categoriaParam = searchParams.get("categoria") || "Todas";
@@ -81,8 +92,9 @@ const Componentes = () => {
     if (precioMaxParam !== null) setPrecioMax(parseInt(precioMaxParam, 10));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // El array vacío [] asegura que esto corra SOLO UNA VEZ
 
+  // Setea los precios por defecto (solo si no vienen de la URL o reset)
   useEffect(() => {
 
     if (
@@ -97,6 +109,7 @@ const Componentes = () => {
     }
   }, [rangoPrecio, precioMax, precioMin, searchParams]);
 
+  // Carga los filtros extra (atributos) desde la URL
   useEffect(() => {
     if (Object.keys(valoresAtributos).length > 0) {
       const nuevosFiltros = {};
@@ -108,6 +121,7 @@ const Componentes = () => {
     }
   }, [valoresAtributos, searchParams]);
 
+  // Revisa si los filtros están en su estado "por defecto"
   useEffect(() => {
     const filtrosExtraActivos = Object.values(filtrosExtra).some(
       (valor) => valor !== "Todas" && valor !== ""
@@ -136,6 +150,7 @@ const Componentes = () => {
     searchQuery,
   ]);
 
+  // Aplica los filtros leídos de la URL *automáticamente* en la carga inicial
   useEffect(() => {
     if (isInitialLoad && !loading && !loadingAdicionales) {
 
@@ -172,6 +187,9 @@ const Componentes = () => {
     page,
   ]);
 
+  // --- Funciones de Eventos ---
+
+  // Aplicar Filtros (Botón)
   const aplicarFiltros = () => {
     const filtrosLimpios = {};
     Object.entries(filtrosExtra).forEach(([clave, valor]) => {
@@ -179,19 +197,20 @@ const Componentes = () => {
     });
 
     const nuevos = {
-      categoria: categoriasMap[categoria],
+      categoria: categoriasMap[categoria] || categoria,
       nombreTienda: tienda !== "Todas" ? tienda : "",
       precioMax,
       precioMin,
       disponible: disponibilidad,
       marca,
-      page: 0,
+      page: 0, // Resetea la página a 0 al aplicar filtros
       ...filtrosLimpios,
     };
 
     setFiltrosAplicados(nuevos);
     setPage(0);
 
+    // Actualiza la URL
     const params = new URLSearchParams();
     params.set("categoria", categoria);
     if (marca !== "Todas") params.set("marca", marca);
@@ -209,17 +228,17 @@ const Componentes = () => {
     setSearchParams(params);
   };
 
+  // Resetear Filtros (Botón)
   const resetearFiltros = () => {
-    const defaultMax = rangoPrecio?.precioMax ?? 0;
-    const defaultMin = rangoPrecio?.precioMin ?? 0;
 
+    setPrecioMax(0);
+    setPrecioMin(0);
+
+    // Resetea el estado visual
     setCategoria("Todas");
-    setPrecioMax(defaultMax);
-    setPrecioMin(defaultMin);
     setMarca("Todas");
     setTienda("Todas");
     setDisponibilidad("Todas");
-    setFiltrosExtra({});
     setPage(0);
 
     const resetFiltrosExtraVisual = Object.fromEntries(
@@ -227,20 +246,23 @@ const Componentes = () => {
     );
     setFiltrosExtra(resetFiltrosExtraVisual);
 
+    // Resetea el estado de filtros aplicados
     setFiltrosAplicados({
       categoria: "Todas",
       nombreTienda: "",
-      precioMax: defaultMax,
-      precioMin: defaultMin,
+      precioMax: 0,
+      precioMin: 0,
       disponible: "Todas",
       marca: "Todas",
       page: 0,
     });
 
+
     setSearchParams(new URLSearchParams());
-    // navigate("/componentes", { replace: true });
+
   };
 
+  // --- Renderizado ---
   return (
     <div className="container mt-4">
       <div className="row">
@@ -291,7 +313,11 @@ const Componentes = () => {
             ))}
           </div>
 
-          <Paginacion page={page} totalPages={totalPages} onPageChange={setPage} />
+          <Paginacion
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ export default function useProductosTiendas({
     disponible,
     marca,
     nombreProducto,
+    filtrosExtra = {},
     page = 0,
     size = 15,
 }) {
@@ -34,6 +35,13 @@ export default function useProductosTiendas({
 
                 if (disponible === "Disponible") params.append("disponible", true);
                 else if (disponible === "No disponible") params.append("disponible", false);
+
+                //Filtros extras
+                Object.entries(filtrosExtra).forEach(([key, value]) => {
+                    if (value && value !== "Todas") {
+                        params.append(key, value);
+                    }
+                });
 
                 // Paginación
                 params.append("page", page);
@@ -67,6 +75,7 @@ export default function useProductosTiendas({
         };
 
         fetchProductos();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [categoria, nombreTienda, precioMax, precioMin, disponible, marca, nombreProducto, page, size]);
 
     return { productos, totalPages, totalElements, loading, error };
