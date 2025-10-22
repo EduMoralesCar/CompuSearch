@@ -48,7 +48,7 @@ public class ResetPasswordController {
     // Endpoint para aplicar nueva contraseña usando el token
     @PostMapping("/reset")
     public ResponseEntity<MessageResponse> reset(@Valid @RequestBody ResetPasswordRequest request) {
-        log.info("Solicitud de reseteo de contraseña con token: {}", request.getToken());
+        log.info("Solicitud de reseteo de contraseña con token: {}", request.getToken().substring(0, 6));
 
         Usuario usuario = resetPasswordService.validateResetToken(request.getToken());
         authService.updatePassword(usuario, request.getContrasena());

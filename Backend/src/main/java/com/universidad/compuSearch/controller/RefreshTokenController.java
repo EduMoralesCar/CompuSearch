@@ -12,6 +12,7 @@ import com.universidad.compusearch.entity.Token;
 import com.universidad.compusearch.entity.Usuario;
 import com.universidad.compusearch.service.AuthService;
 import com.universidad.compusearch.service.RefreshTokenService;
+import com.universidad.compusearch.util.CookieUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RefreshTokenController {
 
+        private final CookieUtil cookieUtil;
         private final RefreshTokenService refreshTokenService;
         private final AuthService authService;
 
@@ -37,21 +39,9 @@ public class RefreshTokenController {
                 Token newRefreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario,
                                 refreshToken.getIpDispositivo());
 
-                ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(10 * 60)
-                                .sameSite("Strict")
-                                .build();
+                ResponseCookie accessCookie = cookieUtil.createAccessCookie(accessToken);
 
-                ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", newRefreshToken.getToken())
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(7 * 24 * 60 * 60)
-                                .sameSite("Strict")
-                                .build();
+                ResponseCookie refreshCookie = cookieUtil.createRefreshCookie(newRefreshToken.getToken(), true);
 
                 response.addHeader("Set-Cookie", refreshCookie.toString());
                 response.addHeader("Set-Cookie", accessCookie.toString());
@@ -67,21 +57,8 @@ public class RefreshTokenController {
 
                 refreshTokenService.revokeRefreshToken(refreshTokenValue);
 
-                ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", "")
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(0)
-                                .sameSite("Strict")
-                                .build();
-
-                ResponseCookie accessCookie = ResponseCookie.from("access_token", "")
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(0)
-                                .sameSite("Strict")
-                                .build();
+                ResponseCookie refreshCookie = cookieUtil.clearRefreshCookie();
+                ResponseCookie accessCookie = cookieUtil.clearRefreshCookie();
 
                 response.addHeader("Set-Cookie", refreshCookie.toString());
                 response.addHeader("Set-Cookie", accessCookie.toString());

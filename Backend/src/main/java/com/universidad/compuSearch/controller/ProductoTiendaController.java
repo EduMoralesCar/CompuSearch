@@ -13,6 +13,8 @@ import com.universidad.compusearch.dto.ProductoTiendaResponse;
 import com.universidad.compusearch.dto.TiendaProductoDisponibleResponse;
 import com.universidad.compusearch.entity.ProductoTienda;
 import com.universidad.compusearch.service.ProductoTiendaService;
+import com.universidad.compusearch.util.FiltroUtils;
+import com.universidad.compusearch.util.ProductoTiendaMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,25 +39,18 @@ public class ProductoTiendaController {
                         @RequestParam(defaultValue = "15") int size,
                         @RequestParam(required = false) Map<String, String> filtrosExtra) {
 
-                filtrosExtra.remove("categoria");
-                filtrosExtra.remove("nombreTienda");
-                filtrosExtra.remove("precioMax");
-                filtrosExtra.remove("precioMin");
-                filtrosExtra.remove("disponible");
-                filtrosExtra.remove("marca");
-                filtrosExtra.remove("page");
-                filtrosExtra.remove("size");
+                Map<String, String> filtrosLimpios = FiltroUtils.limpiarFiltros(filtrosExtra);
 
-                log.info("Filtrando categoría={} con parámetros extra={}", categoria, filtrosExtra);
+                log.info("Filtrando categoría={} con parámetros extra={}", categoria, filtrosLimpios);
 
                 Page<ProductoTiendaResponse> resultados = productoTiendaService
                                 .filtrarPorCategoria(categoria, nombreTienda, marca, precioMax, precioMin, disponible,
-                                                true, filtrosExtra, page, size)
-                                .map(productoTiendaService::mapToResponse);
+                                                true, filtrosLimpios, page, size)
+                                .map(ProductoTiendaMapper::mapToResponse);
 
                 if (resultados.isEmpty()) {
                         log.warn("No se encontraron productos para la categoría {} con filtros {}", categoria,
-                                        filtrosExtra);
+                                        filtrosLimpios);
                         return ResponseEntity.ok(Page.empty());
                 }
 
@@ -74,7 +69,7 @@ public class ProductoTiendaController {
 
                 Page<ProductoTiendaResponse> resultados = productoTiendaService
                                 .buscarPorNombreProducto(nombre, page, size)
-                                .map(productoTiendaService::mapToResponse);
+                                .map(ProductoTiendaMapper::mapToResponse);
 
                 if (resultados.isEmpty()) {
                         log.warn("No se encontraron productos con el nombre: '{}'", nombre);
@@ -94,7 +89,7 @@ public class ProductoTiendaController {
                 ProductoTienda productoTienda = productoTiendaService
                                 .buscarPorNombreProductoEspecifico(nombreProducto, nombreTienda);
 
-                ProductoInfoResponse response = productoTiendaService.mapToInfoProducto(productoTienda);
+                ProductoInfoResponse response = ProductoTiendaMapper.mapToInfoProducto(productoTienda);
 
                 return ResponseEntity.ok(response);
         }

@@ -14,6 +14,7 @@ import com.universidad.compusearch.entity.Token;
 import com.universidad.compusearch.entity.Usuario;
 import com.universidad.compusearch.service.AuthService;
 import com.universidad.compusearch.service.RefreshTokenService;
+import com.universidad.compusearch.util.CookieUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthController {
 
+        private final CookieUtil cookieUtil;
         private final AuthService authService;
         private final RefreshTokenService refreshTokenService;
 
@@ -41,21 +43,9 @@ public class AuthController {
                                 request.getDispositivo());
 
                 // Cookies HttpOnly
-                ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(10 * 60)
-                                .sameSite("Strict")
-                                .build();
+                ResponseCookie accessCookie = cookieUtil.createAccessCookie(accessToken);
 
-                ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(request.isRecordar() ? 30 * 24 * 60 * 60 : -1)
-                                .sameSite("Strict")
-                                .build();
+                ResponseCookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken(), request.isRecordar());
 
                 response.addHeader("Set-Cookie", accessCookie.toString());
                 response.addHeader("Set-Cookie", refreshCookie.toString());
@@ -78,21 +68,9 @@ public class AuthController {
                 String accessToken = authService.generateJwtToken(usuario);
                 Token refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, request.getDispositivo());
 
-                ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(10 * 60)
-                                .sameSite("Strict")
-                                .build();
+                ResponseCookie accessCookie = cookieUtil.createAccessCookie(accessToken);
 
-                ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken.getToken())
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(30 * 24 * 60 * 60)
-                                .sameSite("Strict")
-                                .build();
+                ResponseCookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken(), true);
 
                 response.addHeader("Set-Cookie", accessCookie.toString());
                 response.addHeader("Set-Cookie", refreshCookie.toString());
