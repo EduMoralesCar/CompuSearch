@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 
 const ProductoTiendaCard = ({ producto }) => {
   const placeholder = "https://via.placeholder.com/200x150?text=Sin+Imagen";
-
-  const linkDestino = `/producto/${encodeURIComponent(producto.nombreProducto)}`;
+  const linkDestino = `/producto/${encodeURIComponent(producto.nombreProducto)}`
 
   return (
     <Link to={linkDestino} className="text-decoration-none text-dark h-100">
@@ -19,7 +18,7 @@ const ProductoTiendaCard = ({ producto }) => {
           }}
         />
 
-        <div className="card-body">
+        <div className="card-body d-flex flex-column">
           <h5 className="card-title">{producto.nombreProducto}</h5>
           <p className="card-text mb-1">
             <strong>Precio:</strong> S/. {producto.precio}
@@ -27,13 +26,13 @@ const ProductoTiendaCard = ({ producto }) => {
           <p className="card-text mb-1">
             <strong>Tienda:</strong> {producto.nombreTienda}
           </p>
-          <p className="card-text">
-            <small
-              className={producto.stock > 0 ? "text-success" : "text-danger"}
-            >
+          <p className="card-text mb-2">
+            <small className={producto.stock > 0 ? "text-success" : "text-danger"}>
               {producto.stock > 0 ? `Stock: ${producto.stock}` : "Sin stock"}
             </small>
           </p>
+
+          <div className="btn btn-primary mt-auto text-center">Ver producto</div>
         </div>
       </div>
     </Link>

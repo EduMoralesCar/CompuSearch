@@ -1,5 +1,6 @@
 package com.universidad.compusearch.exception;
 
+// Excepciones para datos requeridos
 public class DataRequiredException extends CustomException {
 
     public DataRequiredException(String message, int status, String code) {

@@ -6,6 +6,7 @@ import com.universidad.compusearch.entity.ProductoTienda;
 
 import jakarta.persistence.criteria.JoinType;
 
+// Especificaciones de la refrigeracion
 public class RefrigeracionSpecification {
     public static Specification<ProductoTienda> porTipo(String tipo) {
         return (root, query, cb) -> {
@@ -36,7 +37,7 @@ public class RefrigeracionSpecification {
             var joinAtributo = joinProductoAtributos.join("atributo", JoinType.INNER);
 
             return cb.and(
-                    cb.equal(joinAtributo.get("nombre"), "Compatibilidad Socket"),
+                    cb.equal(joinAtributo.get("nombre"), "Compatibilidad Socket Cooler"),
                     cb.equal(joinProductoAtributos.get("valor"), compatibilidad));
         };
     }

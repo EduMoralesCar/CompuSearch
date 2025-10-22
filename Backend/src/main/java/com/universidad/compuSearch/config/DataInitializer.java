@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.universidad.compusearch.config.initializer.*;
 
+// Inicializa los demas initializer
 @Configuration
 public class DataInitializer {
 

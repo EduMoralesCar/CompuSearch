@@ -2,8 +2,6 @@ package com.universidad.compusearch.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,21 +11,22 @@ import com.universidad.compusearch.entity.Categoria;
 import com.universidad.compusearch.service.CategoriaService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/categorias")
 @RequiredArgsConstructor
+@Slf4j
 public class CategoriaController {
-    private static final Logger logger = LoggerFactory.getLogger(CategoriaController.class);
     private final CategoriaService categoriaService;
 
     @GetMapping
     public ResponseEntity<List<Categoria>> obtenerTodasLasCategorias() {
-        logger.info("GET /categoria - solicitando todas las categorias");
+        log.info("Solicitando todas las categorias");
 
         List<Categoria> categorias = categoriaService.obtenerTodos();
 
-        logger.info("Se retornaron {} etiquetas.", categorias.size());
+        log.info("Se retornaron {} etiquetas.", categorias.size());
         return ResponseEntity.ok(categorias);
     }
 }

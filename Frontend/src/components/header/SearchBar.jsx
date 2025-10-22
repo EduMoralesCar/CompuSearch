@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 
 const SearchBar = () => {
     const [query, setQuery] = useState("");
@@ -8,10 +9,10 @@ const SearchBar = () => {
     const [loading, setLoading] = useState(false);
     // Estado para controlar la visibilidad del dropdown
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-    
+
     const navigate = useNavigate();
     const searchRef = useRef(null);
-    const timerRef = useRef(null); 
+    const timerRef = useRef(null);
 
     // LÓGICA DE BÚSQUEDA "DEBOUNCED"
     useEffect(() => {
@@ -32,16 +33,19 @@ const SearchBar = () => {
 
         timerRef.current = setTimeout(async () => {
             try {
-                const res = await fetch(
-                    `http://localhost:8080/componentes/buscar?nombre=${encodeURIComponent(query)}&page=0&size=5`
+                const res = await axios.get(
+                    `http://localhost:8080/componentes/buscar`,
+                    {
+                        params: {
+                            nombre: query,
+                            page: 0,
+                            size: 5
+                        }
+                    }
                 );
-                
-                if (!res.ok) throw new Error("Error en la búsqueda");
-                
-                const data = await res.json();
-                
-                setSuggestions(data.content || []);
-                setTotalResults(data.totalElements || 0);
+
+                setSuggestions(res.data.content || []);
+                setTotalResults(res.data.totalElements || 0);
 
             } catch (err) {
                 console.error(err);
@@ -103,7 +107,7 @@ const SearchBar = () => {
     };
 
     return (
-        <div 
+        <div
             className="d-flex col-12 col-lg-6 mx-auto mt-3 mt-lg-0 order-lg-2"
             ref={searchRef}
             style={{ position: 'relative' }}
@@ -131,7 +135,7 @@ const SearchBar = () => {
             </form>
 
             {isDropdownVisible && query.length > 1 && (
-                <div 
+                <div
                     className="list-group"
                     style={{
                         position: 'absolute',
@@ -158,20 +162,20 @@ const SearchBar = () => {
                                     className="list-group-item list-group-item-action d-flex align-items-center"
                                     onClick={handleSuggestionClick}
                                 >
-                                    <img 
-                                        src={item.urlImagen || 'https://via.placeholder.com/50'} 
-                                        alt={item.nombreProducto} 
-                                        style={{width: '50px', height: '50px', objectFit: 'contain', marginRight: '15px'}} 
+                                    <img
+                                        src={item.urlImagen || 'https://via.placeholder.com/50'}
+                                        alt={item.nombreProducto}
+                                        style={{ width: '50px', height: '50px', objectFit: 'contain', marginRight: '15px' }}
                                     />
-                                    <div style={{flex: 1, minWidth: 0}}>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
                                         <p className="mb-0 text-dark text-truncate">{item.nombreProducto}</p>
                                         <strong className="text-primary">S/ {item.precio.toFixed(2)}</strong>
                                     </div>
                                 </Link>
                             ))}
-                            
+
                             {totalResults > 5 && (
-                                <button 
+                                <button
                                     type="submit"
                                     onClick={handleSubmit}
                                     className="list-group-item list-group-item-action text-center text-primary fw-bold"
@@ -183,7 +187,7 @@ const SearchBar = () => {
                     )}
 
                     {!loading && suggestions.length === 0 && (
-                         <span className="list-group-item list-group-item-action text-muted">
+                        <span className="list-group-item list-group-item-action text-muted">
                             No se encontraron resultados para "{query}"
                         </span>
                     )}

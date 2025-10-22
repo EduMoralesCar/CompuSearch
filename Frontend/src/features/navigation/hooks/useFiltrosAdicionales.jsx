@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { categoriasFiltros } from "../utils/categoriasFiltros";
+import axios from "axios";
+import { categoriasFiltrosMap } from "../utils/categoriasFiltrosMap";
 
 export default function useFiltrosAdicionales(categoriaSeleccionada) {
     const [valoresAtributos, setValoresAtributos] = useState({});
@@ -11,7 +12,7 @@ export default function useFiltrosAdicionales(categoriaSeleccionada) {
             setLoading(true);
             setError(null);
 
-            const atributos = categoriasFiltros[categoriaSeleccionada] || [];
+            const atributos = categoriasFiltrosMap[categoriaSeleccionada] || [];
 
             if (atributos.length === 0) {
                 setValoresAtributos({});
@@ -22,25 +23,36 @@ export default function useFiltrosAdicionales(categoriaSeleccionada) {
             try {
                 const respuestas = await Promise.all(
                     atributos.map((nombreAtributo) =>
-                        fetch(`http://localhost:8080/filtro/valores?nombreAtributo=${encodeURIComponent(nombreAtributo)}`)
+                        axios.get(`http://localhost:8080/filtro/valores`, {
+                            params: { nombreAtributo },
+                        })
                     )
                 );
 
-                const datos = await Promise.all(
-                    respuestas.map(async (res) => {
-                        if (!res.ok) return [];
-                        return await res.json();
-                    })
-                );
-
                 const resultado = {};
+
                 atributos.forEach((nombreAtributo, index) => {
-                    resultado[nombreAtributo] = datos[index];
+                    let data = respuestas[index].data || [];
+
+                    const valoresSeparados = [];
+                    const seen = new Set(); // Para evitar duplicados de label
+
+                    data.forEach((valorCompleto) => {
+                        valorCompleto.split(",").forEach((v) => {
+                            const trimmed = v.trim();
+                            if (!seen.has(trimmed)) {
+                                valoresSeparados.push({ label: trimmed, value: valorCompleto });
+                                seen.add(trimmed);
+                            }
+                        });
+                    });
+
+                    resultado[nombreAtributo] = valoresSeparados;
                 });
 
                 setValoresAtributos(resultado);
             } catch (err) {
-                setError(err);
+                setError(err.message || "Error al cargar filtros adicionales");
             } finally {
                 setLoading(false);
             }

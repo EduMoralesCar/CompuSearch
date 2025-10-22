@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function useCategorias() {
     const [categorias, setCategorias] = useState([]);
@@ -6,19 +7,21 @@ export default function useCategorias() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch("http://localhost:8080/categorias")
-            .then((res) => {
-                if (!res.ok) throw new Error("Error al cargar las categorias");
-                return res.json();
-            })
-            .then((data) => {
-                setCategorias(data);
+        const cargarCategorias = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const response = await axios.get("http://localhost:8080/categorias");
+                setCategorias(response.data || []);
+            } catch (err) {
+                setError(err.message || "Error al cargar las categorías");
+            } finally {
                 setLoading(false);
-            })
-            .catch((err) => {
-                setError(err.message);
-                setLoading(false);
-            });
+            }
+        };
+
+        cargarCategorias();
     }, []);
 
     return { categorias, loading, error };

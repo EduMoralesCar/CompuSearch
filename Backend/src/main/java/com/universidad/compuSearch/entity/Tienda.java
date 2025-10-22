@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +20,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +29,6 @@ import lombok.Setter;
 @PrimaryKeyJoinColumn(name = "idUsuario")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Tienda extends Usuario {
 
@@ -59,9 +58,10 @@ public class Tienda extends Usuario {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "tienda_etiqueta", joinColumns = @JoinColumn(name = "tienda_id", referencedColumnName = "idUsuario"), inverseJoinColumns = @JoinColumn(name = "etiqueta_id", referencedColumnName = "idEtiqueta"))
+    @JsonManagedReference
     private List<Etiqueta> etiquetas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tienda")
+    @OneToMany(mappedBy = "tienda", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference 
     private List<ProductoTienda> productos;
 

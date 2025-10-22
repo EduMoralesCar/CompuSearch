@@ -24,8 +24,8 @@
         </encoder>
     </appender>
 
-    <!-- Logger para paquetes específicos -->
-    <logger name="com.universidad.compuSearch" level="DEBUG"/>
+    <!-- log para paquetes específicos -->
+    <logger name="com.universidad.compusearch" level="DEBUG"/>
     <logger name="org.springframework.security" level="INFO"/>
 
     <!-- Nivel global -->

@@ -2,8 +2,6 @@ package com.universidad.compusearch.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,29 +13,29 @@ import com.universidad.compusearch.service.CategoriaService;
 import com.universidad.compusearch.service.FiltroService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/filtro")
 @RequiredArgsConstructor
+@Slf4j
 public class FiltroController {
-
-    private static final Logger logger = LoggerFactory.getLogger(FiltroController.class);
 
     private final FiltroService filtroService;
     private final CategoriaService categoriaService;
 
     @GetMapping("/categorias")
     public ResponseEntity<List<String>> obtenerCategorias() {
-        logger.info("Solicitud recibida para obtener categorías habilitadas");
+        log.info("Solicitud recibida para obtener categorías habilitadas");
 
         List<String> categorias = categoriaService.obtenerTodasLosNombres();
 
         if (categorias.isEmpty()) {
-            logger.warn("No se encontraron categorías habilitadas");
+            log.warn("No se encontraron categorías habilitadas");
             return ResponseEntity.noContent().build();
         }
 
-        logger.debug("Categorías encontradas: {}", categorias.size());
+        log.debug("Categorías encontradas: {}", categorias.size());
         return ResponseEntity.ok(categorias);
     }
 
@@ -45,16 +43,16 @@ public class FiltroController {
     public ResponseEntity<List<String>> obtenerMarcas(
             @RequestParam(required = false) String categoria) {
 
-        logger.info("Solicitud recibida para obtener marcas (categoria = {})", categoria);
+        log.info("Solicitud recibida para obtener marcas (categoria = {})", categoria);
 
         List<String> marcas = filtroService.obtenerMarcas(categoria);
 
         if (marcas.isEmpty()) {
-            logger.warn("No se encontraron marcas para la categoría: {}", categoria);
+            log.warn("No se encontraron marcas para la categoría: {}", categoria);
             return ResponseEntity.noContent().build();
         }
 
-        logger.debug("Marcas encontradas: {}", marcas.size());
+        log.debug("Marcas encontradas: {}", marcas.size());
         return ResponseEntity.ok(marcas);
     }
 
@@ -62,16 +60,16 @@ public class FiltroController {
     public ResponseEntity<RangoPrecioResponse> obtenerRangoPrecios(
             @RequestParam(required = false) String categoria) {
 
-        logger.info("Solicitud recibida para obtener rango de precios (categoria = {})", categoria);
+        log.info("Solicitud recibida para obtener rango de precios (categoria = {})", categoria);
 
         var rango = filtroService.obtenerRangoPrecio(categoria);
 
         if (rango == null) {
-            logger.warn("No se encontró rango de precios para la categoría: {}", categoria);
+            log.warn("No se encontró rango de precios para la categoría: {}", categoria);
             return ResponseEntity.noContent().build();
         }
 
-        logger.debug("Rango de precios → min: {}, max: {}", rango.getPrecioMin(), rango.getPrecioMax());
+        log.debug("Rango de precios → min: {}, max: {}", rango.getPrecioMin(), rango.getPrecioMax());
         return ResponseEntity.ok(rango);
     }
 
@@ -79,16 +77,16 @@ public class FiltroController {
     public ResponseEntity<List<String>> obtenerTiendasPorCategoria(
             @RequestParam(required = false) String categoria) {
 
-        logger.info("Solicitud recibida para obtener tiendas (categoria = {})", categoria);
+        log.info("Solicitud recibida para obtener tiendas (categoria = {})", categoria);
 
         List<String> tiendas = filtroService.obtenerTiendasConProductosHabilitadosPorCategoria(categoria);
 
         if (tiendas.isEmpty()) {
-            logger.warn("No se encontraron tiendas para la categoría: {}", categoria);
+            log.warn("No se encontraron tiendas para la categoría: {}", categoria);
             return ResponseEntity.noContent().build();
         }
 
-        logger.debug("Tiendas encontradas: {}", tiendas.size());
+        log.debug("Tiendas encontradas: {}", tiendas.size());
         return ResponseEntity.ok(tiendas);
     }
 
@@ -96,16 +94,16 @@ public class FiltroController {
     public ResponseEntity<List<String>> obtenerAtributosPorNombre(
             @RequestParam(required = true) String nombreAtributo) {
 
-        logger.info("Solicitud recibida para obtener atributos (atributo = {})", nombreAtributo);
+        log.info("Solicitud recibida para obtener atributos (atributo = {})", nombreAtributo);
 
         List<String> atributos = filtroService.obtenerValoresDeAtributosPorNombre(nombreAtributo);
 
         if (atributos.isEmpty()) {
-            logger.warn("No se encontraron atributos para el atributo: {}", atributos);
+            log.warn("No se encontraron atributos para el atributo: {}", atributos);
             return ResponseEntity.noContent().build();
         }
 
-        logger.debug("Atributos encontradss: {}", atributos.size());
+        log.debug("Atributos encontradss: {}", atributos.size());
         return ResponseEntity.ok(atributos);
     }
 }

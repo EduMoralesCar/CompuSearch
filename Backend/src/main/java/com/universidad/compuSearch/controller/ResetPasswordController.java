@@ -1,7 +1,5 @@
 package com.universidad.compusearch.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,13 +18,13 @@ import com.universidad.compusearch.service.ResetTokenService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/auth/password")
 @RequiredArgsConstructor
+@Slf4j
 public class ResetPasswordController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ResetPasswordController.class);
 
     private final AuthService authService;
     private final ResetTokenService resetTokenService;
@@ -36,25 +34,26 @@ public class ResetPasswordController {
     // Endpoint para iniciar recuperación de contraseña
     @PostMapping("/forgot")
     public ResponseEntity<MessageResponse> forgot(@Valid @RequestBody ForgotPasswordRequest request) {
-        logger.info("Solicitud de recuperación de contraseña para email: {}", request.getEmail());
+        log.info("Solicitud de recuperación de contraseña para email: {}", request.getEmail());
 
         Usuario usuario = resetPasswordService.validateEmail(request.getEmail());
         Token resetToken = resetTokenService.createOrUpdateResetToken(usuario, request.getDispositivo());
         emailService.sendPasswordResetEmail(request.getEmail(), resetToken.getToken());
 
-        logger.info("Token de reseteo generado y enviado para usuario ID: {}", usuario.getIdUsuario());
-        return ResponseEntity.ok(new MessageResponse("Se ha enviado un correo con instrucciones para restablecer tu contraseña"));
+        log.info("Token de reseteo generado y enviado para usuario ID: {}", usuario.getIdUsuario());
+        return ResponseEntity
+                .ok(new MessageResponse("Se ha enviado un correo con instrucciones para restablecer tu contraseña"));
     }
 
     // Endpoint para aplicar nueva contraseña usando el token
     @PostMapping("/reset")
     public ResponseEntity<MessageResponse> reset(@Valid @RequestBody ResetPasswordRequest request) {
-        logger.info("Solicitud de reseteo de contraseña con token: {}", request.getToken());
+        log.info("Solicitud de reseteo de contraseña con token: {}", request.getToken().substring(0, 6));
 
         Usuario usuario = resetPasswordService.validateResetToken(request.getToken());
         authService.updatePassword(usuario, request.getContrasena());
 
-        logger.info("Contraseña actualizada para usuario ID: {}", usuario.getIdUsuario());
+        log.info("Contraseña actualizada para usuario ID: {}", usuario.getIdUsuario());
         return ResponseEntity.ok(new MessageResponse("Contraseña restablecida correctamente"));
     }
 }

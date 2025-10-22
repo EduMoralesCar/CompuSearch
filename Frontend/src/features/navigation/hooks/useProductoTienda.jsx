@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function useProductosTiendas({
     categoria,
@@ -9,13 +10,16 @@ export default function useProductosTiendas({
     marca,
     nombreProducto,
     page = 0,
-    size = 15
+    size = 15,
+    ...filtrosExtra
 }) {
     const [productos, setProductos] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const filtrosExtraString = JSON.stringify(filtrosExtra);
 
     useEffect(() => {
         const fetchProductos = async () => {
@@ -25,52 +29,56 @@ export default function useProductosTiendas({
             try {
                 const params = new URLSearchParams();
 
+                // Filtros generales
                 if (nombreTienda && nombreTienda !== "Todas") params.append("nombreTienda", nombreTienda);
                 if (marca && marca !== "Todas") params.append("marca", marca);
                 if (precioMax) params.append("precioMax", precioMax);
                 if (precioMin) params.append("precioMin", precioMin);
-                if (disponible === "Disponible") {
-                    params.append("disponible", true);
-                } else if (disponible === "No disponible") {
-                    params.append("disponible", false);
-                }
+
+                if (disponible === "Disponible") params.append("disponible", true);
+                else if (disponible === "No disponible") params.append("disponible", false);
+
+                //Filtros extras
+                Object.entries(filtrosExtra).forEach(([key, value]) => {
+                    if (value && value !== "Todas") {
+                        params.append(key, value);
+                    }
+                });
+
+                // Paginación
+                params.append("page", page);
+                params.append("size", size);
 
                 const baseUrl = "http://localhost:8080/componentes";
-                let url;
+                let endpoint = "/filtrar"; // Por defecto
 
-                if (nombreProducto && nombreProducto.trim() !== "") {
-                    // endpoint de búsqueda
+                // Si hay búsqueda por nombre
+                if (nombreProducto?.trim()) {
                     params.append("nombre", nombreProducto);
-                    params.append("page", page);
-                    params.append("size", size);
-                    url = `${baseUrl}/buscar?${params.toString()}`;
-                } else if (categoria && categoria !== "Todas") {
-                    params.append("page", page);
-                    params.append("size", size);
-                    url = `${baseUrl}/${categoria}?${params.toString()}`;
-                } else {
-                    params.append("page", page);
-                    params.append("size", size);
-                    url = `${baseUrl}?${params.toString()}`;
+                    endpoint = "/buscar";
+                }
+                // Si hay categoría específica
+                else if (categoria && categoria !== "Todas") {
+                    params.append("categoria", categoria);
                 }
 
-                const res = await fetch(url);
-                if (!res.ok) throw new Error("Error al cargar productos");
+                const url = `${baseUrl}${endpoint}?${params.toString()}`;
 
-                const data = await res.json();
+                const { data } = await axios.get(url);
 
                 setProductos(data.content || []);
-                setTotalPages(data.totalPages);
-                setTotalElements(data.totalElements);
+                setTotalPages(data.totalPages || 0);
+                setTotalElements(data.totalElements || 0);
             } catch (err) {
-                setError(err);
+                setError(err.message || "Error al cargar productos");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchProductos();
-    }, [categoria, nombreTienda, precioMax, precioMin, disponible, marca, nombreProducto, page, size]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [categoria, nombreTienda, precioMax, precioMin, disponible, marca, nombreProducto, page, size, filtrosExtraString]);
 
     return { productos, totalPages, totalElements, loading, error };
 }

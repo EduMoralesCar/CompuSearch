@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import { categoriasMap } from "../utils/categoriasMap";
 import FiltrosSidebar from "../components/FiltroSidebar";
@@ -34,11 +34,10 @@ const Componentes = () => {
 
   // --- Estados de control ---
   const [filtrosPorDefecto, setFiltrosPorDefecto] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true); 
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
-  const navigate = useNavigate();
 
   // --- Hooks de datos ---
   const {
@@ -67,6 +66,12 @@ const Componentes = () => {
   // --- Efectos de Ciclo de Vida ---
 
   // Efecto de inicialización: Lee la URL una sola vez al montar
+
+  // --- Efectos de Ciclo de Vida ---
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
+
   useEffect(() => {
     const categoriaParam = searchParams.get("categoria") || "Todas";
     const marcaParam = searchParams.get("marca") || "Todas";
@@ -85,6 +90,7 @@ const Componentes = () => {
     if (precioMinParam !== null) setPrecioMin(parseInt(precioMinParam, 10));
     if (precioMaxParam !== null) setPrecioMax(parseInt(precioMaxParam, 10));
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // El array vacío [] asegura que esto corra SOLO UNA VEZ
 
   // Setea los precios por defecto (solo si no vienen de la URL o reset)
@@ -146,7 +152,7 @@ const Componentes = () => {
   // Aplica los filtros leídos de la URL *automáticamente* en la carga inicial
   useEffect(() => {
     if (isInitialLoad && !loading && !loadingAdicionales) {
-      
+
       const filtrosLimpios = {};
       Object.entries(filtrosExtra).forEach(([clave, valor]) => {
         if (valor && valor !== "Todas") filtrosLimpios[clave] = valor;
@@ -223,9 +229,9 @@ const Componentes = () => {
 
   // Resetear Filtros (Botón)
   const resetearFiltros = () => {
-    
-    setPrecioMax(0);
-    setPrecioMin(0);
+
+    const defaultPrecioMin = rangoPrecio?.precioMin ?? 0;
+    const defaultPrecioMax = rangoPrecio?.precioMax ?? 1000000;
 
     // Resetea el estado visual
     setCategoria("Todas");
@@ -243,8 +249,8 @@ const Componentes = () => {
     setFiltrosAplicados({
       categoria: "Todas",
       nombreTienda: "",
-      precioMax: 0, 
-      precioMin: 0,
+      precioMax: defaultPrecioMax,
+      precioMin: defaultPrecioMin,
       disponible: "Todas",
       marca: "Todas",
       page: 0,
@@ -252,7 +258,7 @@ const Componentes = () => {
 
 
     setSearchParams(new URLSearchParams());
-    
+
   };
 
   // --- Renderizado ---

@@ -1,322 +1,109 @@
 package com.universidad.compusearch.service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.universidad.compusearch.dto.ProductoTiendaResponse;
+import com.universidad.compusearch.dto.ProductoBuildResponse;
+import com.universidad.compusearch.dto.TiendaProductoDisponibleResponse;
 import com.universidad.compusearch.entity.ProductoTienda;
+import com.universidad.compusearch.exception.ProductoTiendaException;
 import com.universidad.compusearch.repository.ProductoTiendaRepository;
-import com.universidad.compusearch.specification.AlmacenamientoSpecification;
-import com.universidad.compusearch.specification.FuentePoderSpecification;
-import com.universidad.compusearch.specification.MemoriaSpecification;
-import com.universidad.compusearch.specification.PlacaMadreSpecification;
-import com.universidad.compusearch.specification.ProcesadorSpecification;
-import com.universidad.compusearch.specification.ProductoTiendaSpecification;
-import com.universidad.compusearch.specification.RefrigeracionSpecification;
-import com.universidad.compusearch.specification.TarjetaVideoSpecification;
+import com.universidad.compusearch.specification.*;
+import com.universidad.compusearch.util.ProductoTiendaMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+// Servicio de los productos de tiendas
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductoTiendaService {
 
-        private static final Logger logger = LoggerFactory.getLogger(ProductoTiendaService.class);
         private final ProductoTiendaRepository productoTiendaRepository;
 
-        public Page<ProductoTienda> filtrarConParametros(
+        // Método principal: decide qué filtros aplicar según la categoría recibida.
+        public Page<ProductoTienda> filtrarPorCategoria(
+                        String categoria,
                         String nombreTienda,
                         String marca,
                         BigDecimal precioMax,
                         BigDecimal precioMin,
                         Boolean disponible,
                         Boolean habilitado,
+                        Map<String, String> filtrosExtra,
                         int page,
                         int size) {
-
-                logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}",
-                                nombreTienda, marca, precioMin,
-                                precioMax, disponible);
-
                 Pageable pageable = PageRequest.of(page, size);
 
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(habilitado)
-                                .and(ProductoTiendaSpecification.porNombreTienda(nombreTienda))
-                                .and(ProductoTiendaSpecification.porMarca(marca))
-                                .and(ProductoTiendaSpecification.porRangoPrecio(precioMin, precioMax))
-                                .and(ProductoTiendaSpecification.porDisponibilidad(disponible));
+                Specification<ProductoTienda> spec = ProductoTiendaSpecificationFactory.crearSpec(
+                                categoria, nombreTienda, marca, precioMin, precioMax,
+                                disponible, habilitado, filtrosExtra);
 
                 Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
 
-                logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
+                log.info("Se encontraron {} productos para la categoría '{}' con filtros {}",
+                                productos.getTotalElements(), categoria, filtrosExtra);
 
                 return productos;
         }
 
-        public Page<ProductoTienda> filtrarTarjetasVideo(
-                        String nombreTienda,
-                        String marca,
-                        BigDecimal precioMax,
-                        BigDecimal precioMin,
-                        Boolean disponible,
-                        Boolean habilitado,
-                        String fabricante,
-                        String memoriaVRAM,
-                        int page,
-                        int size) {
-
-                logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}, fabricante: {}, memoriaVRAM: {}",
-                                nombreTienda, marca, precioMin, precioMax, disponible, fabricante, memoriaVRAM);
+        // Búsqueda general por nombre de producto
+        public Page<ProductoTienda> buscarPorNombreProducto(String nombreProducto, int page, int size) {
+                log.info("Buscando productos por nombre o parecido: '{}'", nombreProducto);
 
                 Pageable pageable = PageRequest.of(page, size);
-
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(habilitado)
-                                .and(ProductoTiendaSpecification.porNombreTienda(nombreTienda))
-                                .and(ProductoTiendaSpecification.porMarca(marca))
-                                .and(ProductoTiendaSpecification.porRangoPrecio(precioMin, precioMax))
-                                .and(ProductoTiendaSpecification.porDisponibilidad(disponible))
-                                .and(ProductoTiendaSpecification.porCategoria("Tarjeta de Video"))
-                                .and(TarjetaVideoSpecification.porFabricante(fabricante))
-                                .and(TarjetaVideoSpecification.porMemoriaVRAM(memoriaVRAM));
+                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porNombreProducto(nombreProducto);
 
                 Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
-
-                logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
-
-                return productos;
-        }
-
-        public Page<ProductoTienda> filtrarProcesador(
-                        String nombreTienda,
-                        String marca,
-                        BigDecimal precioMax,
-                        BigDecimal precioMin,
-                        Boolean disponible,
-                        Boolean habilitado,
-                        String socket,
-                        int page,
-                        int size) {
-
-                logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}, socket: {}",
-                                nombreTienda, marca, precioMin, precioMax, disponible, socket);
-
-                Pageable pageable = PageRequest.of(page, size);
-
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(habilitado)
-                                .and(ProductoTiendaSpecification.porNombreTienda(nombreTienda))
-                                .and(ProductoTiendaSpecification.porMarca(marca))
-                                .and(ProductoTiendaSpecification.porRangoPrecio(precioMin, precioMax))
-                                .and(ProductoTiendaSpecification.porDisponibilidad(disponible))
-                                .and(ProductoTiendaSpecification.porCategoria("Procesador"))
-                                .and(ProcesadorSpecification.porSocket(socket));
-
-                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
-
-                logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
-
-                return productos;
-        }
-
-        public Page<ProductoTienda> filtrarAlmacenamiento(
-                        String nombreTienda,
-                        String marca,
-                        BigDecimal precioMax,
-                        BigDecimal precioMin,
-                        Boolean disponible,
-                        Boolean habilitado,
-                        String capacidad,
-                        String tipo,
-                        int page,
-                        int size) {
-
-                logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}, capacidad: {}, tipo: {}",
-                                nombreTienda, marca, precioMin, precioMax, disponible, capacidad, tipo);
-
-                Pageable pageable = PageRequest.of(page, size);
-
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(habilitado)
-                                .and(ProductoTiendaSpecification.porNombreTienda(nombreTienda))
-                                .and(ProductoTiendaSpecification.porMarca(marca))
-                                .and(ProductoTiendaSpecification.porRangoPrecio(precioMin, precioMax))
-                                .and(ProductoTiendaSpecification.porDisponibilidad(disponible))
-                                .and(ProductoTiendaSpecification.porCategoria("Almacenamiento"))
-                                .and(AlmacenamientoSpecification.porCapacidad(capacidad))
-                                .and(AlmacenamientoSpecification.porTipo(tipo));
-
-                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
-
-                logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
-
-                return productos;
-        }
-
-        public Page<ProductoTienda> filtrarMemoria(
-                        String nombreTienda,
-                        String marca,
-                        BigDecimal precioMax,
-                        BigDecimal precioMin,
-                        Boolean disponible,
-                        Boolean habilitado,
-                        String capacidad,
-                        String frecuencia,
-                        String tipo,
-                        int page,
-                        int size) {
-
-                logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}, capacidad: {}, frecuencia: {}, tipo: {}",
-                                nombreTienda, marca, precioMin, precioMax, disponible, capacidad, frecuencia, tipo);
-
-                Pageable pageable = PageRequest.of(page, size);
-
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(habilitado)
-                                .and(ProductoTiendaSpecification.porNombreTienda(nombreTienda))
-                                .and(ProductoTiendaSpecification.porMarca(marca))
-                                .and(ProductoTiendaSpecification.porRangoPrecio(precioMin, precioMax))
-                                .and(ProductoTiendaSpecification.porDisponibilidad(disponible))
-                                .and(ProductoTiendaSpecification.porCategoria("Memoria RAM"))
-                                .and(MemoriaSpecification.porCapacidad(capacidad))
-                                .and(MemoriaSpecification.porFrecuencia(frecuencia))
-                                .and(MemoriaSpecification.porTipo(tipo));
-
-                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
-
-                logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
-
-                return productos;
-        }
-
-        public Page<ProductoTienda> filtrarPlacaMadre(
-                        String nombreTienda,
-                        String marca,
-                        BigDecimal precioMax,
-                        BigDecimal precioMin,
-                        Boolean disponible,
-                        Boolean habilitado,
-                        String socket,
-                        String factor,
-                        int page,
-                        int size) {
-
-                logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}, socket: {}, factor: {}",
-                                nombreTienda, marca, precioMin, precioMax, disponible, socket, factor);
-
-                Pageable pageable = PageRequest.of(page, size);
-
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(habilitado)
-                                .and(ProductoTiendaSpecification.porNombreTienda(nombreTienda))
-                                .and(ProductoTiendaSpecification.porMarca(marca))
-                                .and(ProductoTiendaSpecification.porRangoPrecio(precioMin, precioMax))
-                                .and(ProductoTiendaSpecification.porDisponibilidad(disponible))
-                                .and(ProductoTiendaSpecification.porCategoria("Placa Madre"))
-                                .and(PlacaMadreSpecification.porSocket(socket))
-                                .and(PlacaMadreSpecification.porFactor(factor));
-
-                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
-
-                logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
-
-                return productos;
-        }
-
-        public Page<ProductoTienda> filtrarFuentePoder(
-                        String nombreTienda,
-                        String marca,
-                        BigDecimal precioMax,
-                        BigDecimal precioMin,
-                        Boolean disponible,
-                        Boolean habilitado,
-                        String certificacion,
-                        String potencia,
-                        int page,
-                        int size) {
-
-                logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}, certificacion: {}, potencia: {}",
-                                nombreTienda, marca, precioMin, precioMax, disponible, certificacion, potencia);
-
-                Pageable pageable = PageRequest.of(page, size);
-
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(habilitado)
-                                .and(ProductoTiendaSpecification.porNombreTienda(nombreTienda))
-                                .and(ProductoTiendaSpecification.porMarca(marca))
-                                .and(ProductoTiendaSpecification.porRangoPrecio(precioMin, precioMax))
-                                .and(ProductoTiendaSpecification.porDisponibilidad(disponible))
-                                .and(ProductoTiendaSpecification.porCategoria("Fuente de Poder"))
-                                .and(FuentePoderSpecification.porCertificacion(certificacion))
-                                .and(FuentePoderSpecification.porPotencia(potencia));
-
-                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
-
-                logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
-
-                return productos;
-        }
-
-        public Page<ProductoTienda> filtrarRefrigeracion(
-                        String nombreTienda,
-                        String marca,
-                        BigDecimal precioMax,
-                        BigDecimal precioMin,
-                        Boolean disponible,
-                        Boolean habilitado,
-                        String tipo,
-                        String compatibilidad,
-                        int page,
-                        int size) {
-
-                logger.info("Aplicando filtros - nombreTienda: {}, marca: {}, precioMin: {}, precioMax: {}, disponible: {}, tipo: {}, compatibilidad: {}",
-                                nombreTienda, marca, precioMin, precioMax, disponible, tipo, compatibilidad);
-
-                Pageable pageable = PageRequest.of(page, size);
-
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(habilitado)
-                                .and(ProductoTiendaSpecification.porNombreTienda(nombreTienda))
-                                .and(ProductoTiendaSpecification.porMarca(marca))
-                                .and(ProductoTiendaSpecification.porRangoPrecio(precioMin, precioMax))
-                                .and(ProductoTiendaSpecification.porDisponibilidad(disponible))
-                                .and(ProductoTiendaSpecification.porCategoria("Refrigeración CPU"))
-                                .and(RefrigeracionSpecification.porTipo(tipo))
-                                .and(RefrigeracionSpecification.porCompatibilidad(compatibilidad));
-
-                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
-
-                logger.info("Se encontraron {} productos con los filtros aplicados", productos.getTotalElements());
-
-                return productos;
-        }
-
-        public Page<ProductoTienda> buscarPorNombreProducto(
-                        String nombreProducto,
-                        int page,
-                        int size) {
-
-                logger.info("Buscando productos por nombre o parecido: '{}'", nombreProducto);
-
-                Pageable pageable = PageRequest.of(page, size);
-
-                Specification<ProductoTienda> spec = ProductoTiendaSpecification
-                                .porNombreProducto(nombreProducto);
-
-                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
-
-                logger.info("Se encontraron {} productos que coinciden con el nombre '{}'",
+                log.info("Se encontraron {} productos que coinciden con el nombre '{}'",
                                 productos.getTotalElements(), nombreProducto);
 
                 return productos;
         }
 
-        public ProductoTiendaResponse mapToResponse(ProductoTienda productoTienda) {
-                return new ProductoTiendaResponse(
-                                productoTienda.getProducto().getNombre(),
-                                productoTienda.getPrecio(),
-                                productoTienda.getStock(),
-                                productoTienda.getUrlImagen(),
-                                productoTienda.getTienda().getNombre());
+        // Búsqueda de un producto específico en una tienda específica
+        public ProductoTienda buscarPorNombreProductoEspecifico(String nombreProducto, String nombreTienda) {
+                log.info("Buscando producto '{}' en la tienda '{}'", nombreProducto, nombreTienda);
+
+                return productoTiendaRepository.findByNombreProductoAndNombreTienda(nombreProducto, nombreTienda)
+                                .orElseThrow(() -> ProductoTiendaException.notFoundProductoOrShop());
         }
+
+        public List<TiendaProductoDisponibleResponse> obtenerTiendasPorNombreProducto(String nombreProducto) {
+                List<ProductoTienda> productosTienda = productoTiendaRepository.findByNombreProducto(nombreProducto);
+
+                return productosTienda.stream()
+                                .map(pt -> new TiendaProductoDisponibleResponse(
+                                                pt.getTienda().getNombre(),
+                                                pt.getPrecio(),
+                                                pt.getStock(),
+                                                pt.getUrlProducto()))
+                                .collect(Collectors.toList());
+        }
+
+        public Page<ProductoBuildResponse> obtenerProductosBuilds(
+                        String categoria,
+                        int page,
+                        int size) {
+
+                log.info("Buscanco productos para build de categoria: ", categoria);
+                Pageable pageable = PageRequest.of(page, size);
+
+                Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(true)
+                                .and(ProductoTiendaSpecification.porCategoria(categoria));
+
+                Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
+
+                return productos.map(ProductoTiendaMapper::mapToProductoBuildResponse);
+        }
+
 }

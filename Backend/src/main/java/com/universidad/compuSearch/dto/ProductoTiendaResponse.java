@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductoTiendaResponse {
+    private long idProductoTienda;
     private String nombreProducto;
     private BigDecimal precio;
     private int stock;

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function useFiltros(categoriaSeleccionada) {
     const [filtroCategoria, setFiltroCategoria] = useState([]);
@@ -10,35 +11,27 @@ export default function useFiltros(categoriaSeleccionada) {
 
     useEffect(() => {
         const cargarFiltros = async () => {
+            setLoading(true);
+            setError(null);
+
+            const params = categoriaSeleccionada && categoriaSeleccionada !== "Todas"
+                ? { categoria: categoriaSeleccionada }
+                : {};
+
             try {
-                const categoriaParam = categoriaSeleccionada && categoriaSeleccionada !== "Todas"
-                    ? `?categoria=${encodeURIComponent(categoriaSeleccionada)}`
-                    : "";
-
                 const [resCat, resPre, resMar, resTie] = await Promise.all([
-                    fetch(`http://localhost:8080/filtro/categorias`),
-                    fetch(`http://localhost:8080/filtro/precios${categoriaParam}`),
-                    fetch(`http://localhost:8080/filtro/marcas${categoriaParam}`),
-                    fetch(`http://localhost:8080/filtro/tiendas${categoriaParam}`)
+                    axios.get("http://localhost:8080/filtro/categorias"),
+                    axios.get("http://localhost:8080/filtro/precios", { params }),
+                    axios.get("http://localhost:8080/filtro/marcas", { params }),
+                    axios.get("http://localhost:8080/filtro/tiendas", { params })
                 ]);
 
-                if (!resCat.ok || !resPre.ok || !resMar.ok || !resTie.ok) {
-                    throw new Error("Error en una o más respuestas del servidor");
-                }
-
-                const [dataCat, dataPre, dataMar, dataTie] = await Promise.all([
-                    resCat.json(),
-                    resPre.json(),
-                    resMar.json(),
-                    resTie.json()
-                ]);
-
-                setFiltroCategoria(dataCat);
-                setRangoPrecio(dataPre);
-                setFiltroMarca(dataMar);
-                setFiltroTienda(dataTie);
+                setFiltroCategoria(resCat.data || []);
+                setRangoPrecio(resPre.data || null);
+                setFiltroMarca(resMar.data || []);
+                setFiltroTienda(resTie.data || []);
             } catch (err) {
-                setError(err);
+                setError(err.message || "Error al cargar filtros");
             } finally {
                 setLoading(false);
             }

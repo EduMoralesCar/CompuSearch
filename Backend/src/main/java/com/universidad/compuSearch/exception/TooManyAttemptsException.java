@@ -1,5 +1,6 @@
 package com.universidad.compusearch.exception;
 
+// Excepciones de muchos intentos
 public class TooManyAttemptsException extends CustomException{
     
     public TooManyAttemptsException(){

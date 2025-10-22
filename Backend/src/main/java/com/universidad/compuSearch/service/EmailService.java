@@ -1,20 +1,19 @@
 package com.universidad.compusearch.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+// Servicio de email
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailService {
 
     private final JavaMailSender mailSender;
-
-    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     public void sendPasswordResetEmail(String to, String token) {
 
@@ -41,9 +40,9 @@ public class EmailService {
             // Enviar correo
             mailSender.send(message);
 
-            logger.info("Correo de restablecimiento enviado a: {}", to);
+            log.info("Correo de restablecimiento enviado a: {}", to);
         } catch (Exception e) {
-            logger.error("Error al enviar correo de restablecimiento a {}", to, e);
+            log.error("Error al enviar correo de restablecimiento a {}", to, e);
             throw e;
         }
     }

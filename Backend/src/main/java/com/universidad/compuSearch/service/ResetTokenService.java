@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.universidad.compusearch.entity.EstadoToken;
@@ -17,19 +15,20 @@ import com.universidad.compusearch.jwt.JwtConfigHelper;
 import com.universidad.compusearch.repository.TokenRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+// Servicio de reset token
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ResetTokenService {
 
     private final TokenRepository tokenRepository;
     private final JwtConfigHelper jwtConfigHelper;
 
-    private static final Logger logger = LoggerFactory.getLogger(ResetTokenService.class);
-
     // Crea o actualiza el token de reseteo según el estado del existente
     public Token createOrUpdateResetToken(Usuario usuario, String dispositivo) {
-        logger.info("Procesando token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
+        log.info("Procesando token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
 
         return findByUsuarioAndDispositivo(usuario, dispositivo)
                 .map(existingToken -> {
@@ -39,14 +38,14 @@ public class ResetTokenService {
                     return existingToken;
                 })
                 .orElseGet(() -> {
-                    logger.info("No se encontró token de reseteo, creando nuevo para usuario {}", usuario.getIdUsuario());
+                    log.info("No se encontró token de reseteo, creando nuevo para usuario {}", usuario.getIdUsuario());
                     return createResetToken(usuario, dispositivo);
                 });
     }
 
     // Actualiza el token de reseteo
     private Token updateResetToken(Token existingToken) {
-        logger.info("Actualizando token de reseteo ID={} para usuario {}", existingToken.getIdToken(), existingToken.getUsuario().getIdUsuario());
+        log.info("Actualizando token de reseteo ID={} para usuario {}", existingToken.getIdToken(), existingToken.getUsuario().getIdUsuario());
 
         existingToken.setToken(UUID.randomUUID().toString());
         existingToken.setFechaCreacion(Instant.now());
@@ -58,7 +57,7 @@ public class ResetTokenService {
 
     // Crea un nuevo token de reseteo
     private Token createResetToken(Usuario usuario, String dispositivo) {
-        logger.info("Creando nuevo token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
+        log.info("Creando nuevo token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
 
         Token resetToken = new Token();
         resetToken.setUsuario(usuario);
@@ -74,7 +73,7 @@ public class ResetTokenService {
 
     // Valida que el token esté activo y no expirado
     public Token validateAndGetResetToken(String token) {
-        logger.debug("Validando token de reseteo: {}", token);
+        log.debug("Validando token de reseteo: {}", token);
 
         return findByToken(token)
                 .filter(t -> !t.isExpired() && t.getEstado() == EstadoToken.ACTIVO)
@@ -83,7 +82,7 @@ public class ResetTokenService {
 
     // Revoca el token de reseteo
     public void revokeResetToken(String token) {
-        logger.warn("Revocando token de reseteo: {}", token);
+        log.warn("Revocando token de reseteo: {}", token);
 
         Token resetToken = findByToken(token)
                 .orElseThrow(() -> TokenException.invalid("Reset"));
@@ -94,19 +93,19 @@ public class ResetTokenService {
 
     // Guarda el token
     public Token save(Token token) {
-        logger.debug("Guardando token de reseteo ID={}", token.getIdToken());
+        log.debug("Guardando token de reseteo ID={}", token.getIdToken());
         return tokenRepository.save(token);
     }
 
     // Busca por token y tipo
     public Optional<Token> findByToken(String token) {
-        logger.debug("Buscando token de reseteo: {}", token);
+        log.debug("Buscando token de reseteo: {}", token);
         return tokenRepository.findByTokenAndTipo(token, TipoToken.RESET);
     }
 
     // Busca por usuario, dispositivo y tipo
     public Optional<Token> findByUsuarioAndDispositivo(Usuario usuario, String dispositivo) {
-        logger.debug("Buscando token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
-        return tokenRepository.findByUsuarioAndIpDispositivoAndTipo(usuario, dispositivo, TipoToken.RESET);
+        log.debug("Buscando token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
+        return tokenRepository.findByUsuario_IdUsuarioAndIpDispositivoAndTipo(usuario.getIdUsuario(), dispositivo, TipoToken.RESET);
     }
 }

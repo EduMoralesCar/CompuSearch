@@ -18,19 +18,18 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenValidator jwtTokenValidator;
     private final JwtTokenParser jwtTokenParser;
     private final UsuarioService usuarioService;
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -40,8 +39,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Extraer token desde cookies
             String token = getCookieValue(request, "access_token");
 
-            if (token == null) {
-                logger.debug("No se encontró el token en las cookies.");
+            if (StringUtils.isBlank(token)) {
+                log.debug("No se encontró el token en las cookies.");
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -50,8 +49,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = jwtTokenParser.extractUsername(token);
 
             // Verificar si ya hay autenticación en el contexto
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                logger.debug("Intentando autenticar usuario: {}", username);
+            if (StringUtils.isNotBlank(username) &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
+                log.debug("Intentando autenticar usuario: {}", username);
 
                 // Cargar usuario desde base de datos
                 UserDetails userDetails = usuarioService.loadUserByUsername(username);
@@ -65,14 +65,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    logger.info("Autenticación exitosa para el usuario: {}", username);
+                    
+                    log.info("Autenticación exitosa para el usuario: {}", username);
                 } else {
-                    logger.warn("Token inválido o expirado para usuario: {}", username);
+                    log.warn("Token inválido o expirado para usuario: {}", username);
                 }
             }
 
         } catch (Exception e) {
-            logger.error("Error procesando JWT: {}", e.getMessage(), e);
+            log.error("Error procesando JWT: {}", e.getMessage(), e);
         }
 
         // Continuar con el flujo del filtro

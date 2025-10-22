@@ -7,5 +7,7 @@ import java.util.List;
 
 
 public interface TiendaRepository extends JpaRepository<Tienda, Long>{
+
+    // Obtiene una lista de las tiendas verificadas
     List<Tienda> findByVerificado(boolean verificado);
 }

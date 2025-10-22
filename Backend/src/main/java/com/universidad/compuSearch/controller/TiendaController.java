@@ -7,33 +7,31 @@ import com.universidad.compusearch.dto.TiendaResponse;
 import com.universidad.compusearch.service.TiendaService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/tiendas")
 @RequiredArgsConstructor
+@Slf4j
 public class TiendaController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TiendaController.class);
     private final TiendaService tiendaService;
 
     @GetMapping("/verificadas")
     public ResponseEntity<List<TiendaResponse>> obtenerTiendasVerificadas() {
-        logger.info("GET /tiendas/verificadas - solicitando tiendas verificadas");
+        log.info("GET /tiendas/verificadas - solicitando tiendas verificadas");
 
         List<TiendaResponse> tiendasResponse = tiendaService.obtenerTiendasVerificadas()
-            .stream()
-            .map(tiendaService::mapToTienda)
-            .toList();
+                .stream()
+                .map(tiendaService::mapToTienda)
+                .toList();
 
-        logger.info("Se retornaron {} tiendas verificadas.", tiendasResponse.size());
+        log.info("Se retornaron {} tiendas verificadas.", tiendasResponse.size());
         return ResponseEntity.ok(tiendasResponse);
     }
 }
-

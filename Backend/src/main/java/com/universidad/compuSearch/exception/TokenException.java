@@ -1,5 +1,6 @@
 package com.universidad.compusearch.exception;
 
+// Excepciones de token
 public class TokenException extends CustomException{
     public TokenException(String message, int status, String code) {
         super(message, status, code);

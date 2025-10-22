@@ -1,5 +1,6 @@
 package com.universidad.compusearch.exception;
 
+// Excepciones de usuario
 public class UserException extends CustomException{
 
     public UserException(String message, int status, String code) {

@@ -9,6 +9,7 @@ import { resetService } from "../features/auth/services/resetService";
 export const AuthProvider = ({ children }) => {
     const [tipoUsuario, setTipoUsuario] = useState(null);
     const [usuario, setUsuario] = useState(null);
+    const [idUsuario, setIdUsuario] = useState(null);
     const [sessionReady, setSessionReady] = useState(false);
     const [sessionError, setSessionError] = useState(null);
 
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }) => {
 
             setUsuario(res.data);
             setTipoUsuario(res.data.tipoUsuario);
+            setIdUsuario(res.data.idUsuario);
 
             return { success: true };
         } catch (error) {
@@ -43,6 +45,7 @@ export const AuthProvider = ({ children }) => {
 
             setUsuario(res.data);
             setTipoUsuario(res.data.tipoUsuario);
+            setIdUsuario(res.data.idUsuario);
 
             return { success: true };
         } catch (error) {
@@ -73,37 +76,87 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = () => {
-        setUsuario(null);
-        setTipoUsuario(null);
+    const logout = async () => {
+        try {
+            await axios.post("http://localhost:8080/auth/logout", null, {
+                withCredentials: true,
+            });
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+        } finally {
+            setUsuario(null);
+            setTipoUsuario(null);
+            setIdUsuario(null)
+        }
+    };
+
+    const refreshSession = async () => {
+        try {
+            await axios.post("http://localhost:8080/auth/refresh", null, {
+                withCredentials: true,
+            });
+
+            const res = await axios.get("http://localhost:8080/auth/me", {
+                withCredentials: true,
+            });
+
+            setUsuario(res.data);
+            setTipoUsuario(res.data.tipoUsuario);
+            setIdUsuario(res.data.idUsuario);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al refrescar sesión:", error);
+            return {
+                success: false,
+                message: error.response?.data?.message || "No se pudo renovar la sesión",
+            };
+        }
     };
 
     useEffect(() => {
+        if (usuario && tipoUsuario && idUsuario) {
+            setSessionReady(true);
+            return;
+        }
+
         axios.get("http://localhost:8080/auth/me", { withCredentials: true })
             .then(res => {
                 setUsuario(res.data);
                 setTipoUsuario(res.data.tipoUsuario);
+                setIdUsuario(res.data.idUsuario);
             })
-            .catch((err) => {
-                setSessionError(err.response?.data?.message || "Error al cargar sesión");
-                logout();
+            .catch(async (err) => {
+                const status = err.response?.status;
+                if (status === 401 || status === 403) {
+                    const result = await refreshSession();
+                    if (!result.success) {
+                        setUsuario(null);
+                        setTipoUsuario(null);
+                        setIdUsuario(null);
+                    }
+                } else {
+                    setSessionError(err.response?.data?.message || "Error al cargar sesión");
+                    logout();
+                }
             })
             .finally(() => {
                 setSessionReady(true);
             });
-    }, []);
+    }, [tipoUsuario, usuario, idUsuario]);
 
     return (
         <AuthContext.Provider value={{
             usuario,
             tipoUsuario,
+            idUsuario,
             sessionReady,
             sessionError,
             login,
             logout,
             forgotPassword,
             resetPassword,
-            registro
+            registro,
+            refreshSession
         }}>
             {children}
         </AuthContext.Provider>

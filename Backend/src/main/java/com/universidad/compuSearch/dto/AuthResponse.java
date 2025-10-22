@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthResponse {
+    private long idUsuario;
     private String identificador;
     private String tipoUsuario;
 }

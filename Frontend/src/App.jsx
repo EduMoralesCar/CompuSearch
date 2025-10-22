@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
-import Header from "./components/Header/Header";
+import Header from "./components/header/Header";
 import AppRoute from "./routes/AppRoute";
 import Footer from "./components/Footer/Footer";
 import { applyHeaderOffset } from "./utils/layout";
 import AuthToast from "./components/AuthToast";
+import ScrollToTop from "./utils/ScrollToTop"
 
 import "./App.css"
 
@@ -17,6 +18,7 @@ const App = () => {
 
     return (
         <BrowserRouter>
+            <ScrollToTop />
             <Header />
             <AuthToast />
             <main>

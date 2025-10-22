@@ -15,7 +15,7 @@ import Categorias from "../features/navigation/pages/Categorias";
 import Builds from "../features/navigation/pages/Builds";
 import Componentes from "../features/navigation/pages/Componentes";
 import TiendasAfiliadas from "../features/navigation/pages/Tiendas";
-import ProductoDetalle from "../features/navigation/pages/ProductoDetalle";
+import ProductoDetalle from "../features/navigation/pages/ProductoDetalle"
 
 // Perfil
 import PerfilUsuario from "../features/perfil/pages/PerfilUsuario";

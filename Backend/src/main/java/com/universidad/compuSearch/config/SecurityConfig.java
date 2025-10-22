@@ -1,7 +1,5 @@
 package com.universidad.compusearch.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,16 +18,17 @@ import com.universidad.compusearch.jwt.JwtAuthenticationFilter;
 import com.universidad.compusearch.service.UsuarioService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+// Configuramos la sseguridad de los endpoints
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UsuarioService usuarioService;
-
-    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,7 +59,7 @@ public class SecurityConfig {
                 // Agregamos el filtro JWT antes del filtro de login por username/password
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        logger.info("Configuración de seguridad cargada correctamente. Filtros y endpoints asegurados.");
+        log.info("Configuración de seguridad cargada correctamente. Filtros y endpoints asegurados.");
         return http.build();
     }
 
@@ -76,14 +75,14 @@ public class SecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(usuarioService);
         authProvider.setPasswordEncoder(passwordEncoder());
 
-        logger.info("DaoAuthenticationProvider registrado con UsuarioService y BCryptPasswordEncoder.");
+        log.info("DaoAuthenticationProvider registrado con UsuarioService y BCryptPasswordEncoder.");
         return authProvider;
     }
 
     // AuthenticationManager: orquesta todo el proceso de autenticación
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        logger.info("AuthenticationManager inicializado.");
+        log.info("AuthenticationManager inicializado.");
         return config.getAuthenticationManager();
     }
 }
