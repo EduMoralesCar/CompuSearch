@@ -326,11 +326,11 @@ const Builds = () => {
         const result = await eliminarBuild(idBuild);
 
         if (result.success) {
-            if (result.data != null) {
-                SetIdBuild(null);
-                setbuildActual({});
-                setNombreActual("");
-            }
+            SetIdBuild(null);
+            setbuildActual({});
+            setNombreActual("");
+            setBuildActualizada({});
+            setNombreActualizado("");
         }
 
         setMensajeBuild(

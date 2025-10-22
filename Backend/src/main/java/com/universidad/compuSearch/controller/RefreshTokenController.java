@@ -58,7 +58,7 @@ public class RefreshTokenController {
                 refreshTokenService.revokeRefreshToken(refreshTokenValue);
 
                 ResponseCookie refreshCookie = cookieUtil.clearRefreshCookie();
-                ResponseCookie accessCookie = cookieUtil.clearRefreshCookie();
+                ResponseCookie accessCookie = cookieUtil.clearAccessCookie();
 
                 response.addHeader("Set-Cookie", refreshCookie.toString());
                 response.addHeader("Set-Cookie", accessCookie.toString());
