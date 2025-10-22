@@ -59,7 +59,6 @@ const Componentes = () => {
     error: errorProductos,
   } = useProductosTiendas({
     ...filtrosAplicados,
-    filtrosExtra,
     nombreProducto: searchQuery,
     page,
   });
@@ -97,17 +96,30 @@ const Componentes = () => {
   // Setea los precios por defecto (solo si no vienen de la URL o reset)
   useEffect(() => {
 
-    if (
-      rangoPrecio &&
-      precioMax === 0 &&
-      precioMin === 0 &&
-      !searchParams.has("precioMin") &&
-      !searchParams.has("precioMax")
-    ) {
-      setPrecioMax(rangoPrecio.precioMax);
-      setPrecioMin(rangoPrecio.precioMin);
+    // Si el hook rangoPrecio ya cargó los datos
+    if (rangoPrecio) {
+
+      // Si los precios NO vienen de la URL (carga normal o reset), y el precio visual está en 0 (señal de reset) O es la carga inicial.
+      if (
+        !searchParams.has("precioMin") &&
+        !searchParams.has("precioMax")
+      ) {
+        // Establece los sliders visuales al rango de la categoría actual
+        setPrecioMax(rangoPrecio.precioMax);
+        setPrecioMin(rangoPrecio.precioMin);
+      }
+
+      // Si los precios SÍ vienen de la URL (carga de página)
+      else {
+        const precioMinParam = parseInt(searchParams.get("precioMin"), 10);
+        const precioMaxParam = parseInt(searchParams.get("precioMax"), 10);
+
+        if (!isNaN(precioMinParam)) setPrecioMin(precioMinParam);
+        if (!isNaN(precioMaxParam)) setPrecioMax(precioMaxParam);
+      }
     }
-  }, [rangoPrecio, precioMax, precioMin, searchParams]);
+
+  }, [rangoPrecio, searchParams]);
 
   // Carga los filtros extra (atributos) desde la URL
   useEffect(() => {
@@ -231,8 +243,8 @@ const Componentes = () => {
   // Resetear Filtros (Botón)
   const resetearFiltros = () => {
 
-    setPrecioMax(0);
-    setPrecioMin(0);
+    const defaultPrecioMin = rangoPrecio?.precioMin ?? 0;
+    const defaultPrecioMax = rangoPrecio?.precioMax ?? 1000000;
 
     // Resetea el estado visual
     setCategoria("Todas");
@@ -240,6 +252,9 @@ const Componentes = () => {
     setTienda("Todas");
     setDisponibilidad("Todas");
     setPage(0);
+
+    setPrecioMax(0);
+    setPrecioMin(0);
 
     const resetFiltrosExtraVisual = Object.fromEntries(
       Object.keys(filtrosExtra).map((key) => [key, "Todas"])
@@ -250,8 +265,8 @@ const Componentes = () => {
     setFiltrosAplicados({
       categoria: "Todas",
       nombreTienda: "",
-      precioMax: 0,
-      precioMin: 0,
+      precioMax: defaultPrecioMax,
+      precioMin: defaultPrecioMin,
       disponible: "Todas",
       marca: "Todas",
       page: 0,

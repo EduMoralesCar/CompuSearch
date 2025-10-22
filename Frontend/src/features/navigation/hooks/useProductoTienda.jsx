@@ -9,15 +9,17 @@ export default function useProductosTiendas({
     disponible,
     marca,
     nombreProducto,
-    filtrosExtra = {},
     page = 0,
     size = 15,
+    ...filtrosExtra
 }) {
     const [productos, setProductos] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const filtrosExtraString = JSON.stringify(filtrosExtra);
 
     useEffect(() => {
         const fetchProductos = async () => {
@@ -76,7 +78,7 @@ export default function useProductosTiendas({
 
         fetchProductos();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [categoria, nombreTienda, precioMax, precioMin, disponible, marca, nombreProducto, page, size]);
+    }, [categoria, nombreTienda, precioMax, precioMin, disponible, marca, nombreProducto, page, size, filtrosExtraString]);
 
     return { productos, totalPages, totalElements, loading, error };
 }
