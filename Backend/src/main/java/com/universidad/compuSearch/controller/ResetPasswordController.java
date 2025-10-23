@@ -1,86 +1,59 @@
-package com.universidad.compuSearch.controller;
+package com.universidad.compusearch.controller;
 
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.universidad.compuSearch.entity.ResetToken;
-import com.universidad.compuSearch.entity.Usuario;
-import com.universidad.compuSearch.service.AuthService;
-import com.universidad.compuSearch.service.EmailService;
-import com.universidad.compuSearch.service.ResetPasswordAttemptService;
-import com.universidad.compuSearch.service.ResetTokenService;
+import com.universidad.compusearch.dto.ForgotPasswordRequest;
+import com.universidad.compusearch.dto.MessageResponse;
+import com.universidad.compusearch.dto.ResetPasswordRequest;
+import com.universidad.compusearch.entity.Token;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.service.AuthService;
+import com.universidad.compusearch.service.EmailService;
+import com.universidad.compusearch.service.ResetPasswordService;
+import com.universidad.compusearch.service.ResetTokenService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/auth/password")
 @RequiredArgsConstructor
+@Slf4j
 public class ResetPasswordController {
 
     private final AuthService authService;
     private final ResetTokenService resetTokenService;
-    private final ResetPasswordAttemptService resetAttemptService;
     private final EmailService emailService;
+    private final ResetPasswordService resetPasswordService;
 
+    // Endpoint para iniciar recuperación de contraseña
     @PostMapping("/forgot")
-    public ResponseEntity<?> forgot(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        if (email == null || email.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Email requerido"));
-        }
+    public ResponseEntity<MessageResponse> forgot(@Valid @RequestBody ForgotPasswordRequest request) {
+        log.info("Solicitud de recuperación de contraseña para email: {}", request.getEmail());
 
-        if (resetAttemptService.isBlocked(email)) {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body(Map.of("error", "Demasiados intentos. Intenta más tarde."));
-        }
+        Usuario usuario = resetPasswordService.validateEmail(request.getEmail());
+        Token resetToken = resetTokenService.createOrUpdateResetToken(usuario, request.getDispositivo());
+        emailService.sendPasswordResetEmail(request.getEmail(), resetToken.getToken());
 
-        Usuario usuario = authService.findByEmail(email);
-        if (usuario == null) {
-            resetAttemptService.requestFailed(email);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Usuario no encontrado"));
-        }
-
-        ResetToken token = resetTokenService.createToken(usuario, 3600_000);
-
-        emailService.sendPasswordResetEmail(email, token.getToken());
-
-        resetAttemptService.requestSucceeded(email);
-        return ResponseEntity.ok(Map.of(
-                "message", "Se ha enviado un correo con instrucciones para restablecer tu contraseña"));
+        log.info("Token de reseteo generado y enviado para usuario ID: {}", usuario.getIdUsuario());
+        return ResponseEntity
+                .ok(new MessageResponse("Se ha enviado un correo con instrucciones para restablecer tu contraseña"));
     }
 
+    // Endpoint para aplicar nueva contraseña usando el token
     @PostMapping("/reset")
-    public ResponseEntity<?> reset(@RequestBody Map<String, String> request) {
-        String tokenStr = request.get("token");
-        String nuevaPassword = request.get("password");
+    public ResponseEntity<MessageResponse> reset(@Valid @RequestBody ResetPasswordRequest request) {
+        log.info("Solicitud de reseteo de contraseña con token: {}", request.getToken().substring(0, 6));
 
-        if (tokenStr == null || tokenStr.isBlank() || nuevaPassword == null || nuevaPassword.isBlank()) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Token y nueva contraseña requeridos"));
-        }
+        Usuario usuario = resetPasswordService.validateResetToken(request.getToken());
+        authService.updatePassword(usuario, request.getContrasena());
 
-        if (resetAttemptService.isBlocked(tokenStr)) {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body(Map.of("error", "Demasiados intentos con este token. Intenta más tarde."));
-        }
-
-        try {
-            ResetToken token = resetTokenService.findValidToken(tokenStr);
-            authService.updatePassword(token.getUsuario(), nuevaPassword);
-            resetTokenService.revokeToken(token);
-            resetAttemptService.requestSucceeded(token.getUsuario().getEmail());
-            return ResponseEntity.ok(Map.of("message", "Contraseña restablecida correctamente"));
-        } catch (RuntimeException e) {
-            resetAttemptService.requestFailed(tokenStr);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", e.getMessage()));
-        }
+        log.info("Contraseña actualizada para usuario ID: {}", usuario.getIdUsuario());
+        return ResponseEntity.ok(new MessageResponse("Contraseña restablecida correctamente"));
     }
 }

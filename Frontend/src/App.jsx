@@ -1,67 +1,32 @@
-import React, { useEffect, useState } from "react"
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import Header from "./components/Header"
-import Footer from "./components/Footer"
-import ScrollToTop from "./components/ScrollToTop" 
+import React, { useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
+import Header from "./components/header/Header";
+import AppRoute from "./routes/AppRoute";
+import Footer from "./components/Footer/Footer";
+import { applyHeaderOffset } from "./utils/layout";
+import AuthToast from "./components/AuthToast";
+import ScrollToTop from "./utils/ScrollToTop"
 
-import Home from "./pages/Home"
-import Componentes from "./pages/Componentes"
-import Tiendas from "./pages/Tiendas"
-import Categorias from "./pages/Categorias"
-import Builds from "./pages/Builds"
-import Login from "./pages/Login"
-import Registro from "./pages/Registro"
-import Perfil from "./pages/Perfil";
-import ForgotPassword from "./pages/ForgotPassword"
-import ResetPassword from "./pages/ResetPassword"
-import NotFound from "./pages/NotFound"
+import "./App.css"
 
 const App = () => {
-  const [headerHeight, setHeaderHeight] = useState(0)
+    useEffect(() => {
+        applyHeaderOffset();
+        window.addEventListener("resize", applyHeaderOffset);
+        return () => window.removeEventListener("resize", applyHeaderOffset);
+    }, []);
 
-  useEffect(() => {
-    const header = document.querySelector("header")
+    return (
+        <BrowserRouter>
+            <ScrollToTop />
+            <Header />
+            <AuthToast />
+            <main>
+                <AppRoute />
+            </main>
+            <Footer />
+        </BrowserRouter>
+    );
+};
 
-    if (header) {
-      const resizeObserver = new ResizeObserver((entries) => {
-        for (let entry of entries) {
-          setHeaderHeight(entry.contentRect.height)
-        }
-      })
-
-      resizeObserver.observe(header)
-
-      return () => resizeObserver.disconnect()
-    }
-  }, [])
-
-  return (
-    <Router>
-      <ScrollToTop />
-      <div className="d-flex flex-column min-vh-100">
-        <Header />
-
-        <main className="flex-grow-1" style={{ paddingTop: headerHeight }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/componentes" element={<Componentes />} />
-            <Route path="/tiendas" element={<Tiendas />} />
-            <Route path="/categorias" element={<Categorias />} />
-            <Route path="/builds" element={<Builds />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/registro" element={<Registro />} />
-            <Route path="/perfil" element={<Perfil />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            {/* Esta es la ruta de comodín para las URLs que no existen */}
-            <Route path="*" element={<NotFound />} /> 
-          </Routes>
-        </main>
-
-        <Footer />
-      </div>
-    </Router>
-  )
-}
-
-export default App
+export default App;

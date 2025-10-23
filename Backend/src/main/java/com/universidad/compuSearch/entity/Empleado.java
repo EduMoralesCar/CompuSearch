@@ -1,4 +1,4 @@
-package com.universidad.compuSearch.entity;
+package com.universidad.compusearch.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,35 +14,31 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// Entidad que representa al empleado
 @Entity
 @Table(name = "empleado")
 @PrimaryKeyJoinColumn(name = "idUsuario")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Empleado extends Usuario {
 
-    @Column(nullable = false)
-    private LocalDateTime fechaAsignacion = LocalDateTime.now();
-
-    @Column(nullable = false)
-    @NotBlank
+    @Column(nullable = false, length = 50)
     private String nombre;
 
-    @Column(nullable = false)
-    @NotBlank
+    @Column(nullable = false, length = 50)
     private String apellido;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rol rol;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaAsignacion = LocalDateTime.now();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -51,5 +47,4 @@ public class Empleado extends Usuario {
         authorities.add(new SimpleGrantedAuthority("ROLE_" + rol.name()));
         return authorities;
     }
-
 }

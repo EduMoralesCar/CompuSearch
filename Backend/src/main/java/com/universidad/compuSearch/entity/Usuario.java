@@ -1,6 +1,7 @@
-package com.universidad.compuSearch.entity;
+package com.universidad.compusearch.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,33 +9,40 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
 
+// Entidad que reprenseta al usuario
 @Entity
 @Table(name = "usuario")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Usuario implements UserDetails{
-    
+public class Usuario implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idUsuario;
+
+    @Column(nullable = false, unique = true)
+    private String username;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
@@ -45,12 +53,22 @@ public class Usuario implements UserDetails{
     @Column(nullable = false)
     private boolean activo = true;
 
-    @Column(nullable = false)
-    private LocalDateTime fechaRegistro = LocalDateTime.now();
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoUsuario tipoUsuario;
+
+    @Column(nullable = false)
+    private LocalDateTime fechaRegistro = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    @JsonManagedReference
+    private List<Build> builds = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    @JsonManagedReference
+    private List<Token> tokens = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -64,7 +82,7 @@ public class Usuario implements UserDetails{
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override
