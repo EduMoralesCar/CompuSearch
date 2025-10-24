@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { applyHeaderOffset } from "../../../utils/layout";
+import { MarginTop } from "../../../utils/MarginTop";
 
 const NotFound = () => {
     useEffect(() => {
-        applyHeaderOffset();
-        window.addEventListener("resize", applyHeaderOffset);
-        return () => window.removeEventListener("resize", applyHeaderOffset);
+        MarginTop();
+        window.addEventListener("resize", MarginTop);
+        return () => window.removeEventListener("resize", MarginTop);
     }, []);
 
     return (

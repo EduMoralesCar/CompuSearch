@@ -8,7 +8,7 @@ const RequireTipoUsuario = ({ tiposPermitidos, children }) => {
 
     if (!tipoUsuario) return <Navigate to="/login" replace />;
 
-    if (!tiposPermitidos.includes(tipoUsuario)) return <Navigate to="/unauthorized" replace />;
+    if (!tiposPermitidos.includes(tipoUsuario)) return <Navigate to="/Unauthorized" replace />;
 
     return children;
 };

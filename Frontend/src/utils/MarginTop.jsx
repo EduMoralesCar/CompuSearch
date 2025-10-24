@@ -1,4 +1,4 @@
-export const applyHeaderOffset = () => {
+export const MarginTop = () => {
     const header = document.querySelector("header");
     const main = document.querySelector("main");
     if (header && main) {
