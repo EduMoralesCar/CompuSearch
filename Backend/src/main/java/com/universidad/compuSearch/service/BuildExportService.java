@@ -78,24 +78,47 @@ public class BuildExportService {
     }
 
     private void agregarLogo(Sheet sheet, CreationHelper helper, Workbook workbook) {
+
+        for (int r = 0; r < 6; r++) { 
+            Row row = sheet.getRow(r);
+            if (row == null)
+                row = sheet.createRow(r);
+
+            for (int c = 0; c < 4; c++) {
+                Cell cell = row.createCell(c);
+                CellStyle bgStyle = workbook.createCellStyle();
+                bgStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+                bgStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                cell.setCellStyle(bgStyle);
+            }
+        }
+
         try {
             byte[] imageBytes = CargarImagen.cargarImagen("static/images/util/logo.png");
+
             if (imageBytes != null) {
                 int pictureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
                 Drawing<?> drawing = sheet.createDrawingPatriarch();
+
                 ClientAnchor anchor = helper.createClientAnchor();
-                anchor.setCol1(2);
+                anchor.setCol1(0);
                 anchor.setRow1(0);
-                Picture pict = drawing.createPicture(anchor, pictureIdx);
-                pict.resize(4.0, 4.0);
+                anchor.setCol2(4);
+                anchor.setRow2(6);
+
+                drawing.createPicture(anchor, pictureIdx);
+
+                log.info("Logo agregado correctamente a la hoja de resumen.");
+            } else {
+                log.warn("No se pudo cargar el logo (bytes nulos).");
             }
         } catch (Exception e) {
-            log.warn("No se pudo cargar el logo: {}", e.getMessage());
+            log.warn("Error al agregar el logo: {}", e.getMessage());
         }
     }
 
     private void escribirResumen(Sheet sheet, Build build, CellStyle headerStyle, CellStyle currencyStyle) {
-        int rowIdx = 5;
+        int rowIdx = 6;
         Usuario usuario = build.getUsuario();
 
         // Estilo para compatibilidad
@@ -107,7 +130,7 @@ public class BuildExportService {
                 build.isCompatible() ? IndexedColors.LIGHT_GREEN.getIndex() : IndexedColors.ROSE.getIndex());
         compatibleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-        String compatText = build.isCompatible() ? "✅ Sí" : "❌ No";
+        String compatText = build.isCompatible() ? "Sí" : "No";
 
         String[][] resumen = {
                 { "ID Build", String.valueOf(build.getIdBuild()) },
