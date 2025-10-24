@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuthStatus } from "../hooks/useAuthStatus";
+import { useAuthStatus } from "../../hooks/useAuthStatus";
 
 const AuthToast = () => {
     const { isAuthenticated, sessionReady } = useAuthStatus();

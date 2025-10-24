@@ -1,6 +1,6 @@
-import ProductoImagen from "../components/ProductoImagen";
-import ProductoInfo from "../components/ProductoInfo";
-import TablaTiendas from "../components/TablaTiendas";
+import ProductoImagen from "../components/productoDetalle/ProductoImagen";
+import ProductoInfo from "../components/productoDetalle/ProductoInfo";
+import TablaTiendas from "../components/productoDetalle/TablaTiendas";
 import { useDatosProductos } from "../hooks/useDatosProductos";
 
 const ProductoDetalle = () => {

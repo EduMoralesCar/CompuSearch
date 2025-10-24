@@ -3,7 +3,7 @@ import NavbarMobile from "./NavbarMobile";
 import NavbarDesktop from "./NavbarDesktop";
 import SearchBar from "./SearchBar";
 import { NavLink } from "react-router-dom";
-import Logo from "../../assets/logo.webp";
+import Logo from "../../assets/logo/logo.webp";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min";
 
 const Header = () => {

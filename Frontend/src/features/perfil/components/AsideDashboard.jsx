@@ -1,5 +1,5 @@
 import { Nav } from "react-bootstrap";
-import Logo from "../../../assets/logo.webp";
+import Logo from "../../../assets/logo/logo.webp";
 import { NavLink } from "react-router-dom";
 import BotonLogout from "./BotonLogout";
 

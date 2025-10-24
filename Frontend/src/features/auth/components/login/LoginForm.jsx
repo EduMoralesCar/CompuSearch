@@ -1,15 +1,16 @@
 import React from "react";
 import { Form, Button, Spinner, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-const RegistroForm = ({
-    username,
-    setUsername,
-    email,
-    setEmail,
+const LoginForm = ({
+    identifier,
+    setIdentifier,
     password,
     setPassword,
     showPassword,
     togglePassword,
+    rememberMe,
+    setRememberMe,
     errors,
     feedbackMessage,
     feedbackType = "danger",
@@ -18,39 +19,24 @@ const RegistroForm = ({
 }) => {
     return (
         <Form onSubmit={handleSubmit}>
-            {/* Username */}
+            {/* Identificador */}
             <Form.Group className="mb-3">
-                <Form.Label>Nombre de usuario</Form.Label>
+                <Form.Label>Correo o Usuario</Form.Label>
                 <Form.Control
                     type="text"
-                    value={username}
-                    placeholder="Ej: Pepe123"
-                    isInvalid={!!errors.username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={identifier}
+                    placeholder="Ingresa tu correo o usuario"
+                    isInvalid={!!errors.identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
                     disabled={loading}
+                    autoComplete="username"
                 />
                 <Form.Control.Feedback type="invalid">
-                    {errors.username}
+                    {errors.identifier}
                 </Form.Control.Feedback>
             </Form.Group>
 
-            {/* Email */}
-            <Form.Group className="mb-3">
-                <Form.Label>Correo electrónico</Form.Label>
-                <Form.Control
-                    type="text"
-                    value={email}
-                    placeholder="ejemplo@correo.com"
-                    isInvalid={!!errors.email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={loading}
-                />
-                <Form.Control.Feedback type="invalid">
-                    {errors.email}
-                </Form.Control.Feedback>
-            </Form.Group>
-
-            {/* Password */}
+            {/* Contraseña */}
             <Form.Group className="mb-3">
                 <Form.Label>Contraseña</Form.Label>
                 <div className="input-group">
@@ -61,12 +47,9 @@ const RegistroForm = ({
                         isInvalid={!!errors.password}
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={loading}
+                        autoComplete="current-password"
                     />
-                    <Button
-                        variant="outline-secondary"
-                        onClick={togglePassword}
-                        disabled={loading}
-                    >
+                    <Button variant="outline-secondary" onClick={togglePassword} disabled={loading}>
                         <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`} />
                     </Button>
                 </div>
@@ -75,6 +58,26 @@ const RegistroForm = ({
                 )}
             </Form.Group>
 
+            {/* Recuérdame + Olvidaste */}
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <div
+                    className="d-flex align-items-center gap-2 cursor-pointer"
+                    onClick={() => !loading && setRememberMe(!rememberMe)}
+                >
+                    <i
+                        className={`bi ${rememberMe ? "bi-toggle-on" : "bi-toggle-off"} text-primary fs-4`}
+                    />
+                    <span className="text-decoration-none">Recuérdame</span>
+                </div>
+
+                <Link
+                    to="/forgot-password"
+                    className="small text-decoration-none justify-content-end"
+                >
+                    ¿Olvidaste tu contraseña?
+                </Link>
+            </div>
+
             {/* Mensaje de éxito */}
             {feedbackMessage && (
                 <Alert variant={feedbackType} className="py-2">
@@ -82,20 +85,19 @@ const RegistroForm = ({
                 </Alert>
             )}
 
-
             {/* Submit */}
             <Button type="submit" variant="primary" className="w-100" disabled={loading}>
                 {loading ? (
                     <>
                         <Spinner animation="border" size="sm" className="me-2" />
-                        Creando cuenta...
+                        Iniciando sesión...
                     </>
                 ) : (
-                    "Crear cuenta"
+                    "Iniciar Sesión"
                 )}
             </Button>
         </Form>
     );
 };
 
-export default RegistroForm;
+export default LoginForm;

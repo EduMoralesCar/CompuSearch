@@ -1,9 +1,9 @@
 import { useAuth } from "../context/useAuth";
 
 export const useAuthStatus = () => {
-    const { usuario, tipoUsuario, idUsuario, sessionReady } = useAuth();
+    const { usuario, tipoUsuario, idUsuario, rol, sessionReady } = useAuth();
 
     const isAuthenticated = !!usuario;
 
-    return { isAuthenticated, tipoUsuario, idUsuario, sessionReady };
+    return { isAuthenticated, tipoUsuario, idUsuario, rol, sessionReady };
 };

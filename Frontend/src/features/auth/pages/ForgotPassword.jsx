@@ -3,7 +3,7 @@ import { Card } from "react-bootstrap";
 import { useAuth } from "../../../context/useAuth";
 import { validateForgotPassword } from "../validations/validateForgotPassword";
 import axios from "axios";
-import ForgotPasswordForm from "../components/ForgotPasswordForm";
+import ForgotPasswordForm from "../components/forgotPassword/ForgotPasswordForm";
 
 const ForgotPassword = () => {
     const { forgotPassword } = useAuth();

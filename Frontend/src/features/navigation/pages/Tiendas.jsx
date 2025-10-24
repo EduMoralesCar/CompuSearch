@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import useTiendas from "../hooks/useTienda";
 import useEtiquetas from "../hooks/useEtiquetas";
-import TiendaFilters from "../components/TiendaFilters";
-import TiendaCard from "../components/TiendaCard";
+import TiendaFilters from "../components/tiendas/TiendaFilters";
+import TiendaCard from "../components/tiendas/TiendaCard";
 import bannerTiendas from "../../../assets/banners/banner_tiendas.jpg";
-import BannerHeader from "../components/BannerHeader"
+import BannerHeader from "../components/auxliar/BannerHeader"
 
 export default function Tiendas() {
     const { tiendas, loading, error } = useTiendas();

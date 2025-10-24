@@ -28,6 +28,7 @@ const ResetPasswordForm = ({
                     onChange={(e) => setPassword(e.target.value)}
                     isInvalid={!!errors.password}
                     disabled={loading}
+                    autoComplete="new-password"
                 />
                 <Button
                     variant="outline-secondary"
@@ -54,6 +55,7 @@ const ResetPasswordForm = ({
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     isInvalid={!!errors.confirmPassword}
                     disabled={loading}
+                    autoComplete="new-password"
                 />
                 <Button
                     variant="outline-secondary"

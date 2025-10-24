@@ -22,6 +22,7 @@ const ForgotPasswordForm = ({
                     onChange={(e) => setEmail(e.target.value)}
                     isInvalid={!!errors.email}
                     disabled={loading}
+                    autoComplete="email"
                 />
                 <Form.Control.Feedback type="invalid">
                     {errors.email}

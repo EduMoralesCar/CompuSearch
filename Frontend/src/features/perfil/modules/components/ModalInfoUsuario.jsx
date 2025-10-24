@@ -1,7 +1,7 @@
 import { Modal, Button, ListGroup } from "react-bootstrap";
 
 const ModalInfoUsuario = ({ show, handleClose, usuario }) => {
-    
+
     // Capitaliza la primera letra de un string (ej: "nombre" -> "Nombre")
     const capitalizar = (str) => {
         if (!str) return '';
@@ -19,7 +19,7 @@ const ModalInfoUsuario = ({ show, handleClose, usuario }) => {
                 {usuario ? (
                     <ListGroup variant="flush">
                         {/* Iteramos sobre todas las propiedades del objeto usuario 
-                          para mostrarlas dinámicamente
+                        para mostrarlas dinámicamente
                         */}
                         {Object.entries(usuario).map(([key, value]) => (
                             <ListGroup.Item key={key}>

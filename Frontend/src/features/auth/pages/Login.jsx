@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/useAuth";
-import LoginCard from "../components/LoginCard";
-import RegisterCard from "../components/RegisterCard";
+import LoginCard from "../components/login/LoginCard";
+import RegisterCard from "../components/login/RegisterCard";
 import axios from "axios";
 import { validateLogin } from "../validations/validateLogin";
 

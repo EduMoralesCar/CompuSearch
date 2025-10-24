@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/header/Header";
-import Footer from "../components/Footer/Footer";
+import Footer from "../components/footer/Footer";
 import { useEffect } from "react";
-import { MarginTop } from "./MarginTop";
+import { MarginTop } from "../utils/MarginTop";
 import "../css/LayoutPrincipal.css"
 
 const LayoutPrincipal = () => {

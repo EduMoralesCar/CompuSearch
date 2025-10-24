@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Container } from "react-bootstrap";
-import BannerHeader from "../components/BannerHeader";
-import BuildsSummary from "../components/BuildsSummary";
-import BuildsTable from "../components/BuildsTable";
+import BannerHeader from "../components/auxliar/BannerHeader";
+import BuildsSummary from "../components/builds/info/BuildsSummary";
+import BuildsTable from "../components/builds/info/BuildsTable";
 import bannerBuilds from "../../../assets/banners/banner_builds.png";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 import useCategorias from "../hooks/useCategorias";
 import useBuilds from "../hooks/useBuilds";
-import BuildAuthModal from "../components/BuildAuthModal";
-import BuildProductModal from "../components/BuildProductModal";
-import BuildsModal from "../components/BuildsModal";
+import BuildAuthModal from "../components/builds/modal/BuildAuthModal";
+import BuildProductModal from "../components/builds/modal/BuildProductModal";
+import BuildsModal from "../components/builds/modal/BuildsModal";
 import { validarCompatibilidad } from "../validation/validarCompatibilidad"
-import CompatibilidadModal from "../components/CompatibilidadModal"
+import CompatibilidadModal from "../components/builds/modal/CompatibilidadModal"
 
 const Builds = () => {
     // Obtener si el usuario inicio sesion

@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import RedirectIfAuthenticated from "../components/RedirectIfAuthenticated";
-import RequireAnonimo from "../components/RequireAnonimo";
-import RequireTipoUsuario from "../components/RequireTipoUsuario";
+import RedirectIfAuthenticated from "../components/auth/RedirectIfAuthenticated";
+import RequireAnonimo from "../components/auth/RequireAnonimo";
+import RequireTipoUsuario from "../components/auth/RequireTipoUsuario";
 
 // Auth
 import Login from "../features/auth/pages/Login";
@@ -27,8 +27,8 @@ import NotFound from "../features/auxiliar/pages/NotFound";
 import Unauthorized from "../features/auxiliar/pages/Unauthorized";
 
 // Layouts
-import LayoutPrincipal from "../utils/LayoutPrincipal";
-import LayoutPerfil from "../utils/LayoutPerfil";
+import LayoutPrincipal from "../layout/LayoutPrincipal";
+import LayoutPerfil from "../layout/LayoutPerfil";
 
 const AppRoute = () => {
     return (
