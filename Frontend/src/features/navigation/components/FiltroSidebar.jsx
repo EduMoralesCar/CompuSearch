@@ -19,7 +19,7 @@ const FiltrosSidebar = ({
   setFiltrosExtra,
   filtrosPorDefecto
 }) => {
-  
+
   // Hacemos la desestructuración segura por si rangoPrecio es null
   const minRango = rangoPrecio?.precioMin ?? 0;
   const maxRango = rangoPrecio?.precioMax ?? 10000; // Valor por defecto

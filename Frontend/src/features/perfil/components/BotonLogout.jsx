@@ -2,7 +2,7 @@ import { useAuth } from "../../../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
-const BotonLogout = ({ className = "", variant = "outline-danger", texto = "Cerrar sesión" }) => {
+const BotonLogout = ({ className = "", variant = "danger", texto = "Cerrar sesión" }) => {
     const { logout } = useAuth();
     const navigate = useNavigate();
 

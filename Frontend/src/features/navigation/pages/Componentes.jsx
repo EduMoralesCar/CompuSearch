@@ -95,10 +95,10 @@ const Componentes = () => {
 
   // Setea los precios por defecto (solo si no vienen de la URL o reset)
   useEffect(() => {
-    
+
     // Si el hook rangoPrecio ya cargó los datos
     if (rangoPrecio) {
-      
+
       // Si los precios NO vienen de la URL (carga normal o reset), y el precio visual está en 0 (señal de reset) O es la carga inicial.
       if (
         !searchParams.has("precioMin") &&
@@ -108,12 +108,12 @@ const Componentes = () => {
         setPrecioMax(rangoPrecio.precioMax);
         setPrecioMin(rangoPrecio.precioMin);
       }
-      
+
       // Si los precios SÍ vienen de la URL (carga de página)
       else {
         const precioMinParam = parseInt(searchParams.get("precioMin"), 10);
         const precioMaxParam = parseInt(searchParams.get("precioMax"), 10);
-        
+
         if (!isNaN(precioMinParam)) setPrecioMin(precioMinParam);
         if (!isNaN(precioMaxParam)) setPrecioMax(precioMaxParam);
       }
@@ -250,7 +250,7 @@ const Componentes = () => {
     setDisponibilidad("Todas");
     setPage(0);
 
-    setPrecioMax(0); 
+    setPrecioMax(0);
     setPrecioMin(0);
 
     const resetFiltrosExtraVisual = Object.fromEntries(
