@@ -106,4 +106,11 @@ public class ProductoTiendaService {
                 return productos.map(ProductoTiendaMapper::mapToProductoBuildResponse);
         }
 
+        public ProductoTienda obtenerPorId(long idProductoTienda) {
+                log.info("Obteniendo producto tienda con id: {}", idProductoTienda);
+                return productoTiendaRepository.findById(idProductoTienda).orElseThrow(
+                                () -> ProductoTiendaException.notFoundProductoOrShop());
+
+        }
+
 }

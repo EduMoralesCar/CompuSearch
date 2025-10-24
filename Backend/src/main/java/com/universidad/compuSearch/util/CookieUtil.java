@@ -18,19 +18,22 @@ public class CookieUtil {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(jwtConfig.getExpiration())
                 .sameSite("Strict")
                 .build();
     }
 
     public ResponseCookie createRefreshCookie(String token, boolean recordar) {
-        return ResponseCookie.from("refresh_token", token)
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("refresh_token", token)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(recordar? jwtConfig.getRefreshExpiration() : 0)
-                .sameSite("Strict")
-                .build();
+                .sameSite("Strict");
+
+        if (recordar) {
+            builder.maxAge(jwtConfig.getRefreshExpiration());
+        }
+
+        return builder.build();
     }
 
     public ResponseCookie clearAccessCookie() {

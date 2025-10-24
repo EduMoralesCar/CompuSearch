@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.universidad.compusearch.dto.BuildRequest;
 import com.universidad.compusearch.dto.BuildsInfoResponse;
 import com.universidad.compusearch.dto.DetalleAtributoResponse;
+import com.universidad.compusearch.dto.DetalleBuildRequest;
 import com.universidad.compusearch.dto.DetalleBuildResponse;
 import com.universidad.compusearch.entity.Build;
 import com.universidad.compusearch.entity.DetalleBuild;
@@ -30,6 +31,7 @@ public class BuildService {
 
     private final BuildRepository buildRepository;
     private final UsuarioService usuarioService;
+    private final ProductoTiendaService productoTiendaService;
 
     // Creaa y guarda la build
     public Build crearBuild(BuildRequest request) {
@@ -97,8 +99,22 @@ public class BuildService {
         buildExistente.setCostoTotal(buildRequest.getCostoTotal());
         buildExistente.setConsumoTotal(buildRequest.getConsumoTotal());
         buildExistente.setCompatible(buildRequest.isCompatible());
-        buildExistente.setDetalles(buildExistente.getDetalles());
-        // Si tienes detalles de componentes, también los puedes actualizar aquí.
+
+        buildExistente.getDetalles().clear();
+
+        buildRequest.getDetalles().forEach(detalleReq -> {
+            ProductoTienda productoTienda = productoTiendaService
+                    .obtenerPorId(detalleReq.getIdProductoTienda());
+
+            DetalleBuild detalle = new DetalleBuild();
+            detalle.setBuild(buildExistente);
+            detalle.setProductoTienda(productoTienda);
+            detalle.setCantidad(detalleReq.getCantidad());
+            detalle.setPrecioUnitario(detalleReq.getPrecioUnitario());
+            detalle.setSubTotal(detalleReq.getSubTotal());
+
+            buildExistente.getDetalles().add(detalle);
+        });
 
         return buildRepository.save(buildExistente);
     }
@@ -148,6 +164,16 @@ public class BuildService {
             response.setDetalles(detalleResponses);
             return response;
         });
+    }
+
+    public static DetalleBuild toEntity(DetalleBuildRequest request, ProductoTienda productoTienda, Build build) {
+        DetalleBuild detalle = new DetalleBuild();
+        detalle.setProductoTienda(productoTienda);
+        detalle.setBuild(build);
+        detalle.setCantidad(request.getCantidad());
+        detalle.setPrecioUnitario(request.getPrecioUnitario());
+        detalle.setSubTotal(request.getSubTotal());
+        return detalle;
     }
 
 }

@@ -5,7 +5,7 @@ export const validateRegistro = ({ username, email, password }) => {
         errors.username = "El nombre de usuario es obligatorio";
     } else if (/\s/.test(username)) {
         errors.username = "El nombre de usuario no debe contener espacios";
-    } else if (!/^[a-zA-Z0-9_.-]{3,20}$/.test(username)) {
+    } else if (!/^[a-zA-Z0-9_.\-ñÑ]{3,20}$/.test(username)) {
         errors.username = "Debe tener entre 3 y 20 caracteres alfanuméricos";
     }
 
