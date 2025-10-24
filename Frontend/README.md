@@ -19,24 +19,61 @@ Este directorio contendrá el desarrollo del frontend para **CompuSearch**.
   > con extensiones de React y JavaScript
 - **[WebStorm](https://www.jetbrains.com/webstorm/promo/?msclkid=4429641795d71dcbebea0cdb09c466c7&utm_source=bing&utm_medium=cpc&utm_campaign=AMER_en_AMER_WebStorm_Branded&utm_term=webstorm&utm_content=webstorm)** (opcional)
 
-## 📦 Estructura propuesta
+## 📦 Estructura del Frontend
 
 ```
 Frontend/
 │
-├── public/                 # Archivos estáticos y favicon
-├── src/                    # Código fuente principal
-│   ├── assets/             # Imágenes, estilos, etc.
-│   ├── components/         # Componentes reutilizables de React
-│   ├── pages/              # Vistas principales (páginas)
-│   ├── services/           # Lógica de conexión con el backend (APIs)
-│   ├── App.jsx             # Componente raíz
-│   └── main.jsx            # Punto de entrada
-├── .gitignore
-├── index.html
-├── package.json
-├── README.md
-└── vite.config.js
+├── 📁 node_modules/ 🚫 (auto-hidden)
+├── 📁 public/
+│   └── 🖼️ compusearch.svg
+├── 📁 src/
+│   ├── 📁 assets/
+│   │   ├── 📁 categorias/
+│   │   │   ├── 🖼️ cooler.webp
+│   │   │   ├── 🖼️ cpu.webp
+│   │   │   ├── 🖼️ gpu.png
+│   │   │   ├── 🖼️ motherboard.png
+│   │   │   ├── 📄 psu.avif
+│   │   │   ├── 🖼️ ram.png
+│   │   │   └── 🖼️ ssd.png
+│   │   ├── 📁 icons/
+│   │   │   ├── 🖼️ build.png
+│   │   │   ├── 🖼️ compare.png
+│   │   │   ├── 🖼️ power.png
+│   │   │   └── 🖼️ search.png
+│   │   ├── 🖼️ banner1.webp
+│   │   ├── 🖼️ banner2.jpg
+│   │   ├── 🖼️ boton.jpg
+│   │   └── 🖼️ logo.png
+│   ├── 📁 components/
+│   │   ├── 📄 Footer.jsx
+│   │   ├── 📄 Header.jsx
+│   │   └── 📄 ScrollToTop.jsx
+│   ├── 📁 pages/
+│   │   ├── 📄 Builds.jsx
+│   │   ├── 📄 Categorias.jsx
+│   │   ├── 📄 Componentes.jsx
+│   │   ├── 📄 ForgotPassword.jsx
+│   │   ├── 📄 Home.jsx
+│   │   ├── 📄 Login.jsx
+│   │   ├── 📄 NotFound.jsx
+│   │   ├── 📄 Perfil.jsx
+│   │   ├── 📄 Registro.jsx
+│   │   ├── 📄 ResetPassword.jsx
+│   │   ├── 📄 Tiendas.jsx
+│   │   └── 🎨 home.css
+│   ├── 🎨 App.css
+│   ├── 📄 App.jsx
+│   └── 📄 main.jsx
+├── 🚫 .gitignore
+├── 📖 README.md
+├── 📄 eslint.config.js
+├── 🌐 index.html
+├── 📄 package-lock.json
+├── 📄 package.json
+├── ⚙️ pnpm-lock.yaml
+└── 📄 vite.config.js
 ```
 
 ### 📁 Descripción rápida de carpetas
