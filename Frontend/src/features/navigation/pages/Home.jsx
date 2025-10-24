@@ -43,7 +43,7 @@ const timelineStyles = `
     .timeline-node {
         width: 100px;
         height: 100px;
-        background-color: #0d6efd; /* Color primary de Bootstrap */
+        background-color: #0d6efd;
         border: 3px solid white;
         border-radius: 50%;
         display: flex;
@@ -67,7 +67,7 @@ const timelineStyles = `
     }
     .timeline-line-h {
         position: absolute;
-        top: 60px; /* Centrado vertical del nodo + padding */
+        top: 60px;
         left: 15%;
         right: 15%;
         height: 4px;
@@ -81,10 +81,10 @@ const timelineStyles = `
     }
     .timeline-line-v {
         position: absolute;
-        top: 40px;    /* Mitad del primer nodo */
-        bottom: 40px; /* Mitad del último nodo */
-        left: 50%;    /* Centra la línea horizontalmente */
-        transform: translateX(-50%); /* Ajuste fino de centrado */
+        top: 40px;
+        bottom: 40px;
+        left: 50%; /* Centra la línea horizontalmente */
+        transform: translateX(-50%);
         width: 4px;
         background-color: #0d6efd;
         z-index: 1;
@@ -110,14 +110,51 @@ const Home = () => {
     // Ref para controlar el scroll de las categorías
     const scrollRef = useRef(null);
 
-    // Función para mover el scroll horizontal
+    // Función para mover el scroll con lógica de "loop infinito"
     const scroll = (direction) => {
         if (!scrollRef.current) return;
-        const scrollAmount = 260;
-        scrollRef.current.scrollBy({
-            left: direction === "left" ? -scrollAmount : scrollAmount,
-            behavior: "smooth",
-        });
+
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        
+        // Calcula el ancho de una columna dinámicamente
+        let scrollAmount = 0;
+        const row = scrollRef.current.children[0]; // El <Row>
+        if (row && row.children[1]) {
+            const firstItem = row.children[0];
+            const secondItem = row.children[1];
+            scrollAmount = secondItem.offsetLeft - firstItem.offsetLeft;
+        } else if (row && row.children[0]) {
+            scrollAmount = row.children[0].clientWidth;
+        } else {
+            scrollAmount = 260; // Fallback
+        }
+
+
+        if (direction === "left") {
+            // Si está en el inicio, salta al final
+            if (scrollLeft === 0) {
+                scrollRef.current.scrollTo({
+                    left: scrollWidth - clientWidth, // Salta al final
+                    behavior: "smooth",
+                });
+            } else {
+                scrollRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+            }
+        } else {
+            const maxScrollLeft = scrollWidth - clientWidth;
+            
+            // Comprueba si ya estamos en el final (con un buffer de 10px por si acaso)
+            if (scrollLeft >= maxScrollLeft - 10) { 
+                // Si sí, salta al inicio
+                scrollRef.current.scrollTo({
+                    left: 0,
+                    behavior: "smooth",
+                });
+            } else {
+                // Si no, solo avanza.scrollBy se detendrá automáticamente al llegar al final.
+                scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+            }
+        }
     };
 
     return (
@@ -130,6 +167,7 @@ const Home = () => {
                 <Carousel.Item>
                     <img className="d-block w-100" src={banner1} alt="First slide" />
                     <Carousel.Caption className="bg-dark bg-opacity-50 p-2 p-md-3 rounded">
+                        {/* Clases responsivas para el texto del carrusel */}
                         <h3 className="text-white fs-5 fs-md-3">Bienvenido a CompuSearch</h3>
                         <p className="text-white d-none d-md-block">Encuentra los mejores componentes para tu PC</p>
                     </Carousel.Caption>
