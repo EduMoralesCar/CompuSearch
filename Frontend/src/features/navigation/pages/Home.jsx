@@ -9,27 +9,28 @@ import {
     Col,
 } from "react-bootstrap";
 
-// Imágenes del carrusel (pueden seguir importándose si están en src)
+// Imágenes del carrusel
 import banner1 from "../../../assets/banners/banner_home_1.webp";
 import banner2 from "../../../assets/banners/banner_home_2.jpg";
 
-// Íconos desde src (puedes moverlos a public si prefieres)
+// Íconos
 import searchIcon from "../../../assets/icon/search.png";
 import compareIcon from "../../../assets/icon/compare.png";
 import buildIcon from "../../../assets/icon/build.png";
 import powerIcon from "../../../assets/icon/power.png";
 
-// Categorías desde public/assets/categorias
+// Definición de categorías
 const categorias = [
     { name: "Procesador", img: "/assets/categorias/procesador.jpg" },
     { name: "Placa Madre", img: "/assets/categorias/placa_madre.jpg" },
     { name: "Memoria RAM", img: "/assets/categorias/memoria_ram.jpg" },
     { name: "Almacenamiento", img: "/assets/categorias/almacenamiento.jpg" },
-    { name: "Tarjeta Gráfica", img: "/assets/categorias/tarjeta_video.jpg" },
+    { name: "Tarjeta de Video", img: "/assets/categorias/tarjeta_video.jpg" },
     { name: "Fuente de Poder", img: "/assets/categorias/fuente_poder.jpg" },
     { name: "Refrigeración CPU", img: "/assets/categorias/refrigeracion_cpu.jpg" },
 ];
 
+// Items para la sección "cómo funciona"
 const items = [
     { img: searchIcon, title: "Explora" },
     { img: compareIcon, title: "Compara" },
@@ -37,9 +38,79 @@ const items = [
     { img: powerIcon, title: "Potencia" },
 ];
 
+// Estilos CSS para la timeline (horizontal y vertical)
+const timelineStyles = `
+    .timeline-node {
+        width: 100px;
+        height: 100px;
+        background-color: #0d6efd; /* Color primary de Bootstrap */
+        border: 3px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2; /* Por encima de la línea */
+    }
+    .timeline-node img {
+        width: 60px;
+        height: auto;
+        filter: brightness(0) invert(1); /* Pone los iconos en blanco */
+    }
+
+    /* --- Timeline Horizontal (Desktop) --- */
+    .timeline-container-h {
+        position: relative;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .timeline-line-h {
+        position: absolute;
+        top: 60px; /* Centrado vertical del nodo + padding */
+        left: 15%;
+        right: 15%;
+        height: 4px;
+        background-color: #0d6efd;
+        z-index: 1; /* Por debajo de los nodos */
+    }
+
+    /* --- Timeline Vertical (Mobile) --- */
+    .timeline-container-v {
+        position: relative;
+    }
+    .timeline-line-v {
+        position: absolute;
+        top: 40px;    /* Mitad del primer nodo */
+        bottom: 40px; /* Mitad del último nodo */
+        left: 50%;    /* Centra la línea horizontalmente */
+        transform: translateX(-50%); /* Ajuste fino de centrado */
+        width: 4px;
+        background-color: #0d6efd;
+        z-index: 1;
+    }
+    .timeline-item-v {
+        text-align: center; 
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .timeline-item-v .timeline-node {
+        margin: 0 auto; /* Centra el nodo */
+        flex-shrink: 0;
+    }
+    .timeline-item-v h6 {
+        margin-left: 0;
+        margin-top: 0.5rem; /* Espacio entre nodo y texto */
+    }
+`;
+
+
 const Home = () => {
+    // Ref para controlar el scroll de las categorías
     const scrollRef = useRef(null);
 
+    // Función para mover el scroll horizontal
     const scroll = (direction) => {
         if (!scrollRef.current) return;
         const scrollAmount = 260;
@@ -51,13 +122,16 @@ const Home = () => {
 
     return (
         <div>
+            {/* Inyecta los estilos CSS de la timeline en el componente */}
+            <style>{timelineStyles}</style>
+
             {/* Carrusel principal */}
             <Carousel fade>
                 <Carousel.Item>
                     <img className="d-block w-100" src={banner1} alt="First slide" />
-                    <Carousel.Caption className="bg-dark bg-opacity-50 p-3 rounded">
-                        <h3 className="text-white">Bienvenido a CompuSearch</h3>
-                        <p className="text-white">Encuentra los mejores componentes para tu PC</p>
+                    <Carousel.Caption className="bg-dark bg-opacity-50 p-2 p-md-3 rounded">
+                        <h3 className="text-white fs-5 fs-md-3">Bienvenido a CompuSearch</h3>
+                        <p className="text-white d-none d-md-block">Encuentra los mejores componentes para tu PC</p>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item>
@@ -65,7 +139,7 @@ const Home = () => {
                 </Carousel.Item>
             </Carousel>
 
-            {/* Categorías */}
+            {/* Categorías Populares (Scroll horizontal responsivo) */}
             <Container fluid className="position-relative py-5">
                 <Row className="text-center mb-4">
                     <Col>
@@ -83,26 +157,32 @@ const Home = () => {
                     <i className="bi bi-chevron-left fs-4"></i>
                 </Button>
 
-                {/* Contenedor cards */}
+                {/* Contenedor de cards con scroll horizontal */}
                 <div
                     ref={scrollRef}
-                    className="d-flex overflow-auto gap-3 px-3"
+                    className="overflow-x-auto"
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }} // Oculta la barra de scroll
                 >
-                    {categorias.map((cat) => (
-                        <Link
-                            key={cat.name}
-                            to={`/componentes?categoria=${encodeURIComponent(cat.name)}`}
-                            style={{ textDecoration: "none", color: "inherit" }}
-                        >
-                            <Card className="shadow-sm border-0" style={{ minWidth: "200px" }}>
-                                <Card.Img src={cat.img} alt={cat.name} style={{ height: "150px", objectFit: "cover" }} />
-                                <Card.Body className="text-center bg-light">
-                                    <Card.Text className="fw-semibold">{cat.name}</Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Link>
-                    ))}
-
+                    {/* flex-nowrap evita que las columnas salten de línea */}
+                    <Row className="flex-nowrap gx-3 px-3">
+                        {categorias.map((cat) => (
+                            // Columnas responsivas: 2 en móvil, 3 en tablet, 4 en desktop
+                            <Col xs={6} md={4} lg={3} key={cat.name}>
+                                <Link
+                                    to={`/componentes?categoria=${encodeURIComponent(cat.name)}`}
+                                    style={{ textDecoration: "none", color: "inherit" }}
+                                >
+                                    {/* h-100 hace que todas las cards tengan la misma altura */}
+                                    <Card className="shadow-sm border-0 h-100">
+                                        <Card.Img src={cat.img} alt={cat.name} style={{ height: "150px", objectFit: "cover" }} />
+                                        <Card.Body className="text-center bg-light">
+                                            <Card.Text className="fw-semibold">{cat.name}</Card.Text>
+                                        </Card.Body>
+                                    </Card>
+                                </Link>
+                            </Col>
+                        ))}
+                    </Row>
                 </div>
 
                 {/* Flecha derecha */}
@@ -116,30 +196,49 @@ const Home = () => {
                 </Button>
             </Container>
 
-            {/* Sección ¿Por qué usar CompuSearch? */}
+            {/* Sección ¿Cómo funciona CompuSearch? (Timeline) */}
             <div className="bg-dark text-white py-5">
                 <Container>
-                    <h3 className="text-center mb-4">¿Por qué usar CompuSearch?</h3>
+                    <h3 className="text-center mb-5 fw-bold">¿CÓMO FUNCIONA COMPUSEARCH?</h3>
 
-                    <div className="bg-primary text-white p-4 rounded">
-                        <Row className="justify-content-center text-center">
+                    {/* Timeline Horizontal (Solo en Desktop: d-none d-md-block) */}
+                    <div className="d-none d-md-block timeline-container-h">
+                        <div className="timeline-line-h"></div>
+                        <Row>
                             {items.map((item, idx) => (
-                                <Col key={idx} xs={6} md={3} className="mb-4">
-                                    <div className="d-flex flex-column align-items-center">
-                                        <img src={item.img} alt={item.title} className="mb-2" style={{ width: "50px", height: "50px" }} />
-                                        <div className="bg-white rounded-circle mb-2" style={{ width: "10px", height: "10px" }}></div>
-                                        <h6 className="fw-bold text-white">{item.title}</h6>
+                                <Col md={3} key={idx} className="text-center">
+                                    <div className="timeline-node">
+                                        <img src={item.img} alt={item.title} />
                                     </div>
+                                    <h6 className="fw-bold h5 text-white mt-3">{item.title}</h6>
                                 </Col>
                             ))}
                         </Row>
+                    </div>
 
-                        <div className="text-center mt-4">
-                            <h5 className="fw-bold">CON MEJORES PRECIOS DEL MERCADO</h5>
+                    {/* Timeline Vertical (Solo en Móvil: d-md-none) */}
+                    <div className="d-md-none timeline-container-v">
+                        <div className="timeline-line-v"></div>
+                        {items.map((item, idx) => (
+                            <div key={idx} className="timeline-item-v">
+                                <div className="timeline-node">
+                                    <img src={item.img} alt={item.title} />
+                                </div>
+                                <h6 className="fw-bold text-white">{item.title}</h6>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Frase "Mejores Precios" */}
+                    <div className="text-center mt-5">
+                         <div className="bg-primary d-inline-block p-3 rounded shadow">
+                            <h5 className="fw-bold text-white m-0">
+                                CON MEJORES PRECIOS DEL MERCADO
+                            </h5>
                         </div>
                     </div>
 
-                    {/* CTA Armado */}
+                    {/* CTA (Call to Action) Armado de PC */}
                     <Row className="justify-content-center align-items-center text-center mt-5">
                         <Col xs={12} md="auto">
                             <h4 className="fw-bold mb-3 mb-md-0">¿Armando una PC desde cero?</h4>
