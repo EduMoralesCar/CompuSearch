@@ -39,6 +39,7 @@ public class AuthController {
                 log.info("Intento de login para identificador: {}", request.getIdentificador());
 
                 Usuario usuario = authService.authenticate(request.getIdentificador(), request.getContrasena());
+
                 String accessToken = authService.generateJwtToken(usuario);
                 Token refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario,
                                 request.getDispositivo());

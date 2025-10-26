@@ -1,7 +1,7 @@
 import { Nav } from "react-bootstrap";
 import Logo from "../../../assets/logo/logo.webp";
 import { NavLink } from "react-router-dom";
-import BotonLogout from "./BotonLogout";
+import BotonLogout from "../components/auxiliar/BotonLogout";
 
 const AsideDashboard = ({ setVistaActual, vistaActual, setSidebarAbierto }) => {
   const handleSelect = (vista) => {

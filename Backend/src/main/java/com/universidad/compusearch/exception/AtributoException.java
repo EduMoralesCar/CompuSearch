@@ -8,6 +8,6 @@ public class AtributoException extends CustomException {
     }
     
     public static AtributoException notFound() {
-        return new AtributoException("Atributo no encontrada", 404, "BUILD_NOT_FOUND");
+        return new AtributoException("Atributo no encontrada", 404, "ATRIBUTO_NOT_FOUND");
     }
 }

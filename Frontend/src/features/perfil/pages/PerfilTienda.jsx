@@ -1,4 +1,4 @@
-import BotonLogout from "../components/BotonLogout";
+import BotonLogout from "../components/auxiliar/BotonLogout";
 
 const PerfilTienda = () => {
     return (

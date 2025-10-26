@@ -5,10 +5,13 @@ import TiendaFilters from "../components/tiendas/TiendaFilters";
 import TiendaCard from "../components/tiendas/TiendaCard";
 import bannerTiendas from "../../../assets/banners/banner_tiendas.jpg";
 import BannerHeader from "../components/auxliar/BannerHeader"
+import {useAuthStatus } from "../../../hooks/useAuthStatus"
+import SolicitudTiendaForm from "../components/tiendas/SolicitudTiendaForm";
 
 export default function Tiendas() {
     const { tiendas, loading, error } = useTiendas();
     const { etiquetas, loading: loadingEtiquetas, error: errorEtiquetas } = useEtiquetas();
+    const { idUsuario, tipoUsuario } = useAuthStatus();
 
     const [etiquetaFilter, setEtiquetaFilter] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
@@ -65,6 +68,8 @@ export default function Tiendas() {
                         </div>
                     </>
                 )}
+
+                {tipoUsuario !== "TIENDA" && <SolicitudTiendaForm idUsuario={idUsuario} />}
             </main>
         </section>
     );

@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -29,6 +28,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UsuarioService usuarioService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -42,13 +42,25 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // Solo cuando el usuario este autenticado
-                        .requestMatchers("/auth/me").authenticated()
+                        .requestMatchers("/auth/me",
+                                "/usuario/**",
+                                "/incidentes/**",
+                                "/incidentes/**")
+                        .authenticated()
                         // Endpoints públicos: login, registro, refresh token, etc.
                         .requestMatchers("/auth/**").permitAll()
                         // Las paginas de navegacion estan disponibles
-                        .requestMatchers("/", "/categorias/**", "/productos/**", "/tiendas/**", 
-                        "/builds/**", "/etiquetas/**", "/productos/**", "/filtro/**",
-                        "/componentes/**", "/categorias").permitAll()
+                        .requestMatchers("/",
+                                "/categorias/**",
+                                "/productos/**",
+                                "/tiendas/**",
+                                "/builds/**",
+                                "/etiquetas/**",
+                                "/productos/**",
+                                "/filtro/**",
+                                "/componentes/**",
+                                "/categorias")
+                        .permitAll()
                         // Todo lo demás requiere autenticación
                         .anyRequest().authenticated())
 
@@ -63,17 +75,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Usamos BCrypt para codificar contraseñas de los usuarios
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     // Definimos cómo autenticar usuarios (cargar desde BD + validar password)
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(usuarioService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
 
         log.info("DaoAuthenticationProvider registrado con UsuarioService y BCryptPasswordEncoder.");
         return authProvider;

@@ -31,7 +31,6 @@ export default function useFiltros(categoriaSeleccionada) {
                 setFiltroMarca(resMar.data || []);
                 setFiltroTienda(resTie.data || []);
 
-                console.log(resPre.data)
             } catch (err) {
                 setError(err.message || "Error al cargar filtros");
             } finally {

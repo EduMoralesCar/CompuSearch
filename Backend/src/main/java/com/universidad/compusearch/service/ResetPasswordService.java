@@ -27,7 +27,7 @@ public class ResetPasswordService {
 
         if (resetPasswordAttemptService.isBlocked(email)) {
             log.warn("Email bloqueado por demasiados intentos: {}", email);
-            throw new TooManyAttemptsException();
+            throw TooManyAttemptsException.resetPassword();
         }
 
         Usuario usuario = authService.findByEmail(email);
@@ -57,7 +57,7 @@ public class ResetPasswordService {
 
         if (resetPasswordAttemptService.isBlocked(email)) {
             log.warn("Email bloqueado durante validación de token: {}", email);
-            throw new TooManyAttemptsException();
+            throw TooManyAttemptsException.resetPassword();
         }
 
         resetTokenService.revokeResetToken(token);
