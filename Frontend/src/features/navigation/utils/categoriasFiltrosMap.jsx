@@ -1,5 +1,6 @@
 export const categoriasFiltrosMap = {
     "Todas": [],
+    "Otros": [],
     "Almacenamiento": ["Capacidad Almacenamiento", "Tipo de Almacenamiento"],
     "Fuente de Poder": ["Certificación PSU", "Potencia PSU"],
     "Memoria RAM": ["Capacidad RAM", "Frecuencia RAM", "Tipo RAM"],

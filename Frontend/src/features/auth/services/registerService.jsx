@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const registerService = async ({ username, email, password, ip }) => {
+export const RegisterService = async ({ username, email, password, ip }) => {
     return axios.post("http://localhost:8080/auth/register", {
         username: username,
         email: email,

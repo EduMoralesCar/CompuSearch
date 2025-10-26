@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
-import BannerHeader from "../components/BannerHeader";
-import BuildsSummary from "../components/BuildsSummary";
-import BuildsTable from "../components/BuildsTable";
+import BannerHeader from "../components/auxliar/BannerHeader";
+import BuildsSummary from "../components/builds/info/BuildsSummary";
+import BuildsTable from "../components/builds/info/BuildsTable";
 import bannerBuilds from "../../../assets/banners/banner_builds.png";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 import useCategorias from "../hooks/useCategorias";
 import useBuilds from "../hooks/useBuilds";
-import BuildAuthModal from "../components/BuildAuthModal";
-import BuildProductModal from "../components/BuildProductModal";
-import BuildsModal from "../components/BuildsModal";
+import AuthModal from "../../../components/auth/AuthModal";
+import BuildProductModal from "../components/builds/modal/BuildProductModal";
+import BuildsModal from "../components/builds/modal/BuildsModal";
 import { validarCompatibilidad } from "../validation/validarCompatibilidad"
-import CompatibilidadModal from "../components/CompatibilidadModal"
+import CompatibilidadModal from "../components/builds/modal/CompatibilidadModal"
+import { useLocation } from "react-router-dom";
 
 const Builds = () => {
     // Obtener si el usuario inicio sesion
@@ -52,9 +53,15 @@ const Builds = () => {
 
     const nombresCategorias = categorias.map((c) => c.nombre); // Mapea las categorias
 
+    const { search } = useLocation();
+    const params = new URLSearchParams(search);
+    const idBuildParametro = params.get("idBuild");
+    
+
     // Funciones para las buiilds
     const {
         obtenerProductosBuilds,
+        obtenerBuildPorId,
         crearBuild,
         exportarBuild,
         eliminarBuild,
@@ -86,6 +93,27 @@ const Builds = () => {
     // Compara el tamaño de las categorias seleccionas y las faltantas
     // para determinar si la build esta incompleta
     const buildIncompleta = catSeleccionadas.length === 0 || catFaltantes.length > 0;
+
+    useEffect(() => {
+        const cargarBuildPorId = async () => {
+            if (!isAuthenticated) return;
+
+            if (idBuildParametro && idUsuario) {
+                const result = await obtenerBuildPorId(idBuildParametro);
+                if (result && result.success && result.data) {
+                    const armado = convertirBuildADisplay(result.data.detalles);
+                    setNombreActualizado(result.data.nombre);
+                    setBuildActualizada(armado);
+                    SetIdBuild(result.data.idBuild);
+                    setbuildActual(armado);
+                    setNombreActual(result.data.nombre);
+                }
+            }
+        };
+
+        cargarBuildPorId();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const totalCosto = Object.values(buildActualizada).reduce(
         (acc, item) => acc + item.subtotal,
@@ -357,7 +385,7 @@ const Builds = () => {
         const armadoTransformado = {};
 
         detalles.forEach((item) => {
-            const categoria = item.categoria; // ✅ ya viene en el response
+            const categoria = item.categoria;
 
             if (!categoria) return;
 
@@ -404,7 +432,8 @@ const Builds = () => {
                 obtenerBuildsPorUsuario={obtenerBuildsPorUsuario}
             />
 
-            <BuildAuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} 
+                message="Debes iniciar sesión o registrarte para guardar o descargar tu armado."/>
 
             <BuildProductModal
                 show={showModalProductos}

@@ -7,6 +7,7 @@ import com.universidad.compusearch.entity.TipoUsuario;
 import com.universidad.compusearch.entity.Usuario;
 import com.universidad.compusearch.exception.AlreadyRegisteredException;
 import com.universidad.compusearch.exception.InvalidPasswordException;
+import com.universidad.compusearch.exception.TooManyAttemptsException;
 import com.universidad.compusearch.exception.UserException;
 import com.universidad.compusearch.jwt.JwtTokenFactory;
 import com.universidad.compusearch.repository.UsuarioRepository;
@@ -31,7 +32,7 @@ public class AuthService {
 
         if (loginAttemptService.isBlocked(identificador)) {
             log.warn("Identificador bloqueado por intentos fallidos: {}", identificador);
-            throw UserException.blocked();
+            throw TooManyAttemptsException.login();
         }
 
         Usuario usuario = usuarioRepository.findByEmail(identificador)
@@ -41,6 +42,10 @@ public class AuthService {
                     loginAttemptService.fail(identificador);
                     return UserException.notFound();
                 });
+
+        if (!usuario.isActivo()){
+            throw UserException.noActive();
+        }
 
         if (!passwordEncoder.matches(password, usuario.getContrasena())) {
             log.warn("Contraseña inválida para identificador: {}", identificador);

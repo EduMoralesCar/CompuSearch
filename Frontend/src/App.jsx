@@ -1,30 +1,24 @@
 import React, { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
-import Header from "./components/header/Header";
 import AppRoute from "./routes/AppRoute";
-import Footer from "./components/Footer/Footer";
-import { applyHeaderOffset } from "./utils/layout";
-import AuthToast from "./components/AuthToast";
+import { MarginTop } from "./utils/MarginTop";
+import AuthToast from "./components/auth/AuthToast";
 import ScrollToTop from "./utils/ScrollToTop"
 
-import "./App.css"
+import "./css/App.css"
 
 const App = () => {
     useEffect(() => {
-        applyHeaderOffset();
-        window.addEventListener("resize", applyHeaderOffset);
-        return () => window.removeEventListener("resize", applyHeaderOffset);
+        MarginTop();
+        window.addEventListener("resize", MarginTop);
+        return () => window.removeEventListener("resize", MarginTop);
     }, []);
 
     return (
         <BrowserRouter>
             <ScrollToTop />
-            <Header />
             <AuthToast />
-            <main>
-                <AppRoute />
-            </main>
-            <Footer />
+            <AppRoute />
         </BrowserRouter>
     );
 };

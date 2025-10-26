@@ -3,7 +3,7 @@ import { useAuth } from "../../../context/useAuth";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Card, Spinner } from "react-bootstrap";
 import { validateResetPassword } from "../validations/validateResetPassword";
-import ResetPasswordForm from "../components/ResetPasswordForm";
+import ResetPasswordForm from "../components/resetPassword/ResetPasswordForm";
 
 const ResetPassword = () => {
     const { resetPassword } = useAuth();

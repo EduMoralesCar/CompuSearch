@@ -9,6 +9,7 @@ import com.universidad.compusearch.dto.RegisterRequest;
 import com.universidad.compusearch.dto.AuthResponse;
 import com.universidad.compusearch.dto.LoginRequest;
 import com.universidad.compusearch.dto.MessageResponse;
+import com.universidad.compusearch.entity.Empleado;
 import com.universidad.compusearch.entity.TipoUsuario;
 import com.universidad.compusearch.entity.Token;
 import com.universidad.compusearch.entity.Usuario;
@@ -38,6 +39,7 @@ public class AuthController {
                 log.info("Intento de login para identificador: {}", request.getIdentificador());
 
                 Usuario usuario = authService.authenticate(request.getIdentificador(), request.getContrasena());
+
                 String accessToken = authService.generateJwtToken(usuario);
                 Token refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario,
                                 request.getDispositivo());
@@ -45,7 +47,8 @@ public class AuthController {
                 // Cookies HttpOnly
                 ResponseCookie accessCookie = cookieUtil.createAccessCookie(accessToken);
 
-                ResponseCookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken(), request.isRecordar());
+                ResponseCookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken(),
+                                request.isRecordar());
 
                 response.addHeader("Set-Cookie", accessCookie.toString());
                 response.addHeader("Set-Cookie", refreshCookie.toString());
@@ -82,6 +85,18 @@ public class AuthController {
 
         @GetMapping("/me")
         public ResponseEntity<AuthResponse> getAuthenticatedUser(@AuthenticationPrincipal Usuario usuario) {
-                return ResponseEntity.ok(new AuthResponse(usuario.getIdUsuario(), usuario.getUsername(), usuario.getTipoUsuario().name()));
+                String rol = null;
+
+                if (usuario instanceof Empleado) {
+                        Empleado empleado = (Empleado) usuario;
+                        rol = empleado.getRol().name();
+                }
+
+                return ResponseEntity.ok(
+                                new AuthResponse(
+                                                usuario.getIdUsuario(),
+                                                usuario.getUsername(),
+                                                usuario.getTipoUsuario().name(),
+                                                rol));
         }
 }

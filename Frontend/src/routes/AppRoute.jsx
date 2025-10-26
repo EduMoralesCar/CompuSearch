@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import RedirectIfAuthenticated from "../components/RedirectIfAuthenticated";
-import RequireAnonimo from "../components/RequireAnonimo";
-import RequireTipoUsuario from "../components/RequireTipoUsuario";
+import { Routes, Route } from "react-router-dom";
+import RedirectIfAuthenticated from "../components/auth/RedirectIfAuthenticated";
+import RequireAnonimo from "../components/auth/RequireAnonimo";
+import RequireTipoUsuario from "../components/auth/RequireTipoUsuario";
 
 // Auth
 import Login from "../features/auth/pages/Login";
@@ -15,7 +15,7 @@ import Categorias from "../features/navigation/pages/Categorias";
 import Builds from "../features/navigation/pages/Builds";
 import Componentes from "../features/navigation/pages/Componentes";
 import TiendasAfiliadas from "../features/navigation/pages/Tiendas";
-import ProductoDetalle from "../features/navigation/pages/ProductoDetalle"
+import ProductoDetalle from "../features/navigation/pages/ProductoDetalle";
 
 // Perfil
 import PerfilUsuario from "../features/perfil/pages/PerfilUsuario";
@@ -24,80 +24,90 @@ import PerfilTienda from "../features/perfil/pages/PerfilTienda";
 
 // Auxiliar
 import NotFound from "../features/auxiliar/pages/NotFound";
+import Unauthorized from "../features/auxiliar/pages/Unauthorized";
+
+// Layouts
+import LayoutPrincipal from "../layout/LayoutPrincipal";
+import LayoutPerfil from "../layout/LayoutPerfil";
 
 const AppRoute = () => {
     return (
         <Routes>
-            {/* Auth */}
-            <Route
-                path="/login"
-                element={
-                    <RedirectIfAuthenticated>
-                        <Login />
-                    </RedirectIfAuthenticated>
-                }
-            />
-            <Route
-                path="/registro"
-                element={
-                    <RedirectIfAuthenticated>
-                        <Registro />
-                    </RedirectIfAuthenticated>
-                }
-            />
-            <Route
-                path="/forgot-password"
-                element={
-                    <RequireAnonimo>
-                        <ForgotPassword />
-                    </RequireAnonimo>
-                }
-            />
-            <Route
-                path="/reset-password"
-                element={
-                    <RequireAnonimo>
-                        <ResetPassword />
-                    </RequireAnonimo>
-                }
-            />
+            <Route element={<LayoutPrincipal />}>
+                <Route
+                    path="/login"
+                    element={
+                        <RedirectIfAuthenticated>
+                            <Login />
+                        </RedirectIfAuthenticated>
+                    }
+                />
+                <Route
+                    path="/registro"
+                    element={
+                        <RedirectIfAuthenticated>
+                            <Registro />
+                        </RedirectIfAuthenticated>
+                    }
+                />
+                <Route
+                    path="/forgot-password"
+                    element={
+                        <RequireAnonimo>
+                            <ForgotPassword />
+                        </RequireAnonimo>
+                    }
+                />
+                <Route
+                    path="/reset-password"
+                    element={
+                        <RequireAnonimo>
+                            <ResetPassword />
+                        </RequireAnonimo>
+                    }
+                />
+            </Route>
 
-            {/* Navegación */}
-            <Route path="/" element={<Home />} />
-            <Route path="/categorias" element={<Categorias />} />
-            <Route path="/builds" element={<Builds />} />
-            <Route path="/componentes" element={<Componentes />} />
-            <Route path="/tiendas" element={<TiendasAfiliadas />} />
-            <Route path="/producto/:slug" element={<ProductoDetalle />} />
+            <Route element={<LayoutPrincipal />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/categorias" element={<Categorias />} />
+                <Route path="/builds" element={<Builds />} />
+                <Route path="/componentes" element={<Componentes />} />
+                <Route path="/tiendas" element={<TiendasAfiliadas />} />
+                <Route path="/producto/:slug" element={<ProductoDetalle />} />
+            </Route>
 
-            {/* Perfil */}
-            <Route
-                path="/perfil/usuario"
-                element={
-                    <RequireTipoUsuario tiposPermitidos={["USUARIO"]}>
-                        <PerfilUsuario />
-                    </RequireTipoUsuario>
-                }
-            />
-            <Route
-                path="/perfil/empleado"
-                element={
-                    <RequireTipoUsuario tiposPermitidos={["EMPLEADO"]}>
-                        <PerfilEmpleado />
-                    </RequireTipoUsuario>
-                }
-            />
-            <Route
-                path="/perfil/tienda"
-                element={
-                    <RequireTipoUsuario tiposPermitidos={["TIENDA"]}>
-                        <PerfilTienda />
-                    </RequireTipoUsuario>
-                }
-            />
+            <Route element={<LayoutPerfil />}>
+                <Route
+                    path="/perfil/usuario"
+                    element={
+                        <RequireTipoUsuario tiposPermitidos={["USUARIO"]}>
+                            <PerfilUsuario />
+                        </RequireTipoUsuario>
+                    }
+                />
+                <Route
+                    path="/perfil/empleado"
+                    element={
+                        <RequireTipoUsuario tiposPermitidos={["EMPLEADO"]}>
+                            <PerfilEmpleado />
+                        </RequireTipoUsuario>
+                    }
+                />
+                <Route
+                    path="/perfil/tienda"
+                    element={
+                        <RequireTipoUsuario tiposPermitidos={["TIENDA"]}>
+                            <PerfilTienda />
+                        </RequireTipoUsuario>
+                    }
+                />
+            </Route>
 
-            {/* Auxiliar */}
-            <Route path="*" element={<NotFound />} />
+            <Route element={<LayoutPrincipal />}>
+                <Route path="*" element={<NotFound />} />
+                <Route path="/Unauthorized" element={<Unauthorized />}></Route>
+            </Route>
         </Routes>
     );
 };

@@ -54,10 +54,10 @@ public class BuildController {
     }
 
     @GetMapping("/{idBuild}")
-    public ResponseEntity<Build> obtenerBuildPorId(@PathVariable Long idBuild) {
+    public ResponseEntity<BuildsInfoResponse> obtenerBuildPorId(@PathVariable Long idBuild) {
         log.info("Buscando build con ID: {}", idBuild);
 
-        Build build = buildService.obtenerBuildPorId(idBuild);
+        BuildsInfoResponse build = buildService.obtenerBuildPorIdConInfo(idBuild);
 
         log.info("Build encontrada con ID: {}", build.getIdBuild());
         return ResponseEntity.ok(build);

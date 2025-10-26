@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { categoriasMap } from "../utils/categoriasMap";
-import FiltrosSidebar from "../components/FiltroSidebar";
-import ProductoTiendaCard from "../components/ProductoTiendaCard";
-import Paginacion from "../components/Paginacion";
+import FiltrosSidebar from "../components/componentes/FiltroSidebar";
+import ProductoTiendaCard from "../components/componentes/ProductoTiendaCard";
+import Paginacion from "../components/componentes/Paginacion";
 
 import useFiltros from "../hooks/useFiltros";
 import useFiltrosAdicionales from "../hooks/useFiltrosAdicionales";

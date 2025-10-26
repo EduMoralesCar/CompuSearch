@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const loginService = async ({ identifier, password, ip, rememberMe }) => {
+export const LoginService = async ({ identifier, password, ip, rememberMe }) => {
     return axios.post("http://localhost:8080/auth/login", {
         identificador: identifier,
         contrasena: password,

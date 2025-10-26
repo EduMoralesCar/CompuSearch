@@ -73,6 +73,10 @@ public class ProductoTiendaSpecificationFactory {
                                 .porCompatibilidad(filtrosExtra.get("Compatibilidad Socket Cooler")));
                 break;
 
+            case "otros":
+                spec = spec.and(ProductoTiendaSpecification.porCategoria("Otros"));
+                break;
+                
             default:
                 // No se añade filtro extra si no coincide con ninguna categoría
                 break;

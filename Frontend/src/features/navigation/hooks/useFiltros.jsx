@@ -30,6 +30,7 @@ export default function useFiltros(categoriaSeleccionada) {
                 setRangoPrecio(resPre.data || null);
                 setFiltroMarca(resMar.data || []);
                 setFiltroTienda(resTie.data || []);
+
             } catch (err) {
                 setError(err.message || "Error al cargar filtros");
             } finally {

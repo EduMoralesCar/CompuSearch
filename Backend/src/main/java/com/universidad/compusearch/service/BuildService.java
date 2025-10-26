@@ -80,6 +80,51 @@ public class BuildService {
                 });
     }
 
+    // Obtiene la build por id
+    public BuildsInfoResponse obtenerBuildPorIdConInfo(Long idBuild) {
+        log.info("Buscando build con ID: {}", idBuild);
+
+        Build build = buildRepository.findByIdBuild(idBuild)
+                .orElseThrow(() -> {
+                    log.warn("No se encontró la build con ID: {}", idBuild);
+                    return BuildException.notFound();
+                });
+
+        BuildsInfoResponse response = new BuildsInfoResponse();
+        response.setIdBuild(build.getIdBuild());
+        response.setNombre(build.getNombre());
+        response.setIdUsuario(build.getUsuario().getIdUsuario());
+        response.setCompatible(build.isCompatible());
+        response.setCostoTotal(build.getCostoTotal());
+
+        List<DetalleBuildResponse> detalleResponses = build.getDetalles().stream().map(detalle -> {
+            DetalleBuildResponse detalleResponse = new DetalleBuildResponse();
+            detalleResponse.setIdProductoTienda(detalle.getProductoTienda().getIdProductoTienda());
+            detalleResponse.setNombreProducto(detalle.getProductoTienda().getProducto().getNombre());
+            detalleResponse.setNombreTienda(detalle.getProductoTienda().getTienda().getNombre());
+            detalleResponse.setStock(detalle.getProductoTienda().getStock());
+            detalleResponse.setPrecio(detalle.getProductoTienda().getPrecio());
+            detalleResponse.setSubTotal(detalle.getSubTotal());
+            detalleResponse.setCantidad(detalle.getCantidad());
+            detalleResponse.setCategoria(detalle.getProductoTienda().getProducto().getCategoria().getNombre());
+            detalleResponse.setUrlProducto(detalle.getProductoTienda().getUrlProducto());
+
+            // Mapear atributos
+            List<DetalleAtributoResponse> atributos = detalle.getProductoTienda().getProducto().getAtributos()
+                    .stream()
+                    .map(attr -> new DetalleAtributoResponse(
+                            attr.getAtributo().getNombre(),
+                            attr.getValor()))
+                    .collect(Collectors.toList());
+
+            detalleResponse.setDetalles(atributos);
+            return detalleResponse;
+        }).collect(Collectors.toList());
+
+        response.setDetalles(detalleResponses);
+        return response;
+    }
+
     // Elimina una build del usuario
     public void eliminarBuild(Long idBuild) {
         log.info("Intentando eliminar build con ID: {}", idBuild);

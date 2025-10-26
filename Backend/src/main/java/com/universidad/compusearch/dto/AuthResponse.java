@@ -13,4 +13,5 @@ public class AuthResponse {
     private long idUsuario;
     private String identificador;
     private String tipoUsuario;
+    private String rol;
 }

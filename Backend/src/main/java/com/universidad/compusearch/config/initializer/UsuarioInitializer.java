@@ -27,11 +27,12 @@ public class UsuarioInitializer {
         crearEmpleado("admin@test.com", "admin", "123!123Aa",
                 "Administrador", "Principal", Rol.ADMIN);
         crearTiendas();
-        crearUsuario("usuario@test.com", "usuario", "123!123Aa");
+        crearUsuario("usuario1@test.com", "usuario1", "123!123Aa", true);
+        crearUsuario("usuario2@test.com", "usuario2", "123!123Aa", false);
     }
 
     // Método genérico para crear un Usuario normal
-    private void crearUsuario(String email, String username, String contrasena) {
+    private void crearUsuario(String email, String username, String contrasena, boolean activo) {
         if (usuarioRepository.findByEmail(email).isPresent())
             return;
 
@@ -40,7 +41,7 @@ public class UsuarioInitializer {
         usuario.setUsername(username);
         usuario.setContrasena(passwordEncoder.encode(contrasena));
         usuario.setTipoUsuario(TipoUsuario.USUARIO);
-        usuario.setActivo(true);
+        usuario.setActivo(activo);
 
         usuarioRepository.save(usuario);
         log.info("Usuario creado: {}", email);

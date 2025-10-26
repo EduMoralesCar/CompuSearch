@@ -46,7 +46,10 @@ public class CategoriaInitializer {
 
                                 { "Fuente de Poder",
                                                 "Suministra energía eléctrica a todos los componentes.",
-                                                "fuente_poder.jpg" }
+                                                "fuente_poder.jpg" },
+                                { "Otros", 
+                                        "Explora entre otros componentes disponibles.",
+                                        "otros.jpg"}
                 };
 
                 // Insercion de los categorias
