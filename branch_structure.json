@@ -1,0 +1,33 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "beraun-dev",
+    "macedo-dev",
+    "main",
+    "matos-dev",
+    "morales-dev",
+    "olivares-dev",
+    "origin",
+    "prueba-rama-matos-dev"
+  ],
+  "parent": {
+    "beraun-dev": "main",
+    "macedo-dev": "main",
+    "main": null,
+    "matos-dev": "main",
+    "morales-dev": "main",
+    "olivares-dev": "main",
+    "origin": "main",
+    "prueba-rama-matos-dev": "main"
+  },
+  "order": [
+    "main",
+    "beraun-dev",
+    "macedo-dev",
+    "matos-dev",
+    "morales-dev",
+    "olivares-dev",
+    "origin",
+    "prueba-rama-matos-dev"
+  ]
+}

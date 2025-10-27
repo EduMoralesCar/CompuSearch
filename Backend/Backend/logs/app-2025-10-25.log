@@ -1,0 +1,1050 @@
+2025-10-25 16:12:51 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+2025-10-25 16:12:51 [restartedMain] INFO  c.u.c.CompuSearchApplication - Starting CompuSearchApplication using Java 25 with PID 17524 (D:\CompuSearch-olivares-dev\Backend\target\classes started by Usuario in D:\CompuSearch-olivares-dev\Backend)
+2025-10-25 16:12:51 [restartedMain] DEBUG c.u.c.CompuSearchApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-10-25 16:12:51 [restartedMain] INFO  c.u.c.CompuSearchApplication - No active profile set, falling back to 1 default profile: "default"
+2025-10-25 16:12:51 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-10-25 16:12:51 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-10-25 16:12:52 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-25 16:12:52 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 104 ms. Found 11 JPA repository interfaces.
+2025-10-25 16:12:53 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-10-25 16:12:53 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-10-25 16:12:53 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-25 16:12:53 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-10-25 16:12:53 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-25 16:12:53 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2164 ms
+2025-10-25 16:12:53 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-25 16:12:53 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.33.Final
+2025-10-25 16:12:54 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-10-25 16:12:54 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-25 16:12:54 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-10-25 16:12:54 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6cf5c426
+2025-10-25 16:12:54 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-10-25 16:12:54 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-25 16:12:54 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-25 16:12:55 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-25 16:12:57 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-25 16:12:57 [restartedMain] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-10-25 16:12:57 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-25 16:12:58 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-25 16:12:58 [restartedMain] INFO  c.u.compusearch.config.CorsConfig - CORS configurado para origen: http://localhost:5173
+2025-10-25 16:12:59 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-10-25 16:12:59 [restartedMain] INFO  c.u.c.config.SecurityConfig - DaoAuthenticationProvider registrado con UsuarioService y BCryptPasswordEncoder.
+2025-10-25 16:12:59 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-10-25 16:12:59 [restartedMain] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-10-25 16:12:59 [restartedMain] INFO  c.u.c.config.SecurityConfig - Configuración de seguridad cargada correctamente. Filtros y endpoints asegurados.
+2025-10-25 16:12:59 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-10-25 16:12:59 [restartedMain] INFO  c.u.c.config.SecurityConfig - AuthenticationManager inicializado.
+2025-10-25 16:12:59 [restartedMain] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:mysql://localhost:3306/compusearch?useSSL=false&serverTimezone=UTC'
+2025-10-25 16:12:59 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-10-25 16:12:59 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-10-25 16:12:59 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-10-25 16:12:59 [restartedMain] INFO  c.u.c.CompuSearchApplication - Started CompuSearchApplication in 8.865 seconds (process running for 9.342)
+2025-10-25 16:13:00 [restartedMain] INFO  c.u.c.c.i.EtiquetaInitializer - Etiquetas: 10 nuevas, 0 existentes, total 10
+2025-10-25 16:13:00 [restartedMain] INFO  c.u.c.c.i.CategoriaInitializer - Inicialización de categorías completada: 8 nuevas, 0 existentes, total 8
+2025-10-25 16:13:00 [restartedMain] INFO  c.u.c.c.i.UsuarioInitializer - Empleado creado: admin@test.com (ADMIN)
+2025-10-25 16:13:00 [restartedMain] INFO  c.u.c.c.i.UsuarioInitializer - Tienda creada: tienda1@test.com
+2025-10-25 16:13:00 [restartedMain] INFO  c.u.c.c.i.UsuarioInitializer - Tienda creada: tienda2@test.com
+2025-10-25 16:13:00 [restartedMain] INFO  c.u.c.c.i.UsuarioInitializer - Tienda creada: tienda3@test.com
+2025-10-25 16:13:00 [restartedMain] INFO  c.u.c.c.i.UsuarioInitializer - Usuario creado: usuario@test.com
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.AtributoInitializer - Atributos: 51 nuevos, 0 existentes, total 51
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Tarjeta Gráfica ASUS TUF Gaming GeForce RTX 4070 12GB GDDR6X' creado con 10 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Placa Madre ASRock B450M-HDV R4.0' creado con 9 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Tarjeta Gráfica MSI GeForce RTX 4080 GAMING X TRIO 16GB' creado con 10 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Tarjeta Gráfica GIGABYTE GeForce RTX 3060 GAMING OC 12G' creado con 10 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Tarjeta Gráfica ASUS Dual GeForce GTX 1650 OC 4GB' creado con 10 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Placa Madre ASUS PRIME B550M-A WIFI II' creado con 9 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Placa Madre MSI B450 TOMAHAWK MAX II' creado con 9 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Procesador AMD Ryzen 7 5800X 8 Núcleos 16 Hilos' creado con 7 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Procesador Intel Core i7-12700K' creado con 7 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Procesador AMD Ryzen 5 5600X' creado con 7 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Procesador Intel Core i5-10400F' creado con 7 atributos.
+2025-10-25 16:13:01 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'SSD Kingston NV2 1TB NVMe PCIe 4.0' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'SSD WD Blue SN570 250GB NVMe PCIe 3.0' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'SSD Samsung 980 PRO 2TB NVMe PCIe 4.0' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'SSD Crucial P3 500GB NVMe PCIe 3.0' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Fuente de Poder Corsair RM750x 750W 80+ Gold Full Modular' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Fuente de Poder EVGA SuperNOVA 1000 G5 1000W 80+ Gold Full Modular' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Fuente de Poder Cooler Master MWE 650 Bronze V2 650W' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Fuente de Poder EVGA 500 W1 500W 80+ White' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Cooler CPU Cooler Master Hyper 212 Black Edition' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Cooler CPU Cooler Master Hyper T20' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Enfriamiento Líquido NZXT Kraken X63' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Cooler CPU DeepCool GAMMAXX 400 V2' creado con 6 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Memoria RAM Corsair Vengeance RGB Pro 16GB (2x8GB) 3600MHz DDR4' creado con 7 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Memoria RAM G.Skill Ripjaws V 32GB (2x16GB) 3600MHz DDR4' creado con 7 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoInitializer - Producto 'Memoria RAM ADATA XPG GAMMIX D30 16GB (2x8GB) 3200MHz DDR4' creado con 7 atributos.
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Tarjeta Gráfica ASUS TUF Gaming GeForce RTX 4070 12GB GDDR6X' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Tarjeta Gráfica ASUS TUF Gaming GeForce RTX 4070 12GB GDDR6X' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Placa Madre ASRock B450M-HDV R4.0' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Tarjeta Gráfica MSI GeForce RTX 4080 GAMING X TRIO 16GB' en 'Serco Plus'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Tarjeta Gráfica GIGABYTE GeForce RTX 3060 GAMING OC 12G' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Tarjeta Gráfica ASUS Dual GeForce GTX 1650 OC 4GB' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Placa Madre ASUS PRIME B550M-A WIFI II' en 'Serco Plus'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Placa Madre MSI B450 TOMAHAWK MAX II' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Procesador AMD Ryzen 7 5800X 8 Núcleos 16 Hilos' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Procesador Intel Core i7-12700K' en 'Serco Plus'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Procesador AMD Ryzen 5 5600X' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Procesador Intel Core i5-10400F' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'SSD Kingston NV2 1TB NVMe PCIe 4.0' en 'Serco Plus'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'SSD WD Blue SN570 250GB NVMe PCIe 3.0' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'SSD Samsung 980 PRO 2TB NVMe PCIe 4.0' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'SSD Crucial P3 500GB NVMe PCIe 3.0' en 'Serco Plus'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Fuente de Poder Corsair RM750x 750W 80+ Gold Full Modular' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Fuente de Poder EVGA SuperNOVA 1000 G5 1000W 80+ Gold Full Modular' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Fuente de Poder Cooler Master MWE 650 Bronze V2 650W' en 'Serco Plus'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Fuente de Poder EVGA 500 W1 500W 80+ White' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Cooler CPU Cooler Master Hyper 212 Black Edition' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Cooler CPU Cooler Master Hyper T20' en 'Serco Plus'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Enfriamiento Líquido NZXT Kraken X63' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Cooler CPU DeepCool GAMMAXX 400 V2' en 'Impacto'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Memoria RAM Corsair Vengeance RGB Pro 16GB (2x8GB) 3600MHz DDR4' en 'Serco Plus'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Memoria RAM G.Skill Ripjaws V 32GB (2x16GB) 3600MHz DDR4' en 'Computer Shop'
+2025-10-25 16:13:02 [restartedMain] INFO  c.u.c.c.i.ProductoTiendaInitializer - ProductoTienda creado para 'Memoria RAM ADATA XPG GAMMIX D30 16GB (2x8GB) 3200MHz DDR4' en 'Impacto'
+2025-10-25 16:14:15 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-25 16:14:15 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-10-25 16:14:15 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.Http403ForbiddenEntryPoint - Pre-authenticated entry point called. Rejecting access
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.Http403ForbiddenEntryPoint - Pre-authenticated entry point called. Rejecting access
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:15 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/refresh
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.Http403ForbiddenEntryPoint - Pre-authenticated entry point called. Rejecting access
+2025-10-25 16:14:15 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:15 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:15 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/refresh
+2025-10-25 16:14:15 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.Http403ForbiddenEntryPoint - Pre-authenticated entry point called. Rejecting access
+2025-10-25 16:14:15 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/refresh
+2025-10-25 16:14:15 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:15 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:15 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/refresh
+2025-10-25 16:14:15 [http-nio-8080-exec-2] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MissingRequestCookieException: Required cookie 'refresh_token' for method parameter type String is not present]
+2025-10-25 16:14:15 [http-nio-8080-exec-5] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MissingRequestCookieException: Required cookie 'refresh_token' for method parameter type String is not present]
+2025-10-25 16:14:17 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:14:17 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios
+2025-10-25 16:14:17 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas
+2025-10-25 16:14:17 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:14:17 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas
+2025-10-25 16:14:17 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios
+2025-10-25 16:14:17 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas
+2025-10-25 16:14:17 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:14:17 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:14:17 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas
+2025-10-25 16:14:17 [http-nio-8080-exec-4] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:14:17 [http-nio-8080-exec-4] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:14:17 [http-nio-8080-exec-6] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = null)
+2025-10-25 16:14:17 [http-nio-8080-exec-10] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = null)
+2025-10-25 16:14:17 [http-nio-8080-exec-3] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = null)
+2025-10-25 16:14:17 [http-nio-8080-exec-10] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: TODAS
+2025-10-25 16:14:17 [http-nio-8080-exec-6] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: TODAS
+2025-10-25 16:14:17 [http-nio-8080-exec-4] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:14:17 [http-nio-8080-exec-4] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:14:17 [http-nio-8080-exec-8] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=null con parámetros extra={}
+2025-10-25 16:14:17 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:14:17 [http-nio-8080-exec-6] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 17
+2025-10-25 16:14:17 [http-nio-8080-exec-10] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:14:17 [http-nio-8080-exec-6] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 17
+2025-10-25 16:14:17 [http-nio-8080-exec-10] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:14:17 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-3] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'null': min=29.90, max=1599.90
+2025-10-25 16:14:17 [http-nio-8080-exec-3] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 29.90, max: 1599.90
+2025-10-25 16:14:17 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:14:17 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas
+2025-10-25 16:14:17 [http-nio-8080-exec-9] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:14:17 [http-nio-8080-exec-9] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:14:17 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas
+2025-10-25 16:14:17 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas
+2025-10-25 16:14:17 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas
+2025-10-25 16:14:17 [http-nio-8080-exec-1] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = null)
+2025-10-25 16:14:17 [http-nio-8080-exec-1] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: TODAS
+2025-10-25 16:14:17 [http-nio-8080-exec-7] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = null)
+2025-10-25 16:14:17 [http-nio-8080-exec-9] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:14:17 [http-nio-8080-exec-7] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: TODAS
+2025-10-25 16:14:17 [http-nio-8080-exec-9] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:14:17 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios
+2025-10-25 16:14:17 [http-nio-8080-exec-1] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 17
+2025-10-25 16:14:17 [http-nio-8080-exec-7] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:14:17 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-1] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 17
+2025-10-25 16:14:17 [http-nio-8080-exec-7] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:14:17 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios
+2025-10-25 16:14:17 [http-nio-8080-exec-5] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = null)
+2025-10-25 16:14:17 [http-nio-8080-exec-5] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'null': min=29.90, max=1599.90
+2025-10-25 16:14:17 [http-nio-8080-exec-5] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 29.90, max: 1599.90
+2025-10-25 16:14:17 [http-nio-8080-exec-8] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 27 productos para la categoría 'null' con filtros {}
+2025-10-25 16:14:17 [http-nio-8080-exec-8] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 27 productos para la categoría null
+2025-10-25 16:14:17 [http-nio-8080-exec-8] WARN  o.s.d.w.c.SpringDataJacksonConfiguration$PageModule$WarningLoggingModifier - Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2025-10-25 16:14:17 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:14:17 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:17 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:17 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:14:17 [http-nio-8080-exec-2] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=null con parámetros extra={}
+2025-10-25 16:14:17 [http-nio-8080-exec-2] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 27 productos para la categoría 'null' con filtros {}
+2025-10-25 16:14:17 [http-nio-8080-exec-2] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 27 productos para la categoría null
+2025-10-25 16:14:18 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:14:18 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:18 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:18 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:14:18 [http-nio-8080-exec-4] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:14:18 [http-nio-8080-exec-4] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:14:18 [http-nio-8080-exec-4] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:14:18 [http-nio-8080-exec-4] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:14:18 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:14:18 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:18 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:18 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:14:18 [http-nio-8080-exec-10] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:14:18 [http-nio-8080-exec-10] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:14:18 [http-nio-8080-exec-10] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:14:18 [http-nio-8080-exec-10] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:14:19 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:14:19 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:19 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:19 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:14:19 [http-nio-8080-exec-6] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:14:19 [http-nio-8080-exec-6] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:14:19 [http-nio-8080-exec-6] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:14:19 [http-nio-8080-exec-6] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:14:19 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:14:19 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:19 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:19 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:14:19 [http-nio-8080-exec-9] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:14:19 [http-nio-8080-exec-9] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:14:19 [http-nio-8080-exec-9] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:14:19 [http-nio-8080-exec-9] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:14:26 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /auth/login
+2025-10-25 16:14:26 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/login
+2025-10-25 16:14:26 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:26 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:26 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/login
+2025-10-25 16:14:26 [http-nio-8080-exec-4] INFO  c.u.c.controller.AuthController - Intento de login para identificador: leo
+2025-10-25 16:14:26 [http-nio-8080-exec-4] INFO  c.u.compusearch.service.AuthService - Intentando autenticar con identificador: leo
+2025-10-25 16:14:26 [http-nio-8080-exec-4] WARN  c.u.compusearch.service.AuthService - Usuario no encontrado con identificador: leo
+2025-10-25 16:14:26 [http-nio-8080-exec-4] WARN  c.u.c.service.AttemptService - Intento fallido para leo. Total intentos: 1
+2025-10-25 16:14:26 [http-nio-8080-exec-4] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.universidad.compusearch.exception.UserException: Usuario no encontrado]
+2025-10-25 16:14:33 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/login
+2025-10-25 16:14:33 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:33 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:33 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/login
+2025-10-25 16:14:33 [http-nio-8080-exec-10] INFO  c.u.c.controller.AuthController - Intento de login para identificador: leonardoberaungarcia@gmail.com
+2025-10-25 16:14:33 [http-nio-8080-exec-10] INFO  c.u.compusearch.service.AuthService - Intentando autenticar con identificador: leonardoberaungarcia@gmail.com
+2025-10-25 16:14:33 [http-nio-8080-exec-10] WARN  c.u.compusearch.service.AuthService - Usuario no encontrado con identificador: leonardoberaungarcia@gmail.com
+2025-10-25 16:14:33 [http-nio-8080-exec-10] WARN  c.u.c.service.AttemptService - Intento fallido para leonardoberaungarcia@gmail.com. Total intentos: 1
+2025-10-25 16:14:33 [http-nio-8080-exec-10] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.universidad.compusearch.exception.UserException: Usuario no encontrado]
+2025-10-25 16:14:34 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/login
+2025-10-25 16:14:34 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:14:34 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:14:34 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/login
+2025-10-25 16:14:34 [http-nio-8080-exec-6] INFO  c.u.c.controller.AuthController - Intento de login para identificador: leonardoberaungarcia@gmail.com
+2025-10-25 16:14:34 [http-nio-8080-exec-6] INFO  c.u.compusearch.service.AuthService - Intentando autenticar con identificador: leonardoberaungarcia@gmail.com
+2025-10-25 16:14:34 [http-nio-8080-exec-6] WARN  c.u.compusearch.service.AuthService - Usuario no encontrado con identificador: leonardoberaungarcia@gmail.com
+2025-10-25 16:14:34 [http-nio-8080-exec-6] WARN  c.u.c.service.AttemptService - Intento fallido para leonardoberaungarcia@gmail.com. Total intentos: 2
+2025-10-25 16:14:34 [http-nio-8080-exec-6] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.universidad.compusearch.exception.UserException: Usuario no encontrado]
+2025-10-25 16:15:22 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /auth/password/forgot
+2025-10-25 16:15:22 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/password/forgot
+2025-10-25 16:15:22 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:15:22 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:15:22 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/password/forgot
+2025-10-25 16:15:22 [http-nio-8080-exec-5] INFO  c.u.c.c.ResetPasswordController - Solicitud de recuperación de contraseña para email: leonardoberaungarcia@gmail.com
+2025-10-25 16:15:22 [http-nio-8080-exec-5] INFO  c.u.c.service.ResetPasswordService - Validando solicitud de reseteo para email: leonardoberaungarcia@gmail.com
+2025-10-25 16:15:22 [http-nio-8080-exec-5] DEBUG c.u.compusearch.service.AuthService - Buscando usuario por email: leonardoberaungarcia@gmail.com
+2025-10-25 16:15:22 [http-nio-8080-exec-5] WARN  c.u.c.service.ResetPasswordService - Email no encontrado: leonardoberaungarcia@gmail.com
+2025-10-25 16:15:22 [http-nio-8080-exec-5] WARN  c.u.c.service.AttemptService - Intento fallido para leonardoberaungarcia@gmail.com. Total intentos: 1
+2025-10-25 16:15:22 [http-nio-8080-exec-5] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.universidad.compusearch.exception.UserException: Usuario no encontrado]
+2025-10-25 16:16:21 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/password/forgot
+2025-10-25 16:16:21 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:16:21 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:16:21 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/password/forgot
+2025-10-25 16:16:21 [http-nio-8080-exec-2] INFO  c.u.c.c.ResetPasswordController - Solicitud de recuperación de contraseña para email: leoberaun03@gmail.com
+2025-10-25 16:16:21 [http-nio-8080-exec-2] INFO  c.u.c.service.ResetPasswordService - Validando solicitud de reseteo para email: leoberaun03@gmail.com
+2025-10-25 16:16:21 [http-nio-8080-exec-2] DEBUG c.u.compusearch.service.AuthService - Buscando usuario por email: leoberaun03@gmail.com
+2025-10-25 16:16:21 [http-nio-8080-exec-2] WARN  c.u.c.service.ResetPasswordService - Email no encontrado: leoberaun03@gmail.com
+2025-10-25 16:16:21 [http-nio-8080-exec-2] WARN  c.u.c.service.AttemptService - Intento fallido para leoberaun03@gmail.com. Total intentos: 1
+2025-10-25 16:16:21 [http-nio-8080-exec-2] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.universidad.compusearch.exception.UserException: Usuario no encontrado]
+2025-10-25 16:18:36 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/login
+2025-10-25 16:18:36 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:18:36 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:18:36 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/login
+2025-10-25 16:18:36 [http-nio-8080-exec-10] INFO  c.u.c.controller.AuthController - Intento de login para identificador: usuario
+2025-10-25 16:18:36 [http-nio-8080-exec-10] INFO  c.u.compusearch.service.AuthService - Intentando autenticar con identificador: usuario
+2025-10-25 16:18:36 [http-nio-8080-exec-10] INFO  c.u.c.service.AttemptService - Intentos eliminados para: usuario
+2025-10-25 16:18:36 [http-nio-8080-exec-10] INFO  c.u.compusearch.service.AuthService - Autenticación exitosa para usuario ID: 5
+2025-10-25 16:18:36 [http-nio-8080-exec-10] DEBUG c.u.compusearch.service.AuthService - Generando token de acceso para usuario ID: 5
+2025-10-25 16:18:36 [http-nio-8080-exec-10] INFO  c.u.c.service.RefreshTokenService - Procesando token de refresco para usuario 5 en dispositivo 179.6.4.230
+2025-10-25 16:18:36 [http-nio-8080-exec-10] DEBUG c.u.c.service.RefreshTokenService - Buscando token de refresco para usuario 5 en dispositivo 179.6.4.230
+2025-10-25 16:18:36 [http-nio-8080-exec-10] INFO  c.u.c.service.RefreshTokenService - Creando nuevo token de refresco para usuario 5 en dispositivo 179.6.4.230
+2025-10-25 16:18:36 [http-nio-8080-exec-10] DEBUG c.u.c.service.RefreshTokenService - Guardando token de refresco ID=null
+2025-10-25 16:18:36 [http-nio-8080-exec-10] INFO  c.u.c.controller.AuthController - Login exitoso para usuario ID: 5
+2025-10-25 16:18:36 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-25 16:18:36 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:18:36 [http-nio-8080-exec-6] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:18:36 [http-nio-8080-exec-6] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:18:36 [http-nio-8080-exec-6] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:18:36 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /auth/me
+2025-10-25 16:18:43 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/logout
+2025-10-25 16:18:43 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:18:43 [http-nio-8080-exec-1] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:18:43 [http-nio-8080-exec-1] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:18:43 [http-nio-8080-exec-1] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:18:43 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/logout
+2025-10-25 16:18:43 [http-nio-8080-exec-1] INFO  c.u.c.c.RefreshTokenController - Solicitud de logout con refresh_token
+2025-10-25 16:18:43 [http-nio-8080-exec-1] WARN  c.u.c.service.RefreshTokenService - Revocando token de refresco: fedba348-c6ae-4578-a276-4d6f9690e516
+2025-10-25 16:18:43 [http-nio-8080-exec-1] DEBUG c.u.c.service.RefreshTokenService - Buscando token de refresco: fedba348-c6ae-4578-a276-4d6f9690e516
+2025-10-25 16:18:43 [http-nio-8080-exec-1] DEBUG c.u.c.service.RefreshTokenService - Guardando token de refresco ID=1
+2025-10-25 16:18:43 [http-nio-8080-exec-1] INFO  c.u.c.c.RefreshTokenController - Sesión cerrada y tokens eliminados
+2025-10-25 16:18:43 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-25 16:18:43 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:18:43 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:18:43 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.Http403ForbiddenEntryPoint - Pre-authenticated entry point called. Rejecting access
+2025-10-25 16:18:43 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-10-25 16:18:43 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:18:43 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.Http403ForbiddenEntryPoint - Pre-authenticated entry point called. Rejecting access
+2025-10-25 16:18:43 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/refresh
+2025-10-25 16:18:43 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:18:43 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:18:43 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/refresh
+2025-10-25 16:18:43 [http-nio-8080-exec-3] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MissingRequestCookieException: Required cookie 'refresh_token' for method parameter type String is not present]
+2025-10-25 16:18:46 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing POST /auth/login
+2025-10-25 16:18:46 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:18:46 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:18:46 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured POST /auth/login
+2025-10-25 16:18:46 [http-nio-8080-exec-5] INFO  c.u.c.controller.AuthController - Intento de login para identificador: usuario
+2025-10-25 16:18:46 [http-nio-8080-exec-5] INFO  c.u.compusearch.service.AuthService - Intentando autenticar con identificador: usuario
+2025-10-25 16:18:46 [http-nio-8080-exec-5] INFO  c.u.c.service.AttemptService - Intentos eliminados para: usuario
+2025-10-25 16:18:46 [http-nio-8080-exec-5] INFO  c.u.compusearch.service.AuthService - Autenticación exitosa para usuario ID: 5
+2025-10-25 16:18:46 [http-nio-8080-exec-5] DEBUG c.u.compusearch.service.AuthService - Generando token de acceso para usuario ID: 5
+2025-10-25 16:18:46 [http-nio-8080-exec-5] INFO  c.u.c.service.RefreshTokenService - Procesando token de refresco para usuario 5 en dispositivo 179.6.4.230
+2025-10-25 16:18:46 [http-nio-8080-exec-5] DEBUG c.u.c.service.RefreshTokenService - Buscando token de refresco para usuario 5 en dispositivo 179.6.4.230
+2025-10-25 16:18:46 [http-nio-8080-exec-5] INFO  c.u.c.service.RefreshTokenService - Actualizando token de refresco ID=1 para usuario 5
+2025-10-25 16:18:46 [http-nio-8080-exec-5] DEBUG c.u.c.service.RefreshTokenService - Guardando token de refresco ID=1
+2025-10-25 16:18:46 [http-nio-8080-exec-5] INFO  c.u.c.controller.AuthController - Login exitoso para usuario ID: 5
+2025-10-25 16:18:46 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-25 16:18:46 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:18:46 [http-nio-8080-exec-8] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:18:46 [http-nio-8080-exec-8] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:18:46 [http-nio-8080-exec-8] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:18:46 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /auth/me
+2025-10-25 16:18:56 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:18:56 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:18:56 [http-nio-8080-exec-9] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:18:56 [http-nio-8080-exec-9] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:18:56 [http-nio-8080-exec-9] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:18:56 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:18:56 [http-nio-8080-exec-9] INFO  c.u.compusearch.service.BuildService - Obteniendo builds con detalles para el usuario con ID: 5
+2025-10-25 16:18:56 [http-nio-8080-exec-9] WARN  c.u.compusearch.service.BuildService - No se encontraron builds para el usuario con ID: 5
+2025-10-25 16:18:56 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:18:56 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:18:56 [http-nio-8080-exec-2] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:18:56 [http-nio-8080-exec-2] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:18:56 [http-nio-8080-exec-2] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:18:56 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:18:56 [http-nio-8080-exec-2] INFO  c.u.compusearch.service.BuildService - Obteniendo builds con detalles para el usuario con ID: 5
+2025-10-25 16:18:56 [http-nio-8080-exec-2] WARN  c.u.compusearch.service.BuildService - No se encontraron builds para el usuario con ID: 5
+2025-10-25 16:19:12 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:19:12 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:19:12 [http-nio-8080-exec-4] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:19:12 [http-nio-8080-exec-4] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:19:12 [http-nio-8080-exec-4] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:19:12 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:19:12 [http-nio-8080-exec-4] INFO  c.u.compusearch.service.BuildService - Obteniendo builds con detalles para el usuario con ID: 5
+2025-10-25 16:19:12 [http-nio-8080-exec-4] WARN  c.u.compusearch.service.BuildService - No se encontraron builds para el usuario con ID: 5
+2025-10-25 16:19:12 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:19:12 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:19:12 [http-nio-8080-exec-10] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:19:12 [http-nio-8080-exec-10] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:19:12 [http-nio-8080-exec-10] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:19:12 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:19:12 [http-nio-8080-exec-10] INFO  c.u.compusearch.service.BuildService - Obteniendo builds con detalles para el usuario con ID: 5
+2025-10-25 16:19:12 [http-nio-8080-exec-10] WARN  c.u.compusearch.service.BuildService - No se encontraron builds para el usuario con ID: 5
+2025-10-25 16:19:17 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:19:17 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-25 16:19:17 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:17 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:17 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:19:17 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:19:17 [http-nio-8080-exec-1] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:19:17 [http-nio-8080-exec-6] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:19:17 [http-nio-8080-exec-6] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:19:17 [http-nio-8080-exec-6] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:19:17 [http-nio-8080-exec-1] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:19:17 [http-nio-8080-exec-6] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:19:17 [http-nio-8080-exec-1] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:19:17 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /auth/me
+2025-10-25 16:19:17 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /auth/me
+2025-10-25 16:19:17 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:19:17 [http-nio-8080-exec-1] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:19:17 [http-nio-8080-exec-1] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:19:17 [http-nio-8080-exec-1] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:19:17 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /auth/me
+2025-10-25 16:19:18 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:19:18 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:18 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:18 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:19:18 [http-nio-8080-exec-3] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:19:18 [http-nio-8080-exec-3] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:19:18 [http-nio-8080-exec-3] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:19:18 [http-nio-8080-exec-3] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:19:20 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:19:20 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios
+2025-10-25 16:19:20 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:20 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:20 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:20 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:20 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:19:20 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios
+2025-10-25 16:19:20 [http-nio-8080-exec-5] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:19:20 [http-nio-8080-exec-5] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:19:20 [http-nio-8080-exec-5] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:19:20 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:19:20 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas
+2025-10-25 16:19:20 [http-nio-8080-exec-5] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:19:20 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:20 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas
+2025-10-25 16:19:20 [http-nio-8080-exec-8] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = null)
+2025-10-25 16:19:20 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:20 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:20 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:20 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:20 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:20 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas
+2025-10-25 16:19:21 [http-nio-8080-exec-9] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = null)
+2025-10-25 16:19:21 [http-nio-8080-exec-9] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: TODAS
+2025-10-25 16:19:21 [http-nio-8080-exec-8] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'null': min=29.90, max=1599.90
+2025-10-25 16:19:21 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:19:21 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas
+2025-10-25 16:19:21 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:19:21 [http-nio-8080-exec-8] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 29.90, max: 1599.90
+2025-10-25 16:19:21 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:21 [http-nio-8080-exec-2] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = null)
+2025-10-25 16:19:21 [http-nio-8080-exec-4] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=null con parámetros extra={}
+2025-10-25 16:19:21 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:21 [http-nio-8080-exec-2] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: TODAS
+2025-10-25 16:19:21 [http-nio-8080-exec-9] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 17
+2025-10-25 16:19:21 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios
+2025-10-25 16:19:21 [http-nio-8080-exec-9] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 17
+2025-10-25 16:19:21 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:19:21 [http-nio-8080-exec-2] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:19:21 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:21 [http-nio-8080-exec-2] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:19:21 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:21 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas
+2025-10-25 16:19:21 [http-nio-8080-exec-10] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:19:21 [http-nio-8080-exec-10] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:19:21 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios
+2025-10-25 16:19:21 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:21 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas
+2025-10-25 16:19:21 [http-nio-8080-exec-7] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = null)
+2025-10-25 16:19:21 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:21 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:21 [http-nio-8080-exec-10] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:19:21 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas
+2025-10-25 16:19:21 [http-nio-8080-exec-10] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:19:21 [http-nio-8080-exec-7] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'null': min=29.90, max=1599.90
+2025-10-25 16:19:21 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:21 [http-nio-8080-exec-7] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 29.90, max: 1599.90
+2025-10-25 16:19:21 [http-nio-8080-exec-1] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = null)
+2025-10-25 16:19:21 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas
+2025-10-25 16:19:21 [http-nio-8080-exec-1] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: TODAS
+2025-10-25 16:19:21 [http-nio-8080-exec-6] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = null)
+2025-10-25 16:19:21 [http-nio-8080-exec-6] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: TODAS
+2025-10-25 16:19:21 [http-nio-8080-exec-1] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 17
+2025-10-25 16:19:21 [http-nio-8080-exec-1] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 17
+2025-10-25 16:19:21 [http-nio-8080-exec-6] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:19:21 [http-nio-8080-exec-6] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:19:21 [http-nio-8080-exec-4] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 27 productos para la categoría 'null' con filtros {}
+2025-10-25 16:19:21 [http-nio-8080-exec-4] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 27 productos para la categoría null
+2025-10-25 16:19:21 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:19:21 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:21 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:21 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:19:21 [http-nio-8080-exec-3] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=null con parámetros extra={}
+2025-10-25 16:19:21 [http-nio-8080-exec-3] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 27 productos para la categoría 'null' con filtros {}
+2025-10-25 16:19:21 [http-nio-8080-exec-3] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 27 productos para la categoría null
+2025-10-25 16:19:55 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:19:55 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:55 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:55 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:19:55 [http-nio-8080-exec-5] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:19:55 [http-nio-8080-exec-5] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:19:55 [http-nio-8080-exec-5] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:19:55 [http-nio-8080-exec-5] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:19:55 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:19:55 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:55 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:55 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:19:55 [http-nio-8080-exec-8] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:19:55 [http-nio-8080-exec-8] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:19:55 [http-nio-8080-exec-8] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:19:55 [http-nio-8080-exec-8] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:19:59 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:19:59 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:59 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:59 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:19:59 [http-nio-8080-exec-9] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:19:59 [http-nio-8080-exec-9] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:19:59 [http-nio-8080-exec-9] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:19:59 [http-nio-8080-exec-9] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:19:59 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:19:59 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:19:59 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:19:59 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:19:59 [http-nio-8080-exec-2] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:19:59 [http-nio-8080-exec-2] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:19:59 [http-nio-8080-exec-2] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:19:59 [http-nio-8080-exec-2] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:20:01 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/productos?categoria=Procesador&page=0&size=8
+2025-10-25 16:20:01 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:20:01 [http-nio-8080-exec-10] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:20:01 [http-nio-8080-exec-10] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:20:01 [http-nio-8080-exec-10] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:20:01 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/productos?categoria=Procesador&page=0&size=8
+2025-10-25 16:20:01 [http-nio-8080-exec-10] INFO  c.u.c.controller.BuildController - Obteniendo productos para builds con la categoria: Procesador
+2025-10-25 16:20:01 [http-nio-8080-exec-10] INFO  c.u.c.service.ProductoTiendaService - Buscanco productos para build de categoria: 
+2025-10-25 16:20:01 [http-nio-8080-exec-10] INFO  c.u.c.controller.BuildController - Se encontraron 4 productos para las builds: Procesador
+2025-10-25 16:20:06 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/productos?categoria=Refrigeraci%C3%B3n+CPU&page=0&size=8
+2025-10-25 16:20:06 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:20:06 [http-nio-8080-exec-7] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:20:06 [http-nio-8080-exec-7] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:20:06 [http-nio-8080-exec-7] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:20:06 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/productos?categoria=Refrigeraci%C3%B3n+CPU&page=0&size=8
+2025-10-25 16:20:06 [http-nio-8080-exec-7] INFO  c.u.c.controller.BuildController - Obteniendo productos para builds con la categoria: Refrigeración CPU
+2025-10-25 16:20:06 [http-nio-8080-exec-7] INFO  c.u.c.service.ProductoTiendaService - Buscanco productos para build de categoria: 
+2025-10-25 16:20:06 [http-nio-8080-exec-7] INFO  c.u.c.controller.BuildController - Se encontraron 4 productos para las builds: Refrigeración CPU
+2025-10-25 16:20:08 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/productos?categoria=Almacenamiento&page=0&size=8
+2025-10-25 16:20:08 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:20:08 [http-nio-8080-exec-1] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:20:08 [http-nio-8080-exec-1] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:20:08 [http-nio-8080-exec-1] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:20:08 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/productos?categoria=Almacenamiento&page=0&size=8
+2025-10-25 16:20:08 [http-nio-8080-exec-1] INFO  c.u.c.controller.BuildController - Obteniendo productos para builds con la categoria: Almacenamiento
+2025-10-25 16:20:08 [http-nio-8080-exec-1] INFO  c.u.c.service.ProductoTiendaService - Buscanco productos para build de categoria: 
+2025-10-25 16:20:08 [http-nio-8080-exec-1] INFO  c.u.c.controller.BuildController - Se encontraron 4 productos para las builds: Almacenamiento
+2025-10-25 16:20:09 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/productos?categoria=Memoria+RAM&page=0&size=8
+2025-10-25 16:20:09 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:20:09 [http-nio-8080-exec-6] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:20:09 [http-nio-8080-exec-6] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:20:09 [http-nio-8080-exec-6] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:20:09 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/productos?categoria=Memoria+RAM&page=0&size=8
+2025-10-25 16:20:09 [http-nio-8080-exec-6] INFO  c.u.c.controller.BuildController - Obteniendo productos para builds con la categoria: Memoria RAM
+2025-10-25 16:20:09 [http-nio-8080-exec-6] INFO  c.u.c.service.ProductoTiendaService - Buscanco productos para build de categoria: 
+2025-10-25 16:20:09 [http-nio-8080-exec-6] INFO  c.u.c.controller.BuildController - Se encontraron 3 productos para las builds: Memoria RAM
+2025-10-25 16:20:11 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/productos?categoria=Placa+Madre&page=0&size=8
+2025-10-25 16:20:11 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:20:11 [http-nio-8080-exec-4] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:20:11 [http-nio-8080-exec-4] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:20:11 [http-nio-8080-exec-4] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:20:11 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/productos?categoria=Placa+Madre&page=0&size=8
+2025-10-25 16:20:11 [http-nio-8080-exec-4] INFO  c.u.c.controller.BuildController - Obteniendo productos para builds con la categoria: Placa Madre
+2025-10-25 16:20:11 [http-nio-8080-exec-4] INFO  c.u.c.service.ProductoTiendaService - Buscanco productos para build de categoria: 
+2025-10-25 16:20:11 [http-nio-8080-exec-4] INFO  c.u.c.controller.BuildController - Se encontraron 3 productos para las builds: Placa Madre
+2025-10-25 16:20:13 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/productos?categoria=Tarjeta+de+Video&page=0&size=8
+2025-10-25 16:20:13 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:20:13 [http-nio-8080-exec-3] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:20:13 [http-nio-8080-exec-3] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:20:13 [http-nio-8080-exec-3] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:20:13 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/productos?categoria=Tarjeta+de+Video&page=0&size=8
+2025-10-25 16:20:13 [http-nio-8080-exec-3] INFO  c.u.c.controller.BuildController - Obteniendo productos para builds con la categoria: Tarjeta de Video
+2025-10-25 16:20:13 [http-nio-8080-exec-3] INFO  c.u.c.service.ProductoTiendaService - Buscanco productos para build de categoria: 
+2025-10-25 16:20:13 [http-nio-8080-exec-3] INFO  c.u.c.controller.BuildController - Se encontraron 5 productos para las builds: Tarjeta de Video
+2025-10-25 16:20:15 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/productos?categoria=Fuente+de+Poder&page=0&size=8
+2025-10-25 16:20:15 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:20:15 [http-nio-8080-exec-5] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:20:15 [http-nio-8080-exec-5] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:20:15 [http-nio-8080-exec-5] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:20:15 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/productos?categoria=Fuente+de+Poder&page=0&size=8
+2025-10-25 16:20:15 [http-nio-8080-exec-5] INFO  c.u.c.controller.BuildController - Obteniendo productos para builds con la categoria: Fuente de Poder
+2025-10-25 16:20:15 [http-nio-8080-exec-5] INFO  c.u.c.service.ProductoTiendaService - Buscanco productos para build de categoria: 
+2025-10-25 16:20:15 [http-nio-8080-exec-5] INFO  c.u.c.controller.BuildController - Se encontraron 4 productos para las builds: Fuente de Poder
+2025-10-25 16:20:17 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/productos?categoria=Otros&page=0&size=8
+2025-10-25 16:20:17 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:20:17 [http-nio-8080-exec-8] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:20:17 [http-nio-8080-exec-8] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:20:17 [http-nio-8080-exec-8] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:20:17 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/productos?categoria=Otros&page=0&size=8
+2025-10-25 16:20:17 [http-nio-8080-exec-8] INFO  c.u.c.controller.BuildController - Obteniendo productos para builds con la categoria: Otros
+2025-10-25 16:20:17 [http-nio-8080-exec-8] INFO  c.u.c.service.ProductoTiendaService - Buscanco productos para build de categoria: 
+2025-10-25 16:20:17 [http-nio-8080-exec-8] WARN  c.u.c.controller.BuildController - No se encontraron productos para las builds con categoria: Otros
+2025-10-25 16:20:32 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:20:32 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:32 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:32 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:20:32 [http-nio-8080-exec-6] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:20:32 [http-nio-8080-exec-6] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:20:32 [http-nio-8080-exec-6] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:20:32 [http-nio-8080-exec-6] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:20:32 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:20:32 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:32 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:32 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:20:32 [http-nio-8080-exec-4] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:20:32 [http-nio-8080-exec-4] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:20:32 [http-nio-8080-exec-4] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:20:32 [http-nio-8080-exec-4] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:20:38 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:20:38 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:38 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:38 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:20:38 [http-nio-8080-exec-3] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:20:38 [http-nio-8080-exec-3] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:20:38 [http-nio-8080-exec-3] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:20:38 [http-nio-8080-exec-3] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:20:38 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:20:38 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:38 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:38 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:20:38 [http-nio-8080-exec-5] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:20:38 [http-nio-8080-exec-5] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:20:38 [http-nio-8080-exec-5] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:20:38 [http-nio-8080-exec-5] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios
+2025-10-25 16:20:41 [http-nio-8080-exec-8] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:20:41 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:20:41 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-9] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = null)
+2025-10-25 16:20:41 [http-nio-8080-exec-8] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:20:41 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios?categoria=Placa+Madre
+2025-10-25 16:20:41 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-9] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'null': min=29.90, max=1599.90
+2025-10-25 16:20:41 [http-nio-8080-exec-2] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = null)
+2025-10-25 16:20:41 [http-nio-8080-exec-10] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=null con parámetros extra={}
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 29.90, max: 1599.90
+2025-10-25 16:20:41 [http-nio-8080-exec-2] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: TODAS
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas?categoria=Placa+Madre
+2025-10-25 16:20:41 [http-nio-8080-exec-1] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = null)
+2025-10-25 16:20:41 [http-nio-8080-exec-1] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: TODAS
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios?categoria=Placa+Madre
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas?categoria=Placa+Madre
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 17
+2025-10-25 16:20:41 [http-nio-8080-exec-7] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = Placa Madre)
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 17
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas?categoria=Placa+Madre
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-6] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = Placa Madre)
+2025-10-25 16:20:41 [http-nio-8080-exec-6] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: Placa Madre
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas?categoria=Placa+Madre
+2025-10-25 16:20:41 [http-nio-8080-exec-7] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'Placa Madre': min=89.90, max=149.90
+2025-10-25 16:20:41 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/valores?nombreAtributo=Tipo+RAM+Compatible
+2025-10-25 16:20:41 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/valores?nombreAtributo=Socket+Motherboard
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 89.90, max: 149.90
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 3
+2025-10-25 16:20:41 [http-nio-8080-exec-4] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = Placa Madre)
+2025-10-25 16:20:41 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-4] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: Placa Madre
+2025-10-25 16:20:41 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 3
+2025-10-25 16:20:41 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:20:41 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/valores?nombreAtributo=Tipo+RAM+Compatible
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/valores?nombreAtributo=Factor+de+Forma+Motherboard
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:20:41 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/valores?nombreAtributo=Socket+Motherboard
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-5] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener atributos (atributo = Socket Motherboard)
+2025-10-25 16:20:41 [http-nio-8080-exec-5] INFO  c.u.c.service.FiltroService - Obteniendo atributos de Socket Motherboard
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:20:41 [http-nio-8080-exec-3] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener atributos (atributo = Tipo RAM Compatible)
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-3] INFO  c.u.c.service.FiltroService - Obteniendo atributos de Tipo RAM Compatible
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/valores?nombreAtributo=Factor+de+Forma+Motherboard
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios
+2025-10-25 16:20:41 [http-nio-8080-exec-8] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener atributos (atributo = Factor de Forma Motherboard)
+2025-10-25 16:20:41 [http-nio-8080-exec-8] INFO  c.u.c.service.FiltroService - Obteniendo atributos de Factor de Forma Motherboard
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-9] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios
+2025-10-25 16:20:41 [http-nio-8080-exec-2] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = null)
+2025-10-25 16:20:41 [http-nio-8080-exec-9] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:20:41 [http-nio-8080-exec-2] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'null': min=29.90, max=1599.90
+2025-10-25 16:20:41 [http-nio-8080-exec-3] DEBUG c.u.c.service.FiltroService - Total de atributos encontradas: 1
+2025-10-25 16:20:41 [http-nio-8080-exec-3] DEBUG c.u.c.controller.FiltroController - Atributos encontradss: 1
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG c.u.c.service.FiltroService - Total de atributos encontradas: 2
+2025-10-25 16:20:41 [http-nio-8080-exec-5] DEBUG c.u.c.service.FiltroService - Total de atributos encontradas: 1
+2025-10-25 16:20:41 [http-nio-8080-exec-2] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 29.90, max: 1599.90
+2025-10-25 16:20:41 [http-nio-8080-exec-8] DEBUG c.u.c.controller.FiltroController - Atributos encontradss: 2
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas
+2025-10-25 16:20:41 [http-nio-8080-exec-5] DEBUG c.u.c.controller.FiltroController - Atributos encontradss: 1
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-10] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 27 productos para la categoría 'null' con filtros {}
+2025-10-25 16:20:41 [http-nio-8080-exec-1] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = null)
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-10] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 27 productos para la categoría null
+2025-10-25 16:20:41 [http-nio-8080-exec-1] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: TODAS
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas
+2025-10-25 16:20:41 [http-nio-8080-exec-6] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:20:41 [http-nio-8080-exec-7] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = null)
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:20:41 [http-nio-8080-exec-7] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: TODAS
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:20:41 [http-nio-8080-exec-6] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:20:41 [http-nio-8080-exec-1] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 17
+2025-10-25 16:20:41 [http-nio-8080-exec-6] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:20:41 [http-nio-8080-exec-7] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 17
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:20:41 [http-nio-8080-exec-4] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=null con parámetros extra={}
+2025-10-25 16:20:41 [http-nio-8080-exec-4] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 27 productos para la categoría 'null' con filtros {}
+2025-10-25 16:20:41 [http-nio-8080-exec-4] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 27 productos para la categoría null
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?precioMax=1599.9&precioMin=29.9&page=0&size=15&categoria=placa-madre
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:41 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?precioMax=1599.9&precioMin=29.9&page=0&size=15&categoria=placa-madre
+2025-10-25 16:20:41 [http-nio-8080-exec-9] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=placa-madre con parámetros extra={}
+2025-10-25 16:20:41 [http-nio-8080-exec-9] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 3 productos para la categoría 'placa-madre' con filtros {}
+2025-10-25 16:20:41 [http-nio-8080-exec-9] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 3 productos para la categoría placa-madre
+2025-10-25 16:20:48 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=arma&page=0&size=5
+2025-10-25 16:20:48 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:48 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:48 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=arma&page=0&size=5
+2025-10-25 16:20:48 [http-nio-8080-exec-8] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'arma', page=0, size=5
+2025-10-25 16:20:48 [http-nio-8080-exec-8] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'arma'
+2025-10-25 16:20:48 [http-nio-8080-exec-8] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 0 productos que coinciden con el nombre 'arma'
+2025-10-25 16:20:48 [http-nio-8080-exec-8] WARN  c.u.c.c.ProductoTiendaController - No se encontraron productos con el nombre: 'arma'
+2025-10-25 16:20:49 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=arma%7D&page=0&size=5
+2025-10-25 16:20:49 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:49 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:49 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=arma%7D&page=0&size=5
+2025-10-25 16:20:49 [http-nio-8080-exec-5] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'arma}', page=0, size=5
+2025-10-25 16:20:49 [http-nio-8080-exec-5] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'arma}'
+2025-10-25 16:20:49 [http-nio-8080-exec-5] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 0 productos que coinciden con el nombre 'arma}'
+2025-10-25 16:20:49 [http-nio-8080-exec-5] WARN  c.u.c.c.ProductoTiendaController - No se encontraron productos con el nombre: 'arma}'
+2025-10-25 16:20:49 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=arma&page=0&size=5
+2025-10-25 16:20:49 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:49 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:49 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=arma&page=0&size=5
+2025-10-25 16:20:49 [http-nio-8080-exec-3] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'arma', page=0, size=5
+2025-10-25 16:20:49 [http-nio-8080-exec-3] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'arma'
+2025-10-25 16:20:49 [http-nio-8080-exec-3] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 0 productos que coinciden con el nombre 'arma'
+2025-10-25 16:20:49 [http-nio-8080-exec-3] WARN  c.u.c.c.ProductoTiendaController - No se encontraron productos con el nombre: 'arma'
+2025-10-25 16:20:52 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=rt&page=0&size=5
+2025-10-25 16:20:52 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:52 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:52 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=rt&page=0&size=5
+2025-10-25 16:20:52 [http-nio-8080-exec-2] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'rt', page=0, size=5
+2025-10-25 16:20:52 [http-nio-8080-exec-2] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'rt'
+2025-10-25 16:20:52 [http-nio-8080-exec-2] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 4 productos que coinciden con el nombre 'rt'
+2025-10-25 16:20:52 [http-nio-8080-exec-2] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 4 productos que coinciden con 'rt'
+2025-10-25 16:20:53 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=rtx&page=0&size=5
+2025-10-25 16:20:53 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:53 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:53 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=rtx&page=0&size=5
+2025-10-25 16:20:53 [http-nio-8080-exec-10] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'rtx', page=0, size=5
+2025-10-25 16:20:53 [http-nio-8080-exec-10] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'rtx'
+2025-10-25 16:20:53 [http-nio-8080-exec-10] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 4 productos que coinciden con el nombre 'rtx'
+2025-10-25 16:20:53 [http-nio-8080-exec-10] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 4 productos que coinciden con 'rtx'
+2025-10-25 16:20:55 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=rt&page=0&size=5
+2025-10-25 16:20:55 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:55 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:55 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=rt&page=0&size=5
+2025-10-25 16:20:55 [http-nio-8080-exec-7] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'rt', page=0, size=5
+2025-10-25 16:20:55 [http-nio-8080-exec-7] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'rt'
+2025-10-25 16:20:55 [http-nio-8080-exec-7] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 4 productos que coinciden con el nombre 'rt'
+2025-10-25 16:20:55 [http-nio-8080-exec-7] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 4 productos que coinciden con 'rt'
+2025-10-25 16:20:59 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=rt&page=0&size=5
+2025-10-25 16:20:59 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:20:59 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:20:59 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=rt&page=0&size=5
+2025-10-25 16:20:59 [http-nio-8080-exec-1] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'rt', page=0, size=5
+2025-10-25 16:20:59 [http-nio-8080-exec-1] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'rt'
+2025-10-25 16:20:59 [http-nio-8080-exec-1] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 4 productos que coinciden con el nombre 'rt'
+2025-10-25 16:20:59 [http-nio-8080-exec-1] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 4 productos que coinciden con 'rt'
+2025-10-25 16:21:01 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=rtx&page=0&size=5
+2025-10-25 16:21:01 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:21:01 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:21:01 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=rtx&page=0&size=5
+2025-10-25 16:21:01 [http-nio-8080-exec-6] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'rtx', page=0, size=5
+2025-10-25 16:21:01 [http-nio-8080-exec-6] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'rtx'
+2025-10-25 16:21:01 [http-nio-8080-exec-6] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 4 productos que coinciden con el nombre 'rtx'
+2025-10-25 16:21:01 [http-nio-8080-exec-6] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 4 productos que coinciden con 'rtx'
+2025-10-25 16:21:02 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=rt&page=0&size=5
+2025-10-25 16:21:02 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:21:02 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:21:02 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=rt&page=0&size=5
+2025-10-25 16:21:02 [http-nio-8080-exec-4] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'rt', page=0, size=5
+2025-10-25 16:21:02 [http-nio-8080-exec-4] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'rt'
+2025-10-25 16:21:02 [http-nio-8080-exec-4] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 4 productos que coinciden con el nombre 'rt'
+2025-10-25 16:21:02 [http-nio-8080-exec-4] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 4 productos que coinciden con 'rt'
+2025-10-25 16:21:04 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=intell&page=0&size=5
+2025-10-25 16:21:04 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:21:04 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:21:04 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=intell&page=0&size=5
+2025-10-25 16:21:04 [http-nio-8080-exec-9] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'intell', page=0, size=5
+2025-10-25 16:21:04 [http-nio-8080-exec-9] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'intell'
+2025-10-25 16:21:04 [http-nio-8080-exec-9] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 0 productos que coinciden con el nombre 'intell'
+2025-10-25 16:21:04 [http-nio-8080-exec-9] WARN  c.u.c.c.ProductoTiendaController - No se encontraron productos con el nombre: 'intell'
+2025-10-25 16:21:06 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=intel&page=0&size=5
+2025-10-25 16:21:06 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:21:06 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:21:06 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=intel&page=0&size=5
+2025-10-25 16:21:06 [http-nio-8080-exec-8] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'intel', page=0, size=5
+2025-10-25 16:21:06 [http-nio-8080-exec-8] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'intel'
+2025-10-25 16:21:06 [http-nio-8080-exec-8] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 2 productos que coinciden con el nombre 'intel'
+2025-10-25 16:21:06 [http-nio-8080-exec-8] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 2 productos que coinciden con 'intel'
+2025-10-25 16:21:11 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/buscar?nombre=ry&page=0&size=5
+2025-10-25 16:21:11 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:21:11 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:21:11 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/buscar?nombre=ry&page=0&size=5
+2025-10-25 16:21:11 [http-nio-8080-exec-5] INFO  c.u.c.c.ProductoTiendaController - Buscando productos por nombre: 'ry', page=0, size=5
+2025-10-25 16:21:11 [http-nio-8080-exec-5] INFO  c.u.c.service.ProductoTiendaService - Buscando productos por nombre o parecido: 'ry'
+2025-10-25 16:21:11 [http-nio-8080-exec-5] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 2 productos que coinciden con el nombre 'ry'
+2025-10-25 16:21:11 [http-nio-8080-exec-5] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 2 productos que coinciden con 'ry'
+2025-10-25 16:23:54 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:23:54 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:23:54 [http-nio-8080-exec-9] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:23:54 [http-nio-8080-exec-9] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:23:54 [http-nio-8080-exec-9] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:23:54 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:23:54 [http-nio-8080-exec-9] INFO  c.u.compusearch.service.BuildService - Obteniendo builds con detalles para el usuario con ID: 5
+2025-10-25 16:23:54 [http-nio-8080-exec-9] WARN  c.u.compusearch.service.BuildService - No se encontraron builds para el usuario con ID: 5
+2025-10-25 16:23:54 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:23:54 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - Intentando autenticar usuario: usuario
+2025-10-25 16:23:54 [http-nio-8080-exec-8] DEBUG c.u.c.service.UsuarioService - Intentando autenticar usuario con identificador: usuario
+2025-10-25 16:23:54 [http-nio-8080-exec-8] INFO  c.u.c.service.UsuarioService - Usuario autenticado: usuario@test.com (username: usuario) con rol USUARIO
+2025-10-25 16:23:54 [http-nio-8080-exec-8] INFO  c.u.c.jwt.JwtAuthenticationFilter - Autenticación exitosa para el usuario: usuario
+2025-10-25 16:23:54 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /builds/usuario/5?page=0&size=5
+2025-10-25 16:23:54 [http-nio-8080-exec-8] INFO  c.u.compusearch.service.BuildService - Obteniendo builds con detalles para el usuario con ID: 5
+2025-10-25 16:23:54 [http-nio-8080-exec-8] WARN  c.u.compusearch.service.BuildService - No se encontraron builds para el usuario con ID: 5
+2025-10-25 16:24:04 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:24:04 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:24:04 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:24:04 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:24:04 [http-nio-8080-exec-5] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:24:04 [http-nio-8080-exec-5] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:24:04 [http-nio-8080-exec-5] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:24:04 [http-nio-8080-exec-5] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:24:04 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:24:04 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:24:04 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:24:04 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:24:04 [http-nio-8080-exec-3] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:24:04 [http-nio-8080-exec-3] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:24:04 [http-nio-8080-exec-3] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:24:04 [http-nio-8080-exec-3] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:24:58 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:24:58 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:24:58 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:24:58 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:24:58 [http-nio-8080-exec-2] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:24:58 [http-nio-8080-exec-2] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:24:58 [http-nio-8080-exec-2] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:24:58 [http-nio-8080-exec-2] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:24:58 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:24:58 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:24:58 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:24:58 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:24:58 [http-nio-8080-exec-6] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:24:58 [http-nio-8080-exec-6] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:24:58 [http-nio-8080-exec-6] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:24:58 [http-nio-8080-exec-6] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:25:06 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:25:06 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios
+2025-10-25 16:25:06 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:25:06 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas
+2025-10-25 16:25:06 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas
+2025-10-25 16:25:06 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-5] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:25:06 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios
+2025-10-25 16:25:06 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:25:06 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-4] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = null)
+2025-10-25 16:25:06 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas
+2025-10-25 16:25:06 [http-nio-8080-exec-7] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:25:06 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas
+2025-10-25 16:25:06 [http-nio-8080-exec-7] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:25:06 [http-nio-8080-exec-8] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = null)
+2025-10-25 16:25:06 [http-nio-8080-exec-9] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = null)
+2025-10-25 16:25:06 [http-nio-8080-exec-5] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=null con parámetros extra={}
+2025-10-25 16:25:06 [http-nio-8080-exec-9] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: TODAS
+2025-10-25 16:25:06 [http-nio-8080-exec-8] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: TODAS
+2025-10-25 16:25:06 [http-nio-8080-exec-7] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:25:06 [http-nio-8080-exec-4] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'null': min=29.90, max=1599.90
+2025-10-25 16:25:06 [http-nio-8080-exec-7] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:25:06 [http-nio-8080-exec-4] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 29.90, max: 1599.90
+2025-10-25 16:25:06 [http-nio-8080-exec-9] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 17
+2025-10-25 16:25:06 [http-nio-8080-exec-8] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:25:06 [http-nio-8080-exec-8] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:25:06 [http-nio-8080-exec-9] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 17
+2025-10-25 16:25:06 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/categorias
+2025-10-25 16:25:06 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/precios
+2025-10-25 16:25:06 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/tiendas
+2025-10-25 16:25:06 [http-nio-8080-exec-3] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /filtro/marcas
+2025-10-25 16:25:06 [http-nio-8080-exec-10] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-1] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/categorias
+2025-10-25 16:25:06 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/precios
+2025-10-25 16:25:06 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-2] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-3] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener categorías habilitadas
+2025-10-25 16:25:06 [http-nio-8080-exec-3] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:25:06 [http-nio-8080-exec-10] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener rango de precios (categoria = null)
+2025-10-25 16:25:06 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/tiendas
+2025-10-25 16:25:06 [http-nio-8080-exec-3] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:25:06 [http-nio-8080-exec-10] INFO  c.u.c.service.FiltroService - Rango de precios para la categoría 'null': min=29.90, max=1599.90
+2025-10-25 16:25:06 [http-nio-8080-exec-10] DEBUG c.u.c.controller.FiltroController - Rango de precios → min: 29.90, max: 1599.90
+2025-10-25 16:25:06 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /filtro/marcas
+2025-10-25 16:25:06 [http-nio-8080-exec-3] DEBUG c.u.c.controller.FiltroController - Categorías encontradas: 8
+2025-10-25 16:25:06 [http-nio-8080-exec-1] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener tiendas (categoria = null)
+2025-10-25 16:25:06 [http-nio-8080-exec-1] INFO  c.u.c.service.FiltroService - Obteniendo tiendas con productos habilitados para categoría: TODAS
+2025-10-25 16:25:06 [http-nio-8080-exec-2] INFO  c.u.c.controller.FiltroController - Solicitud recibida para obtener marcas (categoria = null)
+2025-10-25 16:25:06 [http-nio-8080-exec-2] INFO  c.u.c.service.FiltroService - Obteniendo marcas habilitadas para categoría: TODAS
+2025-10-25 16:25:06 [http-nio-8080-exec-2] DEBUG c.u.c.service.FiltroService - Total de marcas encontradas: 17
+2025-10-25 16:25:06 [http-nio-8080-exec-1] DEBUG c.u.c.service.FiltroService - Total de tiendas encontradas: 3
+2025-10-25 16:25:06 [http-nio-8080-exec-2] DEBUG c.u.c.controller.FiltroController - Marcas encontradas: 17
+2025-10-25 16:25:06 [http-nio-8080-exec-1] DEBUG c.u.c.controller.FiltroController - Tiendas encontradas: 3
+2025-10-25 16:25:06 [http-nio-8080-exec-5] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 27 productos para la categoría 'null' con filtros {}
+2025-10-25 16:25:06 [http-nio-8080-exec-5] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 27 productos para la categoría null
+2025-10-25 16:25:06 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:25:06 [http-nio-8080-exec-6] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:06 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:06 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /componentes/filtrar?page=0&size=15
+2025-10-25 16:25:06 [http-nio-8080-exec-6] INFO  c.u.c.c.ProductoTiendaController - Filtrando categoría=null con parámetros extra={}
+2025-10-25 16:25:06 [http-nio-8080-exec-6] INFO  c.u.c.service.ProductoTiendaService - Se encontraron 27 productos para la categoría 'null' con filtros {}
+2025-10-25 16:25:06 [http-nio-8080-exec-6] INFO  c.u.c.c.ProductoTiendaController - Se encontraron 27 productos para la categoría null
+2025-10-25 16:25:14 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /tiendas/verificadas
+2025-10-25 16:25:14 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /etiquetas
+2025-10-25 16:25:14 [http-nio-8080-exec-7] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:14 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:14 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:14 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:14 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /tiendas/verificadas
+2025-10-25 16:25:14 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /etiquetas
+2025-10-25 16:25:14 [http-nio-8080-exec-4] INFO  c.u.c.controller.EtiquetaController - Solicitando todas las etiquetas
+2025-10-25 16:25:14 [http-nio-8080-exec-7] INFO  c.u.c.controller.TiendaController - GET /tiendas/verificadas - solicitando tiendas verificadas
+2025-10-25 16:25:14 [http-nio-8080-exec-4] DEBUG c.u.c.service.EtiquetaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:25:14 [http-nio-8080-exec-7] INFO  c.u.c.service.TiendaService - Buscando tiendas verificadas en la base de datos...
+2025-10-25 16:25:14 [http-nio-8080-exec-7] INFO  c.u.c.service.TiendaService - Se encontraron 3 tiendas verificadas.
+2025-10-25 16:25:14 [http-nio-8080-exec-4] INFO  c.u.c.service.EtiquetaService - Se encontraron 10 etiquetas
+2025-10-25 16:25:14 [http-nio-8080-exec-4] INFO  c.u.c.controller.EtiquetaController - Se retornaron 10 etiquetas.
+2025-10-25 16:25:14 [http-nio-8080-exec-7] INFO  c.u.c.service.TiendaService - Mapeando entidad Tienda a DTO para: Computer Shop
+2025-10-25 16:25:14 [http-nio-8080-exec-7] DEBUG c.u.c.service.TiendaService - DTO generado: com.universidad.compusearch.dto.TiendaResponse@1d19361e
+2025-10-25 16:25:14 [http-nio-8080-exec-7] INFO  c.u.c.service.TiendaService - Mapeando entidad Tienda a DTO para: Impacto
+2025-10-25 16:25:14 [http-nio-8080-exec-7] DEBUG c.u.c.service.TiendaService - DTO generado: com.universidad.compusearch.dto.TiendaResponse@28d88a24
+2025-10-25 16:25:14 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /etiquetas
+2025-10-25 16:25:14 [http-nio-8080-exec-7] INFO  c.u.c.service.TiendaService - Mapeando entidad Tienda a DTO para: Serco Plus
+2025-10-25 16:25:14 [http-nio-8080-exec-7] DEBUG c.u.c.service.TiendaService - DTO generado: com.universidad.compusearch.dto.TiendaResponse@72bf14de
+2025-10-25 16:25:14 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:14 [http-nio-8080-exec-7] INFO  c.u.c.controller.TiendaController - Se retornaron 3 tiendas verificadas.
+2025-10-25 16:25:14 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:14 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /etiquetas
+2025-10-25 16:25:14 [http-nio-8080-exec-8] INFO  c.u.c.controller.EtiquetaController - Solicitando todas las etiquetas
+2025-10-25 16:25:14 [http-nio-8080-exec-8] DEBUG c.u.c.service.EtiquetaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:25:14 [http-nio-8080-exec-8] INFO  c.u.c.service.EtiquetaService - Se encontraron 10 etiquetas
+2025-10-25 16:25:14 [http-nio-8080-exec-8] INFO  c.u.c.controller.EtiquetaController - Se retornaron 10 etiquetas.
+2025-10-25 16:25:14 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /tiendas/verificadas
+2025-10-25 16:25:14 [http-nio-8080-exec-9] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:14 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:14 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /tiendas/verificadas
+2025-10-25 16:25:14 [http-nio-8080-exec-9] INFO  c.u.c.controller.TiendaController - GET /tiendas/verificadas - solicitando tiendas verificadas
+2025-10-25 16:25:14 [http-nio-8080-exec-9] INFO  c.u.c.service.TiendaService - Buscando tiendas verificadas en la base de datos...
+2025-10-25 16:25:14 [http-nio-8080-exec-9] INFO  c.u.c.service.TiendaService - Se encontraron 3 tiendas verificadas.
+2025-10-25 16:25:14 [http-nio-8080-exec-9] INFO  c.u.c.service.TiendaService - Mapeando entidad Tienda a DTO para: Computer Shop
+2025-10-25 16:25:14 [http-nio-8080-exec-9] DEBUG c.u.c.service.TiendaService - DTO generado: com.universidad.compusearch.dto.TiendaResponse@30eceddd
+2025-10-25 16:25:14 [http-nio-8080-exec-9] INFO  c.u.c.service.TiendaService - Mapeando entidad Tienda a DTO para: Impacto
+2025-10-25 16:25:14 [http-nio-8080-exec-9] DEBUG c.u.c.service.TiendaService - DTO generado: com.universidad.compusearch.dto.TiendaResponse@600fd8cb
+2025-10-25 16:25:14 [http-nio-8080-exec-9] INFO  c.u.c.service.TiendaService - Mapeando entidad Tienda a DTO para: Serco Plus
+2025-10-25 16:25:14 [http-nio-8080-exec-9] DEBUG c.u.c.service.TiendaService - DTO generado: com.universidad.compusearch.dto.TiendaResponse@760e243c
+2025-10-25 16:25:14 [http-nio-8080-exec-9] INFO  c.u.c.controller.TiendaController - Se retornaron 3 tiendas verificadas.
+2025-10-25 16:25:47 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:25:47 [http-nio-8080-exec-4] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:47 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:47 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:25:47 [http-nio-8080-exec-4] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:25:47 [http-nio-8080-exec-4] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:25:47 [http-nio-8080-exec-4] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:25:47 [http-nio-8080-exec-4] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
+2025-10-25 16:25:47 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /categorias
+2025-10-25 16:25:47 [http-nio-8080-exec-8] DEBUG c.u.c.jwt.JwtAuthenticationFilter - No se encontró el token en las cookies.
+2025-10-25 16:25:47 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25 16:25:47 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /categorias
+2025-10-25 16:25:47 [http-nio-8080-exec-8] INFO  c.u.c.controller.CategoriaController - Solicitando todas las categorias
+2025-10-25 16:25:47 [http-nio-8080-exec-8] DEBUG c.u.c.service.CategoriaService - Buscando todas las etiquetas en la base de datos...
+2025-10-25 16:25:47 [http-nio-8080-exec-8] INFO  c.u.c.service.CategoriaService - Se encontraron 8 etiquetas
+2025-10-25 16:25:47 [http-nio-8080-exec-8] INFO  c.u.c.controller.CategoriaController - Se retornaron 8 etiquetas.
