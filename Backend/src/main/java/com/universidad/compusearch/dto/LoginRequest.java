@@ -7,6 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO utilizado para manejar las solicitudes de inicio de sesión.
+ * 
+ * Contiene los campos necesarios para autenticar a un usuario.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,5 +28,5 @@ public class LoginRequest {
     private String dispositivo;
 
     @NotNull(message = "El campo recordar es obligatorio")
-    private boolean recordar;
+    private Boolean recordar;
 }

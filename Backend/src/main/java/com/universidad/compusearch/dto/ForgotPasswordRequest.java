@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO utilizado para solicitar el restablecimiento de contraseña.
+ * Contiene el correo electrónico del usuario y el dispositivo desde el cual realiza la solicitud.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -14,7 +18,7 @@ import lombok.Setter;
 public class ForgotPasswordRequest {
     
     @NotBlank(message = "El email es obligatorio")
-    @Email(message = "Email invalido")
+    @Email(message = "Email inválido")
     private String email;
 
     @NotBlank(message = "Dispositivo es obligatorio")

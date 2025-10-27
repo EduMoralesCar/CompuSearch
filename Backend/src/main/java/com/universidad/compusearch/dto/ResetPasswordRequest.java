@@ -7,18 +7,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO utilizado para restablecer la contraseña del usuario.
+ * <p>
+ * Contiene el token de verificación y la nueva contraseña que cumple con los
+ * requisitos de seguridad.
+ * </p>
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class ResetPasswordRequest {
 
-    @NotBlank(message = "Token obligatorio")
+    /** Token de validación enviado al usuario (por correo o enlace). */
+    @NotBlank(message = "El token es obligatorio")
     private String token;
 
-    @NotBlank(message = "Contraseña es obligatoria")
+    /** Nueva contraseña del usuario con validación de complejidad. */
+    @NotBlank(message = "La contraseña es obligatoria")
     @Pattern(
-    regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$",
-    message = "La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula, número y carácter especial")
+        regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$",
+        message = "La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula, número y carácter especial"
+    )
     private String contrasena;
 }

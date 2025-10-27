@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import CategoriaCard from "../components/categorias/CategoriaCard";
-import useCategorias from "../hooks/useCategorias";
+import { useCategorias } from "../hooks/useCategorias";
 import bannerCategorias from "../../../assets/banners/banner_categorias.jpg"
 import BannerHeader from "../components/auxliar/BannerHeader"
 

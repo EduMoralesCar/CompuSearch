@@ -1,12 +1,15 @@
 package com.universidad.compusearch.dto;
 
 import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO que representa la información de un producto
+ * disponible en una tienda específica.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

@@ -1,35 +1,46 @@
 import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 
-const ModalGestionEtiqueta = ({ show, handleClose, etiqueta }) => {
-    
-    // Estado interno para el campo de texto del formulario
+const ModalGestionEtiqueta = ({ show, handleClose, handleGuardar, etiqueta }) => {
     const [nombreEtiqueta, setNombreEtiqueta] = useState("");
+    const [error, setError] = useState("");
 
-    // Determina si estamos en modo "Crear" o "Editar"
     const modo = etiqueta ? "Editar" : "Crear";
     const titulo = `${modo} Etiqueta`;
 
-    // Efecto para actualizar el formulario cuando la etiqueta seleccionada cambia
+    // Cuando cambia la etiqueta o se abre el modal, actualizamos el campo
     useEffect(() => {
         if (etiqueta) {
-            // Si hay una etiqueta (modo Editar), llena el campo
             setNombreEtiqueta(etiqueta.nombre);
         } else {
-            // Si no (modo Crear), vacía el campo
             setNombreEtiqueta("");
         }
-    }, [etiqueta, show]); // Se ejecuta cuando 'etiqueta' o 'show' cambian
+        setError(""); // limpiar error al abrir modal
+    }, [etiqueta, show]);
 
-    // Función de guardado (solo visual- Jesus Chambea)
-    const handleGuardar = () => {
-        if (modo === "Crear") {
-            console.log("(Visual) Creando etiqueta:", nombreEtiqueta);
-        } else {
-            console.log("(Visual) Editando etiqueta:", etiqueta.id, nombreEtiqueta);
+    // Validaciones antes de guardar
+    const validar = () => {
+        if (!nombreEtiqueta.trim()) {
+            setError("El nombre de la etiqueta no puede estar vacío.");
+            return false;
         }
-        
-        handleClose(); // Cierra el modal después de guardar
+
+        if (etiqueta && nombreEtiqueta.trim() === etiqueta.nombre) {
+            setError("Debe ingresar un nombre diferente al actual.");
+            return false;
+        }
+
+        setError("");
+        return true;
+    };
+
+    // Función que llama al handleGuardar del padre
+    const onGuardar = () => {
+        if (!validar()) return;
+
+        handleGuardar(nombreEtiqueta.trim());
+
+        handleClose();
     };
 
     return (
@@ -46,7 +57,13 @@ const ModalGestionEtiqueta = ({ show, handleClose, etiqueta }) => {
                             placeholder="Ej: Oferta, Nuevo, Gamer..."
                             value={nombreEtiqueta}
                             onChange={(e) => setNombreEtiqueta(e.target.value)}
+                            isInvalid={!!error}
                         />
+                        {error && (
+                            <Form.Control.Feedback type="invalid">
+                                {error}
+                            </Form.Control.Feedback>
+                        )}
                     </Form.Group>
                 </Form>
             </Modal.Body>
@@ -54,8 +71,8 @@ const ModalGestionEtiqueta = ({ show, handleClose, etiqueta }) => {
                 <Button variant="secondary" onClick={handleClose}>
                     Cancelar
                 </Button>
-                <Button variant="primary" onClick={handleGuardar}>
-                    Guardar Cambios
+                <Button variant="primary" onClick={onGuardar}>
+                    {modo === "Crear" ? "Crear Etiqueta" : "Guardar Cambios"}
                 </Button>
             </Modal.Footer>
         </Modal>

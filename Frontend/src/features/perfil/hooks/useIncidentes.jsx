@@ -19,14 +19,78 @@ export function useIncidentes() {
                 }
             );
             const data = response.data;
-            setRespuesta(data.content || []); // content del page
+            setRespuesta(data.content || []);
             setTotalPages(data.totalPages || 0);
         } catch (err) {
-            setError(err.response?.data?.message || "Error al obtener los incidentes");
+            setError(err.response?.data?.message || "Error al obtener los incidentes del usuario");
         } finally {
             setLoading(false);
         }
     };
 
-    return { respuesta, loading, error, obtenerIncidentes, totalPages };
+    const obtenerTodosIncidentes = async (page = 0, size = 10) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get("http://localhost:8080/incidentes", {
+                params: { page, size },
+                withCredentials: true
+            });
+            const data = response.data;
+            setRespuesta(data.content || []);
+            setTotalPages(data.totalPages || 0);
+        } catch (err) {
+            setError(err.response?.data?.message || "Error al obtener todos los incidentes");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const eliminarIncidente = async (id) => {
+        try {
+            await axios.delete(`http://localhost:8080/incidentes/${id}`, {
+                withCredentials: true
+            });
+            setRespuesta((prev) => prev.filter((inc) => inc.idIncidente !== id));
+        } catch (err) {
+            console.error("Error al eliminar el incidente:", err);
+            setError(err.response?.data?.message || "Error al eliminar el incidente");
+        }
+    };
+
+    const actualizarRevisado = async (id, revisado) => {
+        try {
+            await axios.put(
+                `http://localhost:8080/incidentes/${id}/revisado`,
+                null,
+                {
+                    params: { revisado },
+                    withCredentials: true,
+                }
+            );
+
+            setRespuesta((prev) =>
+                prev.map((inc) =>
+                    inc.idIncidente === id ? { ...inc, revisado } : inc
+                )
+            );
+        } catch (err) {
+            console.error("Error al actualizar el estado revisado:", err);
+            setError(
+                err.response?.data?.message ||
+                "Error al actualizar el estado revisado del incidente"
+            );
+        }
+    };
+
+    return {
+        respuesta,
+        totalPages,
+        loading,
+        error,
+        obtenerIncidentes,
+        obtenerTodosIncidentes,
+        eliminarIncidente,
+        actualizarRevisado,
+    };
 }

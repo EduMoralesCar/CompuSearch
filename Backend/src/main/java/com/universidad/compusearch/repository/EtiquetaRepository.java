@@ -6,9 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.universidad.compusearch.entity.Etiqueta;
 
-public interface EtiquetaRepository extends JpaRepository<Etiqueta, Long>{
+/**
+ * Repositorio para la entidad {@link Etiqueta}.
+ * Proporciona operaciones CRUD y consultas específicas sobre etiquetas.
+ */
+public interface EtiquetaRepository extends JpaRepository<Etiqueta, Long> {
 
-    // Obtiene todas los nombres de 
-    // las etiquetas
+    /**
+     * Busca una etiqueta por su nombre exacto.
+     *
+     * @param nombre Nombre de la etiqueta a buscar.
+     * @return {@link Optional} que contiene la etiqueta si existe, o vacío si no.
+     */
     Optional<Etiqueta> findByNombre(String nombre);
 }
