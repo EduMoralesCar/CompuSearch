@@ -37,14 +37,7 @@ const PerfilUsuario = () => {
 
     return (
         <Container className="my-5 position-relative" style={{ minHeight: "80vh" }}>
-            <Button
-                variant="outline-primary"
-                onClick={() => navigate("/")}
-                className="position-absolute bottom-0 start-0 mb-3 ms-3 d-flex align-items-center"
-            >
-                <AiFillHome className="me-2" />
-                Inicio
-            </Button>
+            
 
             <h2 className="mb-4 fw-bold text-center">Mi Perfil</h2>
             <Row>

@@ -1,8 +1,12 @@
 import React from "react";
-import { ListGroup } from "react-bootstrap";
+import { ListGroup, Button } from "react-bootstrap";
+import { AiFillHome } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import BotonLogout from "../../auxiliar/BotonLogout";
 
 const PerfilNav = ({ vista, setVista }) => {
+    const navigate = useNavigate();
+
     const navItems = [
         { key: "informacion", icon: "bi-person-fill", text: "Información personal" },
         { key: "builds", icon: "bi-wrench", text: "Mis builds" },
@@ -13,6 +17,19 @@ const PerfilNav = ({ vista, setVista }) => {
 
     return (
         <ListGroup variant="flush">
+            {/* Botón de inicio */}
+            <ListGroup.Item className="p-0 mb-2">
+                <Button
+                    variant="outline-primary"
+                    onClick={() => navigate("/")}
+                    className="w-100 d-flex align-items-center justify-content-center"
+                >
+                    <AiFillHome className="me-2" />
+                    Inicio
+                </Button>
+            </ListGroup.Item>
+
+            {/* Items de navegación */}
             {navItems.map((item) => (
                 <ListGroup.Item
                     key={item.key}
@@ -24,6 +41,8 @@ const PerfilNav = ({ vista, setVista }) => {
                     <i className={`bi ${item.icon} me-3`}></i> {item.text}
                 </ListGroup.Item>
             ))}
+
+            {/* Botón de logout */}
             <ListGroup.Item className="p-0 pt-2">
                 <BotonLogout className="w-100" variant="danger" texto="Cerrar Sesión" />
             </ListGroup.Item>
