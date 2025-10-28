@@ -2,12 +2,19 @@ package com.universidad.compusearch.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO que representa la información básica de un producto
+ * asociado a una tienda, incluyendo su precio, stock y
+ * detalles técnicos relevantes.
+ *
+ * Se utiliza principalmente para la construcción de listados
+ * o resultados de búsqueda de productos.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

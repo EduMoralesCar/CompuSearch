@@ -16,13 +16,21 @@ import com.universidad.compusearch.dto.TiendaProductoDisponibleResponse;
 import com.universidad.compusearch.entity.ProductoTienda;
 import com.universidad.compusearch.exception.ProductoTiendaException;
 import com.universidad.compusearch.repository.ProductoTiendaRepository;
-import com.universidad.compusearch.specification.*;
+import com.universidad.compusearch.specification.ProductoTiendaSpecification;
+import com.universidad.compusearch.specification.ProductoTiendaSpecificationFactory;
 import com.universidad.compusearch.util.ProductoTiendaMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// Servicio de los productos de tiendas
+/**
+ * Servicio para gestionar productos de tiendas.
+ * <p>
+ * Permite filtrar, buscar y obtener información de productos por categoría,
+ * tienda,
+ * nombre, atributos adicionales y otros criterios.
+ * </p>
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -30,7 +38,21 @@ public class ProductoTiendaService {
 
         private final ProductoTiendaRepository productoTiendaRepository;
 
-        // Método principal: decide qué filtros aplicar según la categoría recibida.
+        /**
+         * Filtra productos por categoría y otros criterios opcionales.
+         *
+         * @param categoria    nombre de la categoría
+         * @param nombreTienda nombre de la tienda (opcional)
+         * @param marca        marca del producto (opcional)
+         * @param precioMax    precio máximo (opcional)
+         * @param precioMin    precio mínimo (opcional)
+         * @param disponible   si se busca solo productos disponibles (opcional)
+         * @param habilitado   si se busca solo productos habilitados (opcional)
+         * @param filtrosExtra mapa con filtros adicionales (atributos)
+         * @param page         número de página
+         * @param size         tamaño de página
+         * @return página de productos filtrados
+         */
         public Page<ProductoTienda> filtrarPorCategoria(
                         String categoria,
                         String nombreTienda,
@@ -42,6 +64,7 @@ public class ProductoTiendaService {
                         Map<String, String> filtrosExtra,
                         int page,
                         int size) {
+
                 Pageable pageable = PageRequest.of(page, size);
 
                 Specification<ProductoTienda> spec = ProductoTiendaSpecificationFactory.crearSpec(
@@ -56,7 +79,14 @@ public class ProductoTiendaService {
                 return productos;
         }
 
-        // Búsqueda general por nombre de producto
+        /**
+         * Busca productos por nombre parcial o completo.
+         *
+         * @param nombreProducto nombre o parte del nombre del producto
+         * @param page           número de página
+         * @param size           tamaño de página
+         * @return página de productos que coinciden con el nombre
+         */
         public Page<ProductoTienda> buscarPorNombreProducto(String nombreProducto, int page, int size) {
                 log.info("Buscando productos por nombre o parecido: '{}'", nombreProducto);
 
@@ -70,7 +100,14 @@ public class ProductoTiendaService {
                 return productos;
         }
 
-        // Búsqueda de un producto específico en una tienda específica
+        /**
+         * Busca un producto específico en una tienda específica.
+         *
+         * @param nombreProducto nombre del producto
+         * @param nombreTienda   nombre de la tienda
+         * @return producto de la tienda
+         * @throws ProductoTiendaException si no se encuentra el producto en la tienda
+         */
         public ProductoTienda buscarPorNombreProductoEspecifico(String nombreProducto, String nombreTienda) {
                 log.info("Buscando producto '{}' en la tienda '{}'", nombreProducto, nombreTienda);
 
@@ -78,6 +115,12 @@ public class ProductoTiendaService {
                                 .orElseThrow(() -> ProductoTiendaException.notFoundProductoOrShop());
         }
 
+        /**
+         * Obtiene todas las tiendas donde un producto específico está disponible.
+         *
+         * @param nombreProducto nombre del producto
+         * @return lista de tiendas con disponibilidad del producto
+         */
         public List<TiendaProductoDisponibleResponse> obtenerTiendasPorNombreProducto(String nombreProducto) {
                 List<ProductoTienda> productosTienda = productoTiendaRepository.findByNombreProducto(nombreProducto);
 
@@ -90,12 +133,17 @@ public class ProductoTiendaService {
                                 .collect(Collectors.toList());
         }
 
-        public Page<ProductoBuildResponse> obtenerProductosBuilds(
-                        String categoria,
-                        int page,
-                        int size) {
+        /**
+         * Obtiene productos habilitados de una categoría para construir builds.
+         *
+         * @param categoria nombre de la categoría
+         * @param page      número de página
+         * @param size      tamaño de página
+         * @return página de productos mapeados a ProductoBuildResponse
+         */
+        public Page<ProductoBuildResponse> obtenerProductosBuilds(String categoria, int page, int size) {
+                log.info("Buscando productos para build de categoría: {}", categoria);
 
-                log.info("Buscanco productos para build de categoria: ", categoria);
                 Pageable pageable = PageRequest.of(page, size);
 
                 Specification<ProductoTienda> spec = ProductoTiendaSpecification.porHabilitado(true)
@@ -106,11 +154,16 @@ public class ProductoTiendaService {
                 return productos.map(ProductoTiendaMapper::mapToProductoBuildResponse);
         }
 
+        /**
+         * Obtiene un producto de tienda por su ID.
+         *
+         * @param idProductoTienda ID del producto en la tienda
+         * @return producto de la tienda
+         * @throws ProductoTiendaException si no se encuentra el producto
+         */
         public ProductoTienda obtenerPorId(long idProductoTienda) {
                 log.info("Obteniendo producto tienda con id: {}", idProductoTienda);
-                return productoTiendaRepository.findById(idProductoTienda).orElseThrow(
-                                () -> ProductoTiendaException.notFoundProductoOrShop());
-
+                return productoTiendaRepository.findById(idProductoTienda)
+                                .orElseThrow(() -> ProductoTiendaException.notFoundProductoOrShop());
         }
-
 }

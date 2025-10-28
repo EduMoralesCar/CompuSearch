@@ -1,13 +1,11 @@
 package com.universidad.compusearch.service;
 
 import java.util.Map;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.universidad.compusearch.dto.UsuarioInfoResponse;
 import com.universidad.compusearch.entity.Usuario;
 import com.universidad.compusearch.exception.AlreadyRegisteredException;
@@ -15,11 +13,25 @@ import com.universidad.compusearch.exception.PasswordException;
 import com.universidad.compusearch.exception.TooManyAttemptsException;
 import com.universidad.compusearch.exception.UserException;
 import com.universidad.compusearch.repository.UsuarioRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// Servicio de usuario
+/**
+ * Servicio responsable de la gestión de usuarios dentro del sistema.
+ * <p>
+ * Implementa {@link UserDetailsService} para permitir la autenticación
+ * basada en credenciales de Spring Security.
+ * </p>
+ *
+ * <p>Provee métodos para:</p>
+ * <ul>
+ *   <li>Autenticar usuarios por email o username.</li>
+ *   <li>Buscar usuarios por su identificador.</li>
+ *   <li>Actualizar información personal y contraseñas.</li>
+ *   <li>Obtener información general de perfil del usuario.</li>
+ * </ul>
+ *
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,18 +41,20 @@ public class UsuarioService implements UserDetailsService {
     private final ChangeEmailService changeEmailService;
     private final PasswordEncoder passwordEncoder;
 
-    // Sobreescritura de UserDetails para cargar el usuario
+    /**
+     * Carga un usuario por su identificador (email o username) para autenticación.
+     *
+     * @param identificador email o nombre de usuario.
+     * @return instancia de {@link UserDetails} correspondiente al usuario autenticado.
+     * @throws UsernameNotFoundException si no se encuentra un usuario con el identificador.
+     */
     @Override
     public UserDetails loadUserByUsername(String identificador) throws UsernameNotFoundException {
         log.debug("Intentando autenticar usuario con identificador: {}", identificador);
 
-        // Buscar primero por email, si no, buscar por username
         Usuario usuario = usuarioRepository.findByEmail(identificador)
                 .or(() -> usuarioRepository.findByUsername(identificador))
-                .orElseThrow(() -> {
-                    log.warn("No se encontró usuario con email/username: {}", identificador);
-                    return UserException.notFound();
-                });
+                .orElseThrow(UserException::notFound);
 
         log.info("Usuario autenticado: {} (username: {}) con rol {}",
                 usuario.getEmail(), usuario.getUsername(), usuario.getTipoUsuario());
@@ -48,21 +62,27 @@ public class UsuarioService implements UserDetailsService {
         return usuario;
     }
 
-    // Buscar el usuario por id
+    /**
+     * Busca un usuario por su identificador único.
+     *
+     * @param idUsuario identificador del usuario.
+     * @return el usuario encontrado.
+     * @throws UserException si no existe un usuario con el id dado.
+     */
     public Usuario buscarPorId(Long idUsuario) {
         log.debug("Buscando al usuario con id: {}", idUsuario);
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> {
-                    log.warn("Usuario con el id {} no encontrado", idUsuario);
-                    return UserException.notFound();
-                });
-
-        log.info("Usuario con id {} encontrado", idUsuario);
-        return usuario;
+        return usuarioRepository.findById(idUsuario)
+                .orElseThrow(UserException::notFound);
     }
 
+    /**
+     * Devuelve información resumida del usuario para vistas de perfil o dashboard.
+     *
+     * @param idUsuario identificador del usuario.
+     * @return un {@link UsuarioInfoResponse} con datos resumidos del usuario.
+     */
     public UsuarioInfoResponse buscarInfoUsuario(long idUsuario) {
-        log.debug("Buscando informacion del usuario con id: {}", idUsuario);
+        log.debug("Buscando información del usuario con id: {}", idUsuario);
         Usuario usuario = buscarPorId(idUsuario);
         return new UsuarioInfoResponse(
                 usuario.getUsername(),
@@ -73,6 +93,14 @@ public class UsuarioService implements UserDetailsService {
                 usuario.getSolicitudes().size());
     }
 
+    /**
+     * Actualiza la información personal del usuario (actualmente, solo el email).
+     *
+     * @param id identificador del usuario.
+     * @param cambios mapa con los cambios a aplicar, por ejemplo {"email": "nuevo@email.com"}.
+     * @throws TooManyAttemptsException si el cambio de email ha sido bloqueado por demasiados intentos.
+     * @throws AlreadyRegisteredException si el nuevo email ya está registrado.
+     */
     public void actualizarInfoPersonal(Long id, Map<String, String> cambios) {
         String key = "changeEmail:" + id;
 
@@ -96,12 +124,24 @@ public class UsuarioService implements UserDetailsService {
         usuarioRepository.save(usuario);
     }
 
+    /**
+     * Actualiza la contraseña del usuario tras validar la actual y las nuevas credenciales.
+     *
+     * @param id identificador del usuario.
+     * @param cambios mapa con las claves:
+     *                <ul>
+     *                  <li>"currentPassword": contraseña actual</li>
+     *                  <li>"newPassword": nueva contraseña</li>
+     *                  <li>"confirmPassword": confirmación de la nueva contraseña</li>
+     *                </ul>
+     * @throws PasswordException si alguna validación de contraseña falla.
+     */
     public void actualizarPassword(Long id, Map<String, String> cambios) {
         Usuario usuario = buscarPorId(id);
 
         if (!cambios.containsKey("currentPassword") ||
-                !cambios.containsKey("newPassword") ||
-                !cambios.containsKey("confirmPassword")) {
+            !cambios.containsKey("newPassword") ||
+            !cambios.containsKey("confirmPassword")) {
             throw PasswordException.notFoundData();
         }
 
@@ -109,7 +149,6 @@ public class UsuarioService implements UserDetailsService {
         String newPassword = cambios.get("newPassword");
         String confirmPassword = cambios.get("confirmPassword");
 
-        // Validar contraseña actual
         if (!passwordEncoder.matches(currentPassword, usuario.getPassword())) {
             throw PasswordException.isInvalid();
         }
@@ -118,14 +157,11 @@ public class UsuarioService implements UserDetailsService {
             throw PasswordException.equalOldAndNew();
         }
 
-        // Validar que la nueva contraseña y confirmación coincidan
         if (!newPassword.equals(confirmPassword)) {
             throw PasswordException.notEquals();
         }
 
-        // Guardar la nueva contraseña
         usuario.setContrasena(passwordEncoder.encode(newPassword));
         usuarioRepository.save(usuario);
     }
-
 }

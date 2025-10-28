@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, Tabs, Tab, Table, Button, Stack } from "react-bootstrap";
-import ModalInfoUsuario from "./components/ModalInfoUsuario";
+import ModalInfoUsuario from "../modal/ModalInfoUsuario";
 
 //Datos de Ejemplo (Jesus Chambea)
 const mockUsuarios = [

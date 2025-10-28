@@ -1,5 +1,5 @@
 import React from "react";
-import useCategorias from "../hooks/useCategorias";
+import { useCategorias } from "../hooks/useCategorias";
 import BannerCarousel from "../components/home/carousels/BannerCarousel";
 import CategoriasCarousel from "../components/home/carousels/CategoriasCarousel";
 import TimelineSection from "../components/home/sections/TimelineSection";

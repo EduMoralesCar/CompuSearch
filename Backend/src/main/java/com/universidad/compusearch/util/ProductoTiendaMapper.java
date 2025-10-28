@@ -11,10 +11,23 @@ import com.universidad.compusearch.dto.ProductoTiendaResponse;
 import com.universidad.compusearch.entity.ProductoAtributo;
 import com.universidad.compusearch.entity.ProductoTienda;
 
-
+/**
+ * Clase utilitaria para realizar conversiones entre entidades {@link ProductoTienda}
+ * y sus respectivos objetos de transferencia de datos (DTOs).
+ * 
+ * Esta clase contiene únicamente métodos estáticos y no debe ser instanciada.
+ * Su propósito es centralizar la lógica de mapeo entre entidades y respuestas
+ * utilizadas en el sistema CompuSearch.
+ * 
+ */
 public class ProductoTiendaMapper {
 
-    // Conversión de entidad a DTO de respuesta
+    /**
+     * Convierte una entidad {@link ProductoTienda} en un objeto {@link ProductoTiendaResponse}.
+     *
+     * @param productoTienda entidad {@code ProductoTienda} que se desea convertir.
+     * @return un objeto {@code ProductoTiendaResponse} con los datos básicos del producto en tienda.
+     */
     public static ProductoTiendaResponse mapToResponse(ProductoTienda productoTienda) {
         return new ProductoTiendaResponse(
                 productoTienda.getIdProductoTienda(),
@@ -25,6 +38,13 @@ public class ProductoTiendaMapper {
                 productoTienda.getTienda().getNombre());
     }
 
+    /**
+     * Convierte una entidad {@link ProductoTienda} en un objeto {@link ProductoInfoResponse}
+     * que contiene información más detallada del producto.
+     *
+     * @param productoTienda entidad {@code ProductoTienda} que se desea convertir.
+     * @return un objeto {@code ProductoInfoResponse} con los detalles del producto, incluyendo sus atributos.
+     */
     public static ProductoInfoResponse mapToInfoProducto(ProductoTienda productoTienda) {
         ProductoInfoResponse dto = new ProductoInfoResponse();
         dto.setNombreProducto(productoTienda.getProducto().getNombre());
@@ -46,6 +66,13 @@ public class ProductoTiendaMapper {
         return dto;
     }
 
+    /**
+     * Convierte una entidad {@link ProductoTienda} en un objeto {@link ProductoBuildResponse},
+     * utilizado principalmente para la construcción de listas o configuraciones de productos.
+     *
+     * @param productoTienda entidad {@code ProductoTienda} que se desea convertir.
+     * @return un objeto {@code ProductoBuildResponse} con información del producto y sus atributos.
+     */
     public static ProductoBuildResponse mapToProductoBuildResponse(ProductoTienda productoTienda) {
         ProductoBuildResponse response = new ProductoBuildResponse();
         response.setIdProductoTienda(productoTienda.getIdProductoTienda());
@@ -69,6 +96,13 @@ public class ProductoTiendaMapper {
         return response;
     }
 
+    /**
+     * Convierte una lista de entidades {@link ProductoAtributo} en una lista de objetos
+     * {@link DetalleAtributoResponse}.
+     *
+     * @param atributos lista de entidades {@code ProductoAtributo}.
+     * @return una lista de {@code DetalleAtributoResponse} con el nombre del atributo y su valor.
+     */
     public static List<DetalleAtributoResponse> mapToDetalleAtributo(List<ProductoAtributo> atributos) {
         return atributos.stream()
                 .map(atributo -> {

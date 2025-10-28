@@ -5,7 +5,7 @@ import BuildsSummary from "../components/builds/info/BuildsSummary";
 import BuildsTable from "../components/builds/info/BuildsTable";
 import bannerBuilds from "../../../assets/banners/banner_builds.png";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
-import useCategorias from "../hooks/useCategorias";
+import { useCategorias } from "../hooks/useCategorias";
 import useBuilds from "../hooks/useBuilds";
 import AuthModal from "../../../components/auth/AuthModal";
 import BuildProductModal from "../components/builds/modal/BuildProductModal";

@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
             return { success: true, message: res.data.message };
         } catch (error) {
             setSessionError(error.response?.data?.message);
-            const message = error.response?.data?.error || "Error de conexión con el servidor";
+            const message = error.response?.data?.message || "Error de conexión con el servidor";
             return { success: false, message };
         }
     };

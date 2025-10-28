@@ -23,7 +23,20 @@ import com.universidad.compusearch.repository.BuildRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// Servicio de builds
+/**
+ * Servicio responsable de gestionar las operaciones relacionadas con las
+ * {@link Build} dentro del sistema.
+ * <p>
+ * Permite crear, actualizar, eliminar y consultar builds asociadas a los
+ * usuarios, así como obtener información detallada de cada una de ellas.
+ * </p>
+ *
+ * <p>
+ * Cada build representa una configuración de componentes (productos) seleccionados
+ * por un usuario, junto con sus atributos y precios.
+ * </p>
+ *
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,7 +46,13 @@ public class BuildService {
     private final UsuarioService usuarioService;
     private final ProductoTiendaService productoTiendaService;
 
-    // Creaa y guarda la build
+    /**
+     * Crea y guarda una nueva {@link Build} a partir de los datos del request.
+     *
+     * @param request objeto {@link BuildRequest} con la información de la build y sus detalles.
+     * @return la {@link Build} creada y persistida en base de datos.
+     * @throws BuildException si ocurre algún error al crear la build.
+     */
     public Build crearBuild(BuildRequest request) {
         log.info("Iniciando creación de build para el usuario con ID: {}", request.getIdUsuario());
 
@@ -46,6 +65,7 @@ public class BuildService {
         build.setConsumoTotal(request.getConsumoTotal());
         build.setUsuario(usuario);
 
+        // Mapeo de los detalles
         List<DetalleBuild> detalles = Lists.newArrayList(
                 request.getDetalles().stream().map(det -> {
                     DetalleBuild detalle = new DetalleBuild();
@@ -63,16 +83,21 @@ public class BuildService {
         build.setDetalles(detalles);
 
         Build buildGuardada = buildRepository.save(build);
-        log.info("Build creada exitosamente con ID: {} para el usuario ID: {}",
-                buildGuardada.getIdBuild(), usuario.getIdUsuario());
+        log.info("Build creada exitosamente con ID: {} para el usuario ID: {}", buildGuardada.getIdBuild(),
+                usuario.getIdUsuario());
 
         return buildGuardada;
     }
 
-    // Obtiene la build por id
+    /**
+     * Busca una {@link Build} específica por su identificador.
+     *
+     * @param idBuild ID único de la build.
+     * @return la {@link Build} encontrada.
+     * @throws BuildException si no se encuentra la build con el ID proporcionado.
+     */
     public Build obtenerBuildPorId(Long idBuild) {
         log.info("Buscando build con ID: {}", idBuild);
-
         return buildRepository.findByIdBuild(idBuild)
                 .orElseThrow(() -> {
                     log.warn("No se encontró la build con ID: {}", idBuild);
@@ -80,7 +105,14 @@ public class BuildService {
                 });
     }
 
-    // Obtiene la build por id
+    /**
+     * Obtiene una {@link Build} junto con su información detallada,
+     * incluyendo productos, atributos y totales.
+     *
+     * @param idBuild ID único de la build.
+     * @return un {@link BuildsInfoResponse} con los datos completos de la build.
+     * @throws BuildException si no se encuentra la build.
+     */
     public BuildsInfoResponse obtenerBuildPorIdConInfo(Long idBuild) {
         log.info("Buscando build con ID: {}", idBuild);
 
@@ -109,7 +141,7 @@ public class BuildService {
             detalleResponse.setCategoria(detalle.getProductoTienda().getProducto().getCategoria().getNombre());
             detalleResponse.setUrlProducto(detalle.getProductoTienda().getUrlProducto());
 
-            // Mapear atributos
+            // Mapear atributos del producto
             List<DetalleAtributoResponse> atributos = detalle.getProductoTienda().getProducto().getAtributos()
                     .stream()
                     .map(attr -> new DetalleAtributoResponse(
@@ -125,7 +157,12 @@ public class BuildService {
         return response;
     }
 
-    // Elimina una build del usuario
+    /**
+     * Elimina una {@link Build} existente a partir de su identificador.
+     *
+     * @param idBuild ID único de la build a eliminar.
+     * @throws BuildException si la build no existe.
+     */
     public void eliminarBuild(Long idBuild) {
         log.info("Intentando eliminar build con ID: {}", idBuild);
 
@@ -135,7 +172,14 @@ public class BuildService {
         log.info("Build con ID: {} eliminada correctamente", idBuild);
     }
 
-    // Actualizar la build del usuario
+    /**
+     * Actualiza los datos de una {@link Build} existente.
+     *
+     * @param idBuild ID de la build a actualizar.
+     * @param buildRequest objeto {@link BuildRequest} con los nuevos valores.
+     * @return la {@link Build} actualizada y guardada en base de datos.
+     * @throws BuildException si la build no se encuentra.
+     */
     public Build actualizarBuild(Long idBuild, BuildRequest buildRequest) {
         Build buildExistente = buildRepository.findById(idBuild)
                 .orElseThrow(() -> BuildException.notFound());
@@ -145,11 +189,11 @@ public class BuildService {
         buildExistente.setConsumoTotal(buildRequest.getConsumoTotal());
         buildExistente.setCompatible(buildRequest.isCompatible());
 
+        // Limpiar y volver a cargar los detalles
         buildExistente.getDetalles().clear();
 
         buildRequest.getDetalles().forEach(detalleReq -> {
-            ProductoTienda productoTienda = productoTiendaService
-                    .obtenerPorId(detalleReq.getIdProductoTienda());
+            ProductoTienda productoTienda = productoTiendaService.obtenerPorId(detalleReq.getIdProductoTienda());
 
             DetalleBuild detalle = new DetalleBuild();
             detalle.setBuild(buildExistente);
@@ -164,6 +208,13 @@ public class BuildService {
         return buildRepository.save(buildExistente);
     }
 
+    /**
+     * Obtiene una lista paginada de builds de un usuario, con sus respectivos detalles.
+     *
+     * @param idUsuario ID del usuario propietario de las builds.
+     * @param pageable parámetros de paginación (número de página, tamaño, orden).
+     * @return una página de {@link BuildsInfoResponse} con los datos de cada build.
+     */
     public Page<BuildsInfoResponse> obtenerBuildsInfoPorUsuario(Long idUsuario, Pageable pageable) {
         log.info("Obteniendo builds con detalles para el usuario con ID: {}", idUsuario);
 
@@ -194,12 +245,9 @@ public class BuildService {
                 detalleResponse.setCategoria(detalle.getProductoTienda().getProducto().getCategoria().getNombre());
                 detalleResponse.setUrlProducto(detalle.getProductoTienda().getUrlProducto());
 
-                // Mapear atributos
                 List<DetalleAtributoResponse> atributos = detalle.getProductoTienda().getProducto().getAtributos()
                         .stream()
-                        .map(attr -> new DetalleAtributoResponse(
-                                attr.getAtributo().getNombre(),
-                                attr.getValor()))
+                        .map(attr -> new DetalleAtributoResponse(attr.getAtributo().getNombre(), attr.getValor()))
                         .collect(Collectors.toList());
 
                 detalleResponse.setDetalles(atributos);
@@ -211,6 +259,14 @@ public class BuildService {
         });
     }
 
+    /**
+     * Convierte un {@link DetalleBuildRequest} en una entidad {@link DetalleBuild}.
+     *
+     * @param request el objeto de solicitud con la información del detalle.
+     * @param productoTienda la entidad {@link ProductoTienda} asociada.
+     * @param build la {@link Build} a la cual pertenece este detalle.
+     * @return una instancia de {@link DetalleBuild} lista para persistirse.
+     */
     public static DetalleBuild toEntity(DetalleBuildRequest request, ProductoTienda productoTienda, Build build) {
         DetalleBuild detalle = new DetalleBuild();
         detalle.setProductoTienda(productoTienda);
@@ -220,5 +276,4 @@ public class BuildService {
         detalle.setSubTotal(request.getSubTotal());
         return detalle;
     }
-
 }
