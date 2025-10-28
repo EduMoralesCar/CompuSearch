@@ -89,7 +89,9 @@ const GestionCategorias = () => {
                     </Button>
                 </Card.Header>
                 <Card.Body>
-                    {loading && <Spinner animation="border" />}
+                    <div className="text-center">
+                        {loading && <Spinner animation="border" />}
+                    </div>
 
                     {mensaje && <Alert variant={tipoMensaje}>{mensaje}</Alert>}
                     {!mensaje && error && <Alert variant="danger">{error}</Alert>}

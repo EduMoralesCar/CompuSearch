@@ -30,8 +30,8 @@ public class EtiquetaException extends CustomException {
     public static EtiquetaException notFound() {
         return new EtiquetaException(
                 "Etiqueta no encontrada",
-                404,                   // Código HTTP: Not Found
-                "ETIQUETA_NOT_FOUND"   // Código interno de la excepción
+                404,
+                "ETIQUETA_NOT_FOUND"
         );
     }
 
@@ -43,8 +43,8 @@ public class EtiquetaException extends CustomException {
     public static EtiquetaException inUse() {
         return new EtiquetaException(
                 "Etiqueta en uso por tiendas",
-                409,                  // Código HTTP: Conflict
-                "ETIQUETA_IN_USE"     // Código interno de la excepción
+                409,
+                "ETIQUETA_IN_USE"
         );
     }
 

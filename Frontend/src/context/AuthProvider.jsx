@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }) => {
 
             return { success: true };
         } catch (error) {
-            console.log(error)
             setSessionError(error.response?.data?.message);
             return {
                 success: false,

@@ -9,10 +9,13 @@ import GestionEtiquetas from "../components/perfilEmpleado/content/GestionEtique
 import GestionUsuarios from "../components/perfilEmpleado/content/GestionUsuarios";
 import GestionSolicitudes from "../components/perfilEmpleado/content/GestionSolicitudes";
 import GestionIncidencias from "../components/perfilEmpleado/content/GestionIncidencias";
+import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
 const PerfilEmpleado = () => {
     const [vistaActual, setVistaActual] = useState("categorias"); 
     const [sidebarAbierto, setSidebarAbierto] = useState(true); 
+
+    const { idUsuario } = useAuthStatus();
 
     const renderizarVista = () => {
         switch (vistaActual) {
@@ -23,7 +26,7 @@ const PerfilEmpleado = () => {
             case "usuarios":
                 return <GestionUsuarios />;
             case "solicitudes":
-                return <GestionSolicitudes />;
+                return <GestionSolicitudes idEmpleado={idUsuario} />;
             case "incidencias":
                 return <GestionIncidencias />;
             default:

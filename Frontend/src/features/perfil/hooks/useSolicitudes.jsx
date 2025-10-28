@@ -19,15 +19,64 @@ export function useSolicitudes() {
                 }
             );
             const data = response.data;
-            console.log(data);
             setRespuesta(data.content || []);
             setTotalPages(data.totalPages || 0);
         } catch (err) {
-            setError(err.response?.data?.message || "Error al obtener los incidentes");
+            setError(err.response?.data?.message || "Error al obtener las solicitudes del usuario");
         } finally {
             setLoading(false);
         }
     };
 
-    return { respuesta, loading, error, obtenerSolicitudes, totalPages };
+    const obtenerTodasSolicitudes = async (page = 0, size = 10) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`http://localhost:8080/solicitud`, {
+                params: { page, size },
+                withCredentials: true
+            });
+            const data = response.data;
+            setRespuesta(data.content || []);
+            setTotalPages(data.totalPages || 0);
+        } catch (err) {
+            setError(err.response?.data?.message || "Error al obtener todas las solicitudes");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const actualizarEstadoSolicitud = async (idSolicitud, nuevoEstado, idEmpleado) => {
+        try {
+            await axios.put(
+                `http://localhost:8080/solicitud/${idSolicitud}/estado`,
+                null,
+                {
+                    params: { nuevoEstado, idEmpleado },
+                    withCredentials: true
+                }
+            );
+
+            setRespuesta((prev) =>
+                prev.map((solicitud) =>
+                    solicitud.idSolicitud === idSolicitud
+                        ? { ...solicitud, estado: nuevoEstado }
+                        : solicitud
+                )
+            );
+
+        } catch (err) {
+            setError(err.response?.data?.message || "Error al actualizar el estado de la solicitud");
+        }
+    };
+
+    return {
+        respuesta,
+        totalPages,
+        loading,
+        error,
+        obtenerSolicitudes,
+        obtenerTodasSolicitudes,
+        actualizarEstadoSolicitud
+    };
 }

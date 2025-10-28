@@ -25,7 +25,7 @@ const SolicitudTiendaForm = ({ idUsuario }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-        setErrors((prev) => ({ ...prev, [name]: "" })); // Limpiar error del campo
+        setErrors((prev) => ({ ...prev, [name]: "" }));
     };
 
     const validarFormulario = () => {
@@ -109,7 +109,7 @@ const SolicitudTiendaForm = ({ idUsuario }) => {
                 { withCredentials: true }
             );
 
-            setMensaje("✅ Solicitud enviada correctamente. Un administrador la revisará pronto.");
+            setMensaje("Solicitud enviada correctamente. Un administrador la revisará pronto.");
             setFormData({
                 nombreTienda: "",
                 descripcion: "",
@@ -125,7 +125,7 @@ const SolicitudTiendaForm = ({ idUsuario }) => {
             });
             setErrors({});
         } catch (err) {
-            setErrorGeneral(err.response?.data?.message || "❌ Error al enviar la solicitud.");
+            setErrorGeneral(err.response?.data?.message || "Error al enviar la solicitud.");
         } finally {
             setLoading(false);
         }

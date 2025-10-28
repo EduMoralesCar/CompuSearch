@@ -56,8 +56,8 @@ const GestionEtiquetas = () => {
             await eliminarEtiqueta(etiquetaAEliminar.idEtiqueta);
             setTipoMensaje("success");
             setMensaje(`Etiqueta "${etiquetaAEliminar.nombre}" eliminada correctamente.`);
+        // eslint-disable-next-line no-unused-vars
         } catch (err) {
-            console.error("Error al eliminar:", err);
             setTipoMensaje("danger");
             setMensaje("Error al eliminar la etiqueta.");
         } finally {
@@ -84,8 +84,8 @@ const GestionEtiquetas = () => {
                 setTipoMensaje("success");
                 setMensaje("Etiqueta creada correctamente.");
             }
+        // eslint-disable-next-line no-unused-vars
         } catch (err) {
-            console.error("Error al guardar etiqueta:", err);
             setTipoMensaje("danger");
             setMensaje("Error al guardar la etiqueta.");
         } finally {
@@ -110,7 +110,7 @@ const GestionEtiquetas = () => {
                         </div>
                     )}
 
-                    {/* ✅ Mostrar mensaje de éxito o error */}
+                    {/* Mostrar mensaje de éxito o error */}
                     {mensaje && <Alert variant={tipoMensaje}>{mensaje}</Alert>}
 
                     {/* Si hay error global del hook */}

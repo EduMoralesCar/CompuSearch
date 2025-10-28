@@ -18,16 +18,14 @@ package com.universidad.compusearch.entity;
  * validación o aprobación de solicitudes.
  * </p>
  *
- * @author Jesus
- * @version 1.0
  */
 public enum EstadoSolicitud {
     /** La solicitud presenta observaciones o requiere ajustes. */
     OBSERVACION,
 
     /** La solicitud ha sido rechazada. */
-    RECHAZADO,
+    RECHAZADA,
 
     /** La solicitud ha sido aceptada. */
-    ACEPTADO
+    APROBADA
 }
