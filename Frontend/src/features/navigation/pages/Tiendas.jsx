@@ -4,7 +4,7 @@ import useEtiquetas from "../hooks/useEtiquetas";
 import TiendaFilters from "../components/TiendaFilters";
 import TiendaCard from "../components/TiendaCard";
 import bannerTiendas from "../../../assets/banners/banner_tiendas.jpg";
-import BannerHeader from "../components/BannerHeader"
+import BannerHeader from "../components/BannerHeader";
 
 export default function Tiendas() {
     const { tiendas, loading, error } = useTiendas();
@@ -28,8 +28,8 @@ export default function Tiendas() {
     return (
         <section>
             <BannerHeader
-                title="Arma tu computadora"
-                description="Crea tu PC personalizada con los mejores componentes."
+                title="Tiendas de Componentes"
+                description="Explora nuestras tiendas y encuentra los mejores productos para tu PC."
                 background={bannerTiendas}
             />
 
@@ -42,7 +42,9 @@ export default function Tiendas() {
                     etiquetasDisponibles={etiquetas}
                 />
 
-                {(loading || loadingEtiquetas) && <p className="text-center">Cargando tiendas y etiquetas...</p>}
+                {(loading || loadingEtiquetas) && (
+                    <p className="text-center">Cargando tiendas y etiquetas...</p>
+                )}
                 {(error || errorEtiquetas) && (
                     <p className="text-danger text-center">Error al cargar datos</p>
                 )}
