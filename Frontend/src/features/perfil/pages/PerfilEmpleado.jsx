@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Row, Col, Button } from "react-bootstrap";
-import { BsArrowBarLeft, BsList } from "react-icons/bs"; 
+import { BsArrowBarLeft, BsList } from "react-icons/bs";
 import AsideDashboard from "../components/perfilEmpleado/slider/AsideDashboard";
 import "../css/PerfilEmpleado.css";
 
@@ -9,11 +9,15 @@ import GestionEtiquetas from "../components/perfilEmpleado/content/GestionEtique
 import GestionUsuarios from "../components/perfilEmpleado/content/GestionUsuarios";
 import GestionSolicitudes from "../components/perfilEmpleado/content/GestionSolicitudes";
 import GestionIncidencias from "../components/perfilEmpleado/content/GestionIncidencias";
+import GestionPlanes from "../components/perfilEmpleado/content/GestionPlanes";
+import GestionEmpleados from "../components/perfilEmpleado/content/GestionEmpleados";
+
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
+import GestionTiendas from "../components/perfilEmpleado/content/GestionTiendas";
 
 const PerfilEmpleado = () => {
-    const [vistaActual, setVistaActual] = useState("categorias"); 
-    const [sidebarAbierto, setSidebarAbierto] = useState(true); 
+    const [vistaActual, setVistaActual] = useState("categorias");
+    const [sidebarAbierto, setSidebarAbierto] = useState(true);
 
     const { idUsuario } = useAuthStatus();
 
@@ -25,10 +29,16 @@ const PerfilEmpleado = () => {
                 return <GestionEtiquetas />;
             case "usuarios":
                 return <GestionUsuarios />;
+            case "tiendas":
+                return <GestionTiendas />
+            case "empleados":
+                return <GestionEmpleados />
             case "solicitudes":
                 return <GestionSolicitudes idEmpleado={idUsuario} />;
             case "incidencias":
                 return <GestionIncidencias />;
+            case "planes":
+                return <GestionPlanes />
             default:
                 return <GestionCategorias />;
         }
@@ -36,10 +46,10 @@ const PerfilEmpleado = () => {
 
     return (
         <div className="dashboard-layout">
-            
+
             {/* Se muestra si el sidebar está abierto Y estamos en vista móvil (d-lg-none) */}
             {sidebarAbierto && (
-                <div 
+                <div
                     className="dashboard-backdrop d-lg-none"
                     onClick={() => setSidebarAbierto(false)}
                 ></div>
@@ -47,8 +57,8 @@ const PerfilEmpleado = () => {
 
             {/* Columna 1: Barra Lateral (Aside)*/}
             <aside className={`sidebar ${sidebarAbierto ? "abierto" : "cerrado"}`}>
-                <AsideDashboard 
-                    setVistaActual={setVistaActual} 
+                <AsideDashboard
+                    setVistaActual={setVistaActual}
                     vistaActual={vistaActual}
                     // Pasamos la función para que el aside se cierre al navegar
                     setSidebarAbierto={setSidebarAbierto}
@@ -57,12 +67,12 @@ const PerfilEmpleado = () => {
 
             {/* Columna 2: Contenido Principal */}
             <main className="dashboard-content">
-                
+
                 {/*  SECCIÓN PARA MÓVIL */}
-                <Button 
+                <Button
                     variant="outline-primary"
                     onClick={() => setSidebarAbierto(!sidebarAbierto)}
-                    className="mb-3 d-lg-none" 
+                    className="mb-3 d-lg-none"
                 >
                     {sidebarAbierto ? <BsArrowBarLeft /> : <BsList />}
                 </Button>
@@ -71,7 +81,7 @@ const PerfilEmpleado = () => {
 
                 {/* SECCIÓN PARA DESKTOP */}
                 <div className="d-none d-lg-flex align-items-center mb-3">
-                    <Button 
+                    <Button
                         variant="outline-primary"
                         onClick={() => setSidebarAbierto(!sidebarAbierto)}
                         className="me-3"
@@ -82,7 +92,7 @@ const PerfilEmpleado = () => {
                     <h2 className="mb-0">Panel de Administrador</h2>
                 </div>
 
-                
+
                 {/* Aquí se renderiza el módulo seleccionado */}
                 <div className="vista-gestion-container">
                     {renderizarVista()}

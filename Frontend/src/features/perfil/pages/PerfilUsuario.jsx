@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Spinner, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { AiFillHome } from "react-icons/ai";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 import { useDatosUsuario } from "../hooks/useDatosUsuario";
 import PerfilSidebar from "../components/perfilUsuario/slider/PerfilSidebar";
@@ -11,7 +9,6 @@ const PerfilUsuario = () => {
     const [vista, setVista] = useState("informacion");
     const { idUsuario } = useAuthStatus();
     const { usuario, loading, error } = useDatosUsuario(idUsuario);
-    const navigate = useNavigate();
 
     if (loading)
         return (

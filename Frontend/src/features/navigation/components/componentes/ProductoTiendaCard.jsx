@@ -1,12 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useMetricas } from "../../hooks/useMetricas";
 
 const ProductoTiendaCard = ({ producto }) => {
   const placeholder = "https://via.placeholder.com/200x150?text=Sin+Imagen";
   const linkDestino = `/producto/${encodeURIComponent(producto.nombreProducto)}`
 
+  const { incrementarClicks } = useMetricas();
+
+  const updateMetricsClicks = async () => {
+    await incrementarClicks(producto.idProductoTienda);
+  };
+
+
   return (
-    <Link to={linkDestino} className="text-decoration-none text-dark h-100">
+    <Link to={linkDestino} onClick={updateMetricsClicks} className="text-decoration-none text-dark h-100">
       <div className="card shadow-sm h-100">
         <img
           src={producto.urlImagen || placeholder}

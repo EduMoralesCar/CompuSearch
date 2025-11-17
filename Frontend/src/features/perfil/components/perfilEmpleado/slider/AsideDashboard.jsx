@@ -36,10 +36,19 @@ const AsideDashboard = ({ setVistaActual, vistaActual, setSidebarAbierto }) => {
             <Nav.Link eventKey="usuarios">Usuarios</Nav.Link>
           </Nav.Item>
           <Nav.Item>
+            <Nav.Link eventKey="empleados">Empleados</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="tiendas">Tiendas</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
             <Nav.Link eventKey="solicitudes">Solicitudes</Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link eventKey="incidencias">Incidencias</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="planes">Planes</Nav.Link>
           </Nav.Item>
           <div className="mt-auto">
             <BotonLogout className="w-100" />

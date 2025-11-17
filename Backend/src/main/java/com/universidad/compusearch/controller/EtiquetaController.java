@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,37 +21,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-/**
- * Controlador REST para manejar operaciones relacionadas con las etiquetas.
- *
- * <p>
- * Proporciona endpoints para obtener, actualizar y eliminar etiquetas
- * disponibles en la aplicación.
- * </p>
- *
- * <p>
- * Base URL: <b>/etiquetas</b>
- * </p>
- */
 @RestController
 @Slf4j
 @RequestMapping("/etiquetas")
 @RequiredArgsConstructor
 public class EtiquetaController {
 
-    /** Servicio encargado de la lógica de negocio de etiquetas */
     private final EtiquetaService etiquetaService;
 
-    /**
-     * Obtiene todas las etiquetas disponibles.
-     *
-     * <p>
-     * Endpoint: <b>GET /etiquetas</b>
-     * </p>
-     *
-     * @return ResponseEntity con la lista de etiquetas y estado HTTP 200 OK
-     */
-    @GetMapping
+    @GetMapping("/todas")
     public ResponseEntity<List<Etiqueta>> obtenerTodasLasEtiquetas() {
         log.info("Solicitando todas las etiquetas");
 
@@ -59,17 +39,22 @@ public class EtiquetaController {
         return ResponseEntity.ok(etiquetas);
     }
 
-    /**
-     * Actualiza una etiqueta existente según su ID.
-     *
-     * <p>
-     * Endpoint: <b>PUT /etiquetas/{id}</b>
-     * </p>
-     *
-     * @param id       Identificador de la etiqueta a actualizar
-     * @param nombreEtiqueta Datos de la etiqueta para actualizar
-     * @return ResponseEntity con la etiqueta actualizada y estado HTTP 200 OK
-     */
+    @GetMapping
+    public ResponseEntity<Page<Etiqueta>> obtenerEtiquetasPaginadas(
+            Pageable pageable) {
+
+        log.info("Solicitando etiquetas paginadas. Página: {}, Tamaño: {}",
+                pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<Etiqueta> etiquetasPage = etiquetaService.obtenerTodasPaginadas(pageable);
+
+        log.info("Se retornó la página {} con {} etiquetas (Total: {}).",
+                etiquetasPage.getNumber(), etiquetasPage.getNumberOfElements(),
+                etiquetasPage.getTotalElements());
+
+        return ResponseEntity.ok(etiquetasPage);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Etiqueta> actualizarEtiqueta(@PathVariable Long id, @RequestBody String nombreEtiqueta) {
         log.info("Solicitando actualización de etiqueta con id={}", id);
@@ -78,17 +63,6 @@ public class EtiquetaController {
         return ResponseEntity.ok(actualizada);
     }
 
-    /**
-     * Elimina una etiqueta existente según su ID.
-     *
-     * <p>
-     * Endpoint: <b>DELETE /etiquetas/{id}</b>
-     * </p>
-     *
-     * @param id Identificador de la etiqueta a eliminar
-     * @return ResponseEntity con estado HTTP 204 No Content si la eliminación fue
-     *         exitosa
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarEtiqueta(@PathVariable Long id) {
         log.info("Solicitando eliminación de etiqueta con id={}", id);
@@ -96,17 +70,7 @@ public class EtiquetaController {
         log.info("Etiqueta con id={} eliminada correctamente", id);
         return ResponseEntity.noContent().build();
     }
-
-    /**
-     * Crea una nueva etiqueta.
-     *
-     * <p>
-     * Endpoint: <b>POST /etiquetas</b>
-     * </p>
-     *
-     * @param nombreEtiqueta Nombre de la nueva etiqueta
-     * @return ResponseEntity con la etiqueta creada y estado HTTP 201 Created
-     */
+    
     @PostMapping
     public ResponseEntity<Etiqueta> crearEtiqueta(@RequestBody String nombreEtiqueta) {
         log.info("Solicitando creación de nueva etiqueta: {}", nombreEtiqueta);

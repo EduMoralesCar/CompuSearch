@@ -17,6 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductoInfoResponse {
+    private Long idProductoTienda;
     private String nombreProducto;
     private String marca;
     private String modelo;

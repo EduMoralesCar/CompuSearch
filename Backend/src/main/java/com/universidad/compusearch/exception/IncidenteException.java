@@ -1,19 +1,5 @@
 package com.universidad.compusearch.exception;
 
-/**
- * Excepción lanzada cuando ocurre un error relacionado con incidentes.
- *
- * <p>
- * Esta excepción extiende {@link CustomException} y se utiliza para manejar errores específicos
- * del módulo de incidentes.
- * </p>
- *
- * <p>
- * Código de error de ejemplo: <b>INCIDENTE_NOT_FOUND</b>
- * Mensaje por defecto: "Incidente no encontrada"
- * Código HTTP asociado: 404
- * </p>
- */
 public class IncidenteException extends CustomException {
 
     /**
@@ -23,8 +9,8 @@ public class IncidenteException extends CustomException {
      * @param status Código HTTP asociado
      * @param code Código interno de la excepción
      */
-    public IncidenteException(String message, int status, String code) {
-        super(message, status, code);
+    public IncidenteException(String message) {
+        super(message);
     }
 
     /**
@@ -33,6 +19,6 @@ public class IncidenteException extends CustomException {
      * @return IncidenteException con mensaje y código predefinidos
      */
     public static IncidenteException notFound() {
-        return new IncidenteException("Incidente no encontrada", 404, "INCIDENTE_NOT_FOUND");
+        return new IncidenteException("Incidente no encontrada");
     }
 }
