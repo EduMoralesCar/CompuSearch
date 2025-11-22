@@ -11,7 +11,6 @@ import {
     Button,
     Form,
     Card,
-    InputGroup,
     Pagination,
     FormControl
 } from 'react-bootstrap';
@@ -163,39 +162,39 @@ const GestionTiendas = () => {
                 <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
                     Gestión de Tiendas
 
-                    <div className="d-flex align-items-center" style={{ gap: "8px" }}>
-                        <InputGroup>
-                            <FormControl
-                                type='text'
-                                placeholder='Buscar por Nombre'
-                                value={filterName}
-                                onChange={(e) => setFilterName(e.target.value)}
-                                disabled={loading}
-                            />
+                    <div className="d-flex align-items-center gap-3">
+                        <FormControl
+                            type='text'
+                            placeholder='Buscar por Nombre'
+                            value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)}
+                            disabled={loading}
+                            style={{ minWidth: "250px" }}
+                        />
 
-                            <Button
-                                variant='primary'
-                                onClick={handleFilterChange}
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <Spinner animation="border" size="sm" />
-                                ) : 'Buscar'}
-                            </Button>
+                        <Button
+                            variant='primary'
+                            onClick={handleFilterChange}
+                            disabled={loading}
+                            className="px-3"
+                        >
+                            {loading ? (
+                                <Spinner animation="border" size="sm" />
+                            ) : 'Buscar'}
+                        </Button>
 
-                            <Button
-                                variant="outline-secondary"
-                                onClick={() => {
-                                    setFilterName("");
-                                    setCurrentFilter("");
-                                    setPage(0);
-                                }}
-                                disabled={loading}
-                            >
-                                Limpiar
-                            </Button>
-
-                        </InputGroup>
+                        <Button
+                            variant="outline-secondary"
+                            onClick={() => {
+                                setFilterName("");
+                                setCurrentFilter("");
+                                setPage(0);
+                            }}
+                            disabled={loading}
+                            className="px-3"
+                        >
+                            Limpiar
+                        </Button>
 
                         <Button
                             variant="outline-secondary"

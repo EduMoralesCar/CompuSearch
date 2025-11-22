@@ -162,7 +162,7 @@ const GestionCategorias = () => {
                                         <th>#</th>
                                         <th>Nombre</th>
                                         <th>Descripción</th>
-                                        <th>Ruta de Imagen</th>
+                                        <th>URL/Imagen</th>
                                         <th style={{ width: "150px" }}>Acciones</th>
                                     </tr>
                                 </thead>

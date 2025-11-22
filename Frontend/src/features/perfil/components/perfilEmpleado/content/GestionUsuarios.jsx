@@ -82,34 +82,35 @@ const GestionUsuarios = () => {
                 >
                     Gestión de Usuarios Clientes
 
-                    <div className="d-flex align-items-center" style={{ gap: "8px" }}>
-                        <InputGroup>
-                            <Form.Control
-                                type="text"
-                                placeholder="Buscar por Username..."
-                                value={searchTerm}
-                                onChange={handleInputChange}
-                                disabled={loading && usuarios.length === 0}
-                            />
+                    <div className="d-flex align-items-center gap-3">
+                        <Form.Control
+                            type="text"
+                            placeholder="Buscar por Username..."
+                            value={searchTerm}
+                            onChange={handleInputChange}
+                            disabled={loading && usuarios.length === 0}
+                            style={{ minWidth: "250px" }}
+                        />
 
-                            <Button
-                                variant="primary"
-                                disabled={loading}
-                                onClick={handleSearchSubmit}
-                            >
-                                {loading && isTogglingId === null ? (
-                                    <Spinner animation="border" size="sm" className="me-2" />
-                                ) : 'Buscar'}
-                            </Button>
+                        <Button
+                            variant="primary"
+                            disabled={loading}
+                            onClick={handleSearchSubmit}
+                            className="px-3"
+                        >
+                            {loading && isTogglingId === null ? (
+                                <Spinner animation="border" size="sm" className="me-2" />
+                            ) : 'Buscar'}
+                        </Button>
 
-                            <Button
-                                variant="outline-secondary"
-                                onClick={handleClearSearch}
-                                disabled={loading || searchTerm === ''}
-                            >
-                                Limpiar
-                            </Button>
-                        </InputGroup>
+                        <Button
+                            variant="outline-secondary"
+                            onClick={handleClearSearch}
+                            disabled={loading || searchTerm === ''}
+                            className="px-3"
+                        >
+                            Limpiar
+                        </Button>
 
                         <Button
                             variant="outline-secondary"
