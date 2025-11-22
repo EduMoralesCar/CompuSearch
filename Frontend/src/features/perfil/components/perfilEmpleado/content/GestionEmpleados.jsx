@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { Card, Button, Alert, Spinner, Form, InputGroup } from "react-bootstrap";
+import React, { useState, useEffect, useCallback } from "react";
+import { Card, Button, Alert, Spinner, Form } from "react-bootstrap";
 import useEmpleadosApi from "../../../hooks/useEmpleados";
 import ModalFormularioEmpleado from "../modal/ModalFormularioEmpleado";
 import TablaEmpleados from "../table/TablaEmpleados";
@@ -128,35 +128,36 @@ const GestionEmpleados = () => {
                 <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
                     Gestión de Empleados
 
-                    <div className="d-flex align-items-center" style={{ gap: "8px" }}>
+                    <div className="d-flex align-items-center gap-3">
 
-                        <InputGroup>
-                            <Form.Control
-                                type="text"
-                                placeholder="Buscar por Username..."
-                                value={searchTerm}
-                                onChange={handleInputChange}
-                                disabled={isGlobalLoading && empleados.length === 0}
-                            />
+                        <Form.Control
+                            type="text"
+                            placeholder="Buscar por Username..."
+                            value={searchTerm}
+                            onChange={handleInputChange}
+                            disabled={isGlobalLoading && empleados.length === 0}
+                            style={{ minWidth: "250px" }}
+                        />
 
-                            <Button
-                                variant="primary"
-                                onClick={handleSearchSubmit}
-                                disabled={isGlobalLoading}
-                            >
-                                {isGlobalLoading ? (
-                                    <Spinner animation="border" size="sm" />
-                                ) : 'Buscar'}
-                            </Button>
+                        <Button
+                            variant="primary"
+                            onClick={handleSearchSubmit}
+                            disabled={isGlobalLoading}
+                            className="px-3"
+                        >
+                            {isGlobalLoading ? (
+                                <Spinner animation="border" size="sm" />
+                            ) : 'Buscar'}
+                        </Button>
 
-                            <Button
-                                variant="outline-secondary"
-                                onClick={handleClearSearch}
-                                disabled={isGlobalLoading || searchTerm === ''}
-                            >
-                                Limpiar
-                            </Button>
-                        </InputGroup>
+                        <Button
+                            variant="outline-secondary"
+                            onClick={handleClearSearch}
+                            disabled={isGlobalLoading || searchTerm === ''}
+                            className="px-3"
+                        >
+                            Limpiar
+                        </Button>
 
                         <Button variant="success" onClick={handleCrear} disabled={isGlobalLoading}>
                             <FiPlus size={18} />

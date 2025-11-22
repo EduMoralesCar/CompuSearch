@@ -222,6 +222,11 @@ public class Mapper {
     }
 
     public static TiendaDetallesResponse mapToTiendaDetalles(Tienda tienda) {
+        TiendaSuscripcionActualInfoResponse suscripcionInfo = null;
+        if (tienda.getSuscripciones() != null && !tienda.getSuscripciones().isEmpty()) {
+            suscripcionInfo = mapToTiendaSuscripcionActualInfo(tienda.getSuscripciones().getLast());
+        }
+
         return new TiendaDetallesResponse(
                 tienda.getIdUsuario(),
                 tienda.getNombre(),
@@ -233,7 +238,7 @@ public class Mapper {
                 tienda.getDireccion(),
                 tienda.getUrlPagina(),
                 tienda.getTiendaAPI(),
-                mapToTiendaSuscripcionActualInfo(tienda.getSuscripciones().getLast()),
+                suscripcionInfo,
                 tienda.getEtiquetas(),
                 mapToProductoTiendaInfo(tienda.getProductos()));
     }
@@ -256,12 +261,11 @@ public class Mapper {
                 productoTienda.getHabilitado());
     }
 
-    public static TiendaSuscripcionActualInfoResponse mapToTiendaSuscripcionActualInfo(Suscripcion suscripcion){
+    public static TiendaSuscripcionActualInfoResponse mapToTiendaSuscripcionActualInfo(Suscripcion suscripcion) {
         return new TiendaSuscripcionActualInfoResponse(
-            suscripcion.getFechaInicio(),
-            suscripcion.getFechaFin(),
-            suscripcion.getEstado().name(),
-            suscripcion.getPlan().getNombre()
-        );
+                suscripcion.getFechaInicio(),
+                suscripcion.getFechaFin(),
+                suscripcion.getEstado().name(),
+                suscripcion.getPlan().getNombre());
     }
 }

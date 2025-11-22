@@ -1,21 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useMetricas } from "../../hooks/useMetricas";
 
 const ProductoTiendaCard = ({ producto }) => {
   const placeholder = "https://via.placeholder.com/200x150?text=Sin+Imagen";
-  const linkDestino = `/producto/${encodeURIComponent(producto.nombreProducto)}`
+  const linkDestino = `/producto/${encodeURIComponent(producto.nombreProducto)}`;
+  const [isHovered, setIsHovered] = useState(false);
 
-  const { incrementarClicks } = useMetricas();
+  // Crear una descripción basada en los datos disponibles si no hay descripción
+  const getDescripcion = () => {
+    if (producto.descripcion) return producto.descripcion;
 
-  const updateMetricsClicks = async () => {
-    await incrementarClicks(producto.idProductoTienda);
+    return `${producto.nombreProducto} disponible en ${producto.nombreTienda}. ${producto.stock > 0
+      ? `Stock disponible: ${producto.stock} unidades.`
+      : 'Consultar disponibilidad.'
+      }`;
   };
 
-
   return (
-    <Link to={linkDestino} onClick={updateMetricsClicks} className="text-decoration-none text-dark h-100">
-      <div className="card shadow-sm h-100">
+    <Link to={linkDestino} className="text-decoration-none text-dark h-100">
+      <div
+        className="card shadow-sm h-100 position-relative overflow-hidden"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{ transition: 'transform 0.3s ease' }}
+      >
         <img
           src={producto.urlImagen || placeholder}
           alt={producto.nombreProducto}
@@ -41,6 +49,57 @@ const ProductoTiendaCard = ({ producto }) => {
           </p>
 
           <div className="btn btn-primary mt-auto text-center">Ver producto</div>
+        </div>
+
+        {/* Hover Overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'linear-gradient(135deg, rgba(13, 110, 253, 0.95) 0%, rgba(13, 110, 253, 0.98) 100%)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '1.5rem',
+            opacity: isHovered ? 1 : 0,
+            transform: isHovered ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'all 0.3s ease',
+            pointerEvents: isHovered ? 'auto' : 'none',
+            zIndex: 10,
+          }}
+        >
+          <h5 style={{
+            color: 'white',
+            marginBottom: '1rem',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}>
+            {producto.nombreProducto}
+          </h5>
+          <p style={{
+            color: 'white',
+            textAlign: 'center',
+            fontSize: '0.95rem',
+            lineHeight: '1.5',
+            margin: 0,
+            textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+          }}>
+            {getDescripcion()}
+          </p>
+          <div
+            className="btn btn-light mt-3"
+            style={{
+              fontWeight: 'bold',
+              boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+            }}
+          >
+            Ver detalles →
+          </div>
         </div>
       </div>
     </Link>

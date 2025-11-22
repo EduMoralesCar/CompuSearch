@@ -2,7 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function CategoriaCard({ nombre, descripcion, nombreImagen }) {
-    const imagePath = `/assets/categorias/${nombreImagen}`;
+    // Detectar si es una URL completa o un nombre de archivo local
+    const isExternalUrl = nombreImagen && (nombreImagen.startsWith('http://') || nombreImagen.startsWith('https://'));
+    const imagePath = isExternalUrl ? nombreImagen : `/assets/categorias/${nombreImagen}`;
 
     return (
         <article className="card h-100 border border-2 border-secondary-subtle rounded-5 shadow-sm overflow-hidden">

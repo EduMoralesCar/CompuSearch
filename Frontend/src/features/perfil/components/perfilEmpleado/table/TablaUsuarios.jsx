@@ -3,24 +3,24 @@ import { Table, Button, Spinner, Stack } from "react-bootstrap";
 const TablaUsuarios = ({ usuarios, onVerInfo, onToggleActivo, isTogglingId }) => {
 
     return (
-        <Table striped bordered hover responsive size="sm" className="mt-3">
+        <Table striped bordered hover responsive className="mt-3">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th style={{ width: "60px" }}>ID</th>
                     <th>Username</th>
                     <th>Email</th>
-                    <th>Estado</th>
-                    <th>Registro</th>
-                    <th>Solicitudes</th>
-                    <th>Builds</th>
-                    <th>Incidentes</th>
-                    <th style={{ width: "200px" }}>Acciones</th>
+                    <th style={{ width: "100px" }}>Estado</th>
+                    <th style={{ width: "120px" }}>Registro</th>
+                    <th className="text-center" style={{ width: "100px" }}>Solicitudes</th>
+                    <th className="text-center" style={{ width: "80px" }}>Builds</th>
+                    <th className="text-center" style={{ width: "100px" }}>Incidentes</th>
+                    <th style={{ width: "250px" }}>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {usuarios.length === 0 ? (
                     <tr>
-                        <td colSpan="9" className="text-center">No hay usuarios registrados.</td>
+                        <td colSpan="9" className="text-center py-4">No hay usuarios registrados.</td>
                     </tr>
                 ) : (
                     usuarios.map((user) => (
@@ -42,15 +42,24 @@ const TablaUsuarios = ({ usuarios, onVerInfo, onToggleActivo, isTogglingId }) =>
                             <td className="text-center">{user.cantidadBuilds || 0}</td>
                             <td className="text-center">{user.cantidadIncidentes || 0}</td>
 
-                            <td>
-                                <Stack direction="horizontal" gap={2}>
-                                    <Button variant="info" size="sm" onClick={() => onVerInfo(user)}>Info</Button>
+                            <td className="px-3">
+                                <div className="d-flex justify-content-center align-items-center">
+                                    <Button
+                                        variant="info"
+                                        size="sm"
+                                        onClick={() => onVerInfo(user)}
+                                        style={{ minWidth: "70px" }}
+                                        className="me-3"
+                                    >
+                                        Info
+                                    </Button>
 
                                     <Button
                                         variant={user.activo ? 'secondary' : 'success'}
                                         size="sm"
                                         onClick={() => onToggleActivo(user.idUsuario, user.activo)}
                                         disabled={isTogglingId === user.idUsuario}
+                                        style={{ minWidth: "100px" }}
                                     >
                                         {isTogglingId === user.idUsuario ? (
                                             <Spinner animation="border" size="sm" />
@@ -58,7 +67,7 @@ const TablaUsuarios = ({ usuarios, onVerInfo, onToggleActivo, isTogglingId }) =>
                                             user.activo ? 'Deshabilitar' : 'Activar'
                                         )}
                                     </Button>
-                                </Stack>
+                                </div>
                             </td>
                         </tr>
                     ))
