@@ -8,17 +8,15 @@ const ModalGestionEtiqueta = ({ show, handleClose, handleGuardar, etiqueta }) =>
     const modo = etiqueta ? "Editar" : "Crear";
     const titulo = `${modo} Etiqueta`;
 
-    // Cuando cambia la etiqueta o se abre el modal, actualizamos el campo
     useEffect(() => {
         if (etiqueta) {
             setNombreEtiqueta(etiqueta.nombre);
         } else {
             setNombreEtiqueta("");
         }
-        setError(""); // limpiar error al abrir modal
+        setError("");
     }, [etiqueta, show]);
 
-    // Validaciones antes de guardar
     const validar = () => {
         if (!nombreEtiqueta.trim()) {
             setError("El nombre de la etiqueta no puede estar vacío.");
@@ -34,7 +32,6 @@ const ModalGestionEtiqueta = ({ show, handleClose, handleGuardar, etiqueta }) =>
         return true;
     };
 
-    // Función que llama al handleGuardar del padre
     const onGuardar = () => {
         if (!validar()) return;
 

@@ -12,13 +12,6 @@ import com.universidad.compusearch.repository.ProductoTiendaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Servicio encargado de los filtros y rangos de productos.
- * <p>
- * Proporciona métodos para obtener rangos de precios, marcas, tiendas y valores de atributos.
- * </p>
- * 
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,13 +20,7 @@ public class FiltroService {
     private final ProductoTiendaRepository productoTiendaRepository;
     private final AtributoRepository atributoRepository;
 
-    /**
-     * Obtiene el rango de precios (mínimo y máximo) para una categoría específica.
-     *
-     * @param nombreCategoria el nombre de la categoría de productos.
-     * @return un {@link RangoPrecioResponse} con los valores mínimo y máximo,
-     *         o {@code null} si no se encontraron productos para la categoría.
-     */
+    // Obtener rango de precio
     public RangoPrecioResponse obtenerRangoPrecio(String nombreCategoria) {
         Object result = productoTiendaRepository.obtenerRangoPrecioPorCategoria(nombreCategoria);
 
@@ -51,12 +38,7 @@ public class FiltroService {
         return new RangoPrecioResponse(min, max);
     }
 
-    /**
-     * Obtiene los nombres de todas las marcas habilitadas para una categoría determinada.
-     *
-     * @param nombreCategoria el nombre de la categoría de productos, puede ser {@code null} para todas.
-     * @return lista de nombres de marcas distintas.
-     */
+    // Obtener marcas por categoria
     public List<String> obtenerMarcas(String nombreCategoria) {
         log.info("Obteniendo marcas habilitadas para categoría: {}",
                 nombreCategoria != null ? nombreCategoria : "TODAS");
@@ -69,12 +51,7 @@ public class FiltroService {
         return marcas;
     }
 
-    /**
-     * Obtiene los nombres de todas las tiendas que tienen productos habilitados para una categoría específica.
-     *
-     * @param nombreCategoria el nombre de la categoría de productos, puede ser {@code null} para todas.
-     * @return lista de nombres de tiendas distintas.
-     */
+    // Obtener tiendas con productos habilitadas por categoria
     public List<String> obtenerTiendasConProductosHabilitadosPorCategoria(String nombreCategoria) {
         log.info("Obteniendo tiendas con productos habilitados para categoría: {}",
                 nombreCategoria != null ? nombreCategoria : "TODAS");
@@ -87,12 +64,7 @@ public class FiltroService {
         return tiendas;
     }
 
-    /**
-     * Obtiene todos los valores distintos de un atributo dado.
-     *
-     * @param nombreAtributo el nombre del atributo.
-     * @return lista de valores distintos del atributo.
-     */
+    // Obtener calores de atributos por nombre de atributo
     public List<String> obtenerValoresDeAtributosPorNombre(String nombreAtributo) {
         log.info("Obteniendo atributos de {}", nombreAtributo);
 

@@ -1,32 +1,40 @@
 package com.universidad.compusearch.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.universidad.compusearch.entity.Tienda;
 
-/**
- * Repositorio JPA para la entidad {@link Tienda}.
- *
- * <p>
- * Proporciona métodos para realizar operaciones CRUD y consultas personalizadas
- * sobre las tiendas registradas en el sistema.
- * </p>
- */
-@Repository
 public interface TiendaRepository extends JpaRepository<Tienda, Long> {
 
-    /**
-     * Obtiene todas las tiendas según su estado de verificación.
-     *
-     * <p>
-     * Este método permite filtrar las tiendas que han sido verificadas o no.
-     * </p>
-     *
-     * @param verificado true si se buscan tiendas verificadas, false si se buscan no verificadas
-     * @return lista de {@link Tienda} que cumplen con el criterio de verificación
-     */
+    // Obtener todas las tiendas verificadas
     List<Tienda> findByVerificado(boolean verificado);
+
+    // Verificar si existe una tienda por su id
+    boolean existsByIdUsuario(Long idUsuario);
+
+    // Obtener las tiendas desde x fecha hasta hoy
+    List<Tienda> findByFechaAfiliacionGreaterThanEqual(LocalDateTime fechaInicio);
+
+    // Obtener tiendas con mas productos
+    @Query("SELECT t FROM Tienda t JOIN t.productos pt GROUP BY t ORDER BY COUNT(pt) DESC")
+    List<Tienda> findTopNTiendasByProductoCount(Pageable pageable);
+
+    // Obtiene las tiendas y el total de redirecciones
+    @Query("SELECT t.id, t.nombre, SUM(m.visitas) AS totalVisitas " +
+            "FROM Tienda t " +
+            "JOIN t.productos pt " +
+            "JOIN pt.metricas m " +
+            "GROUP BY t.id, t.nombre " +
+            "ORDER BY totalVisitas DESC")
+    List<Object[]> findTiendasByTotalVisitas(Pageable pageable);
+
+    // Obtener tiendas por nombre
+    Page<Tienda> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
+
 }

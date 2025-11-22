@@ -22,50 +22,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Controlador REST responsable de gestionar las operaciones de autenticación
- * y registro de usuarios del sistema.
- * <p>
- * Contiene los endpoints para:
- * <ul>
- * <li>Iniciar sesión (login)</li>
- * <li>Registrar un nuevo usuario</li>
- * <li>Obtener la información del usuario autenticado</li>
- * </ul>
- *
- * <p>
- * Utiliza cookies seguras (HttpOnly) para almacenar el token de acceso
- * y el token de refresco.
- * </p>
- * 
- */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
 
-        /** Utilidad para la creación de cookies seguras. */
         private final CookieUtil cookieUtil;
-
-        /** Servicio encargado de la autenticación y generación de tokens. */
         private final AuthService authService;
-
-        /** Servicio para la gestión y actualización de tokens de refresco. */
         private final RefreshTokenService refreshTokenService;
 
-        /**
-         * Endpoint para iniciar sesión.
-         * <p>
-         * Autentica las credenciales del usuario, genera el token JWT y
-         * el token de refresco, y los devuelve mediante cookies seguras.
-         * </p>
-         *
-         * @param request  objeto {@link LoginRequest} con las credenciales del usuario.
-         * @param response objeto {@link HttpServletResponse} para adjuntar las cookies.
-         * @return una {@link ResponseEntity} con un {@link MessageResponse} indicando
-         *         el resultado.
-         */
         @PostMapping("/login")
         public ResponseEntity<MessageResponse> login(@Valid @RequestBody LoginRequest request,
                         HttpServletResponse response) {
@@ -76,7 +42,6 @@ public class AuthController {
                 String accessToken = authService.generateJwtToken(usuario);
                 Token refreshToken = refreshTokenService.createOrUpdateRefreshToken(usuario, request.getDispositivo());
 
-                // Configuración de cookies seguras
                 ResponseCookie accessCookie = cookieUtil.createAccessCookie(accessToken);
                 ResponseCookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken(),
                                 request.getRecordar());
@@ -89,19 +54,6 @@ public class AuthController {
                 return ResponseEntity.ok(new MessageResponse("Usuario logueado correctamente"));
         }
 
-        /**
-         * Endpoint para registrar un nuevo usuario.
-         * <p>
-         * Crea una nueva cuenta de usuario, genera el token JWT y el token de refresco,
-         * y los devuelve como cookies seguras.
-         * </p>
-         *
-         * @param request  objeto {@link RegisterRequest} con los datos de registro del
-         *                 usuario.
-         * @param response objeto {@link HttpServletResponse} para adjuntar las cookies.
-         * @return una {@link ResponseEntity} con un {@link MessageResponse} confirmando
-         *         el registro.
-         */
         @PostMapping("/register")
         public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest request,
                         HttpServletResponse response) {
@@ -125,18 +77,6 @@ public class AuthController {
                 return ResponseEntity.ok(new MessageResponse("Usuario registrado correctamente"));
         }
 
-        /**
-         * Endpoint para obtener la información del usuario autenticado.
-         * <p>
-         * Retorna el identificador, nombre de usuario, tipo de usuario
-         * y rol (si aplica) del usuario autenticado.
-         * </p>
-         *
-         * @param usuario objeto {@link Usuario} inyectado automáticamente
-         *                mediante {@link AuthenticationPrincipal}.
-         * @return una {@link ResponseEntity} con un {@link AuthResponse}
-         *         que contiene la información del usuario autenticado.
-         */
         @GetMapping("/me")
         public ResponseEntity<AuthResponse> getAuthenticatedUser(@AuthenticationPrincipal Usuario usuario) {
                 String rol = null;

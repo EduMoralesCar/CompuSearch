@@ -22,20 +22,6 @@ import com.universidad.compusearch.util.CargarImagen;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Servicio encargado de exportar información de una {@link Build}
- * a un archivo de Excel (.xlsx).
- *
- * <p>Incluye dos hojas:
- * <ul>
- *   <li><b>Resumen:</b> información general de la build y del usuario.</li>
- *   <li><b>Detalle:</b> lista de productos, atributos y totales.</li>
- * </ul>
- *
- * <p>Utiliza Apache POI para generar el archivo Excel y puede incluir
- * un logotipo cargado desde los recursos del proyecto.</p>
- *
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -43,14 +29,7 @@ public class BuildExportService {
 
     private final BuildRepository buildRepository;
 
-    /**
-     * Exporta una {@link Build} específica a un archivo Excel.
-     *
-     * @param idBuild el identificador único de la build a exportar.
-     * @return un {@link ByteArrayInputStream} que contiene los bytes del archivo Excel generado.
-     * @throws IOException si ocurre un error al escribir el archivo.
-     * @throws BuildException si no se encuentra la build solicitada.
-     */
+    // Exportar build en excel
     public ByteArrayInputStream exportarBuildAExcel(Long idBuild) throws IOException {
         Build build = buildRepository.findById(idBuild)
                 .orElseThrow(() -> {
@@ -79,12 +58,7 @@ public class BuildExportService {
         }
     }
 
-    /**
-     * Crea un estilo de celda para los encabezados de las tablas.
-     *
-     * @param workbook el libro de trabajo de Excel donde se aplicará el estilo.
-     * @return un {@link CellStyle} configurado para encabezados.
-     */
+    // Crear estilos del excel de build
     private CellStyle crearEstiloEncabezado(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
@@ -102,13 +76,7 @@ public class BuildExportService {
         return style;
     }
 
-    /**
-     * Inserta un logotipo en la parte superior de la hoja de resumen.
-     *
-     * @param sheet la hoja de Excel donde se insertará el logotipo.
-     * @param helper el {@link CreationHelper} del libro de trabajo.
-     * @param workbook el {@link Workbook} activo.
-     */
+    // Metodo auxiliar para agregar el logo
     private void agregarLogo(Sheet sheet, CreationHelper helper, Workbook workbook) {
         for (int r = 0; r < 6; r++) { 
             Row row = sheet.getRow(r);
@@ -144,14 +112,7 @@ public class BuildExportService {
         }
     }
 
-    /**
-     * Escribe los datos generales de la build y del usuario en la hoja de resumen.
-     *
-     * @param sheet hoja donde se escribirá la información.
-     * @param build la build a exportar.
-     * @param headerStyle estilo para los encabezados.
-     * @param currencyStyle estilo para las celdas con formato monetario.
-     */
+    // Metodo auxiliar para agregar un resumen del usuario
     private void escribirResumen(Sheet sheet, Build build, CellStyle headerStyle, CellStyle currencyStyle) {
         int rowIdx = 6;
         Usuario usuario = build.getUsuario();
@@ -195,14 +156,7 @@ public class BuildExportService {
         sheet.autoSizeColumn(1);
     }
 
-    /**
-     * Escribe el detalle de productos, atributos y totales en la hoja "Detalle".
-     *
-     * @param sheet hoja de detalle.
-     * @param build la build a exportar.
-     * @param headerStyle estilo para encabezados.
-     * @param currencyStyle estilo para valores monetarios.
-     */
+    // Metodo auxiliar para escribir el detalle de cada preguntas
     private void escribirDetalle(Sheet sheet, Build build, CellStyle headerStyle, CellStyle currencyStyle) {
         String[] columnasFijas = {
                 "Producto", "Marca", "Modelo", "Categoría",

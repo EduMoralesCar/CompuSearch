@@ -91,14 +91,17 @@ const ModalGestionCategoria = ({ show, handleClose, categoria, onSubmit }) => {
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formImagen">
-                        <Form.Label>Ruta de Imagen</Form.Label>
+                        <Form.Label>URL de Imagen o Nombre de Archivo</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Ingrese la ruta de la imagen"
+                            placeholder="Ej: https://ejemplo.com/imagen.jpg o procesador.png"
                             value={nombreImagen}
                             onChange={(e) => setNombreImagen(e.target.value)}
                             isInvalid={!!errors.nombreImagen}
                         />
+                        <Form.Text className="text-muted">
+                            Puedes usar una URL externa (http://... o https://...) o un nombre de archivo local
+                        </Form.Text>
                         <Form.Control.Feedback type="invalid">{errors.nombreImagen}</Form.Control.Feedback>
                     </Form.Group>
                 </Modal.Body>

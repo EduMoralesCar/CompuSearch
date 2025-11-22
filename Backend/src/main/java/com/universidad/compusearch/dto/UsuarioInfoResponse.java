@@ -21,8 +21,6 @@ import lombok.Setter;
  *   <li><b>solicitudes:</b> Número de solicitudes de tienda realizadas.</li>
  * </ul>
  * 
- * @author Jesus
- * @version 1.0
  */
 @NoArgsConstructor
 @AllArgsConstructor

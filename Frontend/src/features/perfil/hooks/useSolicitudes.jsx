@@ -4,6 +4,8 @@ import axios from "axios";
 export function useSolicitudes() {
     const [respuesta, setRespuesta] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
+    const [number, setNumber] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -21,6 +23,8 @@ export function useSolicitudes() {
             const data = response.data;
             setRespuesta(data.content || []);
             setTotalPages(data.totalPages || 0);
+            setNumber(data.number || 0);
+            setTotalElements(data.totalElements || 0);
         } catch (err) {
             setError(err.response?.data?.message || "Error al obtener las solicitudes del usuario");
         } finally {
@@ -39,6 +43,8 @@ export function useSolicitudes() {
             const data = response.data;
             setRespuesta(data.content || []);
             setTotalPages(data.totalPages || 0);
+            setNumber(data.number || 0);
+            setTotalElements(data.totalElements || 0);
         } catch (err) {
             setError(err.response?.data?.message || "Error al obtener todas las solicitudes");
         } finally {
@@ -48,6 +54,7 @@ export function useSolicitudes() {
 
     const actualizarEstadoSolicitud = async (idSolicitud, nuevoEstado, idEmpleado) => {
         try {
+
             await axios.put(
                 `http://localhost:8080/solicitud/${idSolicitud}/estado`,
                 null,
@@ -59,20 +66,22 @@ export function useSolicitudes() {
 
             setRespuesta((prev) =>
                 prev.map((solicitud) =>
-                    solicitud.idSolicitud === idSolicitud
+                    solicitud.idSolicitudTienda === idSolicitud // Usar idSolicitudTienda si es el correcto
                         ? { ...solicitud, estado: nuevoEstado }
                         : solicitud
                 )
             );
-
         } catch (err) {
             setError(err.response?.data?.message || "Error al actualizar el estado de la solicitud");
+            throw err; 
         }
     };
 
     return {
         respuesta,
         totalPages,
+        number,
+        totalElements,
         loading,
         error,
         obtenerSolicitudes,

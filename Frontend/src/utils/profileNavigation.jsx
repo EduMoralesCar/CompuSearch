@@ -11,7 +11,7 @@ export const getProfileNavigation = (isAuthenticated, tipoUsuario) => {
         return {
             path: "/perfil/empleado",
             iconClass: "bi-shield-lock-fill",
-            text: "Mi Tienda",
+            text: "Administrador",
         };
     }
 
@@ -19,7 +19,7 @@ export const getProfileNavigation = (isAuthenticated, tipoUsuario) => {
         return {
             path: "/perfil/tienda",
             iconClass: "bi-shop",
-            text: "Administrador",
+            text: "Mi tienda",
         };
     }
 

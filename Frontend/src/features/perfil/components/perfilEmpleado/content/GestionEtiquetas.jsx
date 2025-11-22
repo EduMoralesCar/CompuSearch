@@ -1,14 +1,21 @@
-import { useState } from "react";
-import { Card, Button, Table, Stack, Spinner, Alert } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Card, Button, Table, Stack, Spinner, Alert, Pagination } from "react-bootstrap";
 import ModalGestionEtiqueta from "../modal/ModalGestionEtiqueta";
+import { FiPlus } from "react-icons/fi";
 import ModalConfirmacion from "../../auxiliar/ModalConfirmacion";
 import useEtiquetas from "../../../../navigation/hooks/useEtiquetas";
 
+const PAGE_SIZE = 10;
+
 const GestionEtiquetas = () => {
+    const [currentPage, setCurrentPage] = useState(0);
+
     const {
-        etiquetas,
+        etiquetasPaginadas,
+        totalPages,
         loading,
         error,
+        cargarEtiquetasPaginadas,
         crearEtiqueta,
         actualizarEtiqueta,
         eliminarEtiqueta,
@@ -17,36 +24,37 @@ const GestionEtiquetas = () => {
     const [showModal, setShowModal] = useState(false);
     const [etiquetaSeleccionada, setEtiquetaSeleccionada] = useState(null);
 
-    // 🧩 Estados para el modal de confirmación
     const [showConfirm, setShowConfirm] = useState(false);
     const [etiquetaAEliminar, setEtiquetaAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
 
-    // ✅ Estados para feedback
     const [mensaje, setMensaje] = useState("");
     const [tipoMensaje, setTipoMensaje] = useState("success");
 
-    // Abrir modal en modo crear
+
+    useEffect(() => {
+        cargarEtiquetasPaginadas(currentPage, PAGE_SIZE, 'nombre,asc');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage]);
+
+
     const handleCrear = () => {
         setEtiquetaSeleccionada(null);
         setMensaje("");
         setShowModal(true);
     };
 
-    // Abrir modal en modo editar
     const handleEditar = (etiqueta) => {
         setEtiquetaSeleccionada(etiqueta);
         setMensaje("");
         setShowModal(true);
     };
 
-    // Mostrar modal de confirmación
     const confirmarEliminar = (etiqueta) => {
         setEtiquetaAEliminar(etiqueta);
         setShowConfirm(true);
     };
 
-    // Ejecutar eliminación
     const handleEliminarConfirmado = async () => {
         if (!etiquetaAEliminar) return;
 
@@ -54,9 +62,17 @@ const GestionEtiquetas = () => {
         setMensaje("");
         try {
             await eliminarEtiqueta(etiquetaAEliminar.idEtiqueta);
+
+            const newPage = etiquetasPaginadas.length === 1 && currentPage > 0
+                ? currentPage - 1
+                : currentPage;
+
+            await cargarEtiquetasPaginadas(newPage, PAGE_SIZE, 'nombre,asc');
+            setCurrentPage(newPage);
+
             setTipoMensaje("success");
             setMensaje(`Etiqueta "${etiquetaAEliminar.nombre}" eliminada correctamente.`);
-        // eslint-disable-next-line no-unused-vars
+            // eslint-disable-next-line no-unused-vars
         } catch (err) {
             setTipoMensaje("danger");
             setMensaje("Error al eliminar la etiqueta.");
@@ -67,12 +83,10 @@ const GestionEtiquetas = () => {
         }
     };
 
-    // Cerrar modal principal
     const handleCloseModal = () => {
         setShowModal(false);
     };
 
-    // Guardar desde el modal (crear o actualizar)
     const handleGuardar = async (nombreEtiqueta) => {
         try {
             if (etiquetaSeleccionada) {
@@ -84,7 +98,10 @@ const GestionEtiquetas = () => {
                 setTipoMensaje("success");
                 setMensaje("Etiqueta creada correctamente.");
             }
-        // eslint-disable-next-line no-unused-vars
+
+            await cargarEtiquetasPaginadas(currentPage, PAGE_SIZE, 'nombre,asc');
+
+            // eslint-disable-next-line no-unused-vars
         } catch (err) {
             setTipoMensaje("danger");
             setMensaje("Error al guardar la etiqueta.");
@@ -93,13 +110,14 @@ const GestionEtiquetas = () => {
         }
     };
 
+    const getIndex = (index) => currentPage * PAGE_SIZE + index + 1;
+
     return (
         <>
-            <Card>
-                <Card.Header as="h5" className="d-flex justify-content-between align-items-center">
-                    Gestión de Etiquetas
-                    <Button variant="primary" onClick={handleCrear}>
-                        Crear Nueva
+            <Card className="shadow-lg border-0">
+                <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">                    Gestión de Etiquetas
+                    <Button variant="success" onClick={handleCrear} disabled={loading}>
+                        <FiPlus size={18} />
                     </Button>
                 </Card.Header>
 
@@ -110,57 +128,90 @@ const GestionEtiquetas = () => {
                         </div>
                     )}
 
-                    {/* Mostrar mensaje de éxito o error */}
                     {mensaje && <Alert variant={tipoMensaje}>{mensaje}</Alert>}
 
-                    {/* Si hay error global del hook */}
                     {!mensaje && error && <Alert variant="danger">{error}</Alert>}
 
-                    {!loading && etiquetas.length === 0 && (
+                    {!loading && etiquetasPaginadas.length === 0 && (
                         <Alert variant="info">No hay etiquetas registradas.</Alert>
                     )}
 
-                    {!loading && etiquetas.length > 0 && (
-                        <Table striped bordered hover responsive>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nombre</th>
-                                    <th style={{ width: "150px" }}>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {etiquetas.map((et, index) => (
-                                    <tr key={et.idEtiqueta}>
-                                        <td>{index + 1}</td>
-                                        <td>{et.nombre}</td>
-                                        <td>
-                                            <Stack direction="horizontal" gap={2}>
-                                                <Button
-                                                    variant="warning"
-                                                    size="sm"
-                                                    onClick={() => handleEditar(et)}
-                                                >
-                                                    Editar
-                                                </Button>
-                                                <Button
-                                                    variant="danger"
-                                                    size="sm"
-                                                    onClick={() => confirmarEliminar(et)}
-                                                >
-                                                    Eliminar
-                                                </Button>
-                                            </Stack>
-                                        </td>
+                    {!loading && etiquetasPaginadas.length > 0 && (
+                        <>
+                            <Table striped bordered hover responsive>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nombre</th>
+                                        <th style={{ width: "150px" }}>Acciones</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                                </thead>
+                                <tbody>
+                                    {etiquetasPaginadas.map((et, index) => (
+                                        <tr key={et.idEtiqueta}>
+                                            <td>{getIndex(index)}</td>
+                                            <td>{et.nombre}</td>
+                                            <td>
+                                                <Stack direction="horizontal" gap={2}>
+                                                    <Button
+                                                        variant="warning"
+                                                        size="sm"
+                                                        onClick={() => handleEditar(et)}
+                                                    >
+                                                        Editar
+                                                    </Button>
+                                                    <Button
+                                                        variant="danger"
+                                                        size="sm"
+                                                        onClick={() => confirmarEliminar(et)}
+                                                    >
+                                                        Eliminar
+                                                    </Button>
+                                                </Stack>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </>
                     )}
                 </Card.Body>
+
+                {totalPages > 1 && (
+                                <div className="d-flex justify-content-center mt-4">
+                                    <Pagination>
+                                        <Pagination.First
+                                            onClick={() => setCurrentPage(0)}
+                                            disabled={currentPage === 0}
+                                        />
+                                        <Pagination.Prev
+                                            onClick={() => setCurrentPage(currentPage - 1)}
+                                            disabled={currentPage === 0}
+                                        />
+
+                                        {[...Array(totalPages)].map((_, index) => (
+                                            <Pagination.Item
+                                                key={index}
+                                                active={index === currentPage}
+                                                onClick={() => setCurrentPage(index)}
+                                            >
+                                                {index + 1}
+                                            </Pagination.Item>
+                                        ))}
+
+                                        <Pagination.Next
+                                            onClick={() => setCurrentPage(currentPage + 1)}
+                                            disabled={currentPage === totalPages - 1}
+                                        />
+                                        <Pagination.Last
+                                            onClick={() => setCurrentPage(totalPages - 1)}
+                                            disabled={currentPage === totalPages - 1}
+                                        />
+                                    </Pagination>
+                                </div>
+                            )}
             </Card>
 
-            {/* Modal para crear/editar */}
             <ModalGestionEtiqueta
                 show={showModal}
                 handleClose={handleCloseModal}
@@ -168,14 +219,12 @@ const GestionEtiquetas = () => {
                 etiqueta={etiquetaSeleccionada}
             />
 
-            {/* Modal de confirmación */}
             <ModalConfirmacion
                 show={showConfirm}
                 onHide={() => setShowConfirm(false)}
                 titulo="Eliminar Etiqueta"
-                mensaje={`¿Estás seguro de eliminar la etiqueta "${
-                    etiquetaAEliminar?.nombre || ""
-                }"? Se eliminará de las tiendas que la contengan.`}
+                mensaje={`¿Estás seguro de eliminar la etiqueta "${etiquetaAEliminar?.nombre || ""
+                    }"? Se eliminará de las tiendas que la contengan.`}
                 onConfirmar={handleEliminarConfirmado}
                 textoConfirmar={eliminando ? "Eliminando..." : "Eliminar"}
                 variantConfirmar="danger"
