@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 "/usuario/**",
                                 "/incidentes/**",
                                 "/empleado/**",
-                                "/plan")
+                                "/plan",
+                                "/reportes/**")
                         .authenticated()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/",
@@ -51,7 +52,8 @@ public class SecurityConfig {
                                 "/etiquetas/**",
                                 "/filtro/**",
                                 "/componentes/**",
-                                "/metricas/**")
+                                "/metricas/**",
+                                "/stripe")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -16,11 +16,6 @@ public class PasswordException extends CustomException {
                 "La nueva contraseña es igual a la anterior");
     }
 
-    /**
-     * Excepción cuando la nueva contraseña no coincide con la confirmación.
-     *
-     * @return Instancia de PasswordException
-     */
     public static PasswordException notEquals() {
         return new PasswordException(
                 "La contraseña nueva no es igual a la confirmación");

@@ -9,6 +9,7 @@ import com.universidad.compusearch.dto.PlanResponse;
 import com.universidad.compusearch.entity.Plan;
 import com.universidad.compusearch.exception.PlanException;
 import com.universidad.compusearch.repository.PlanRepository;
+import com.universidad.compusearch.stripe.ProductStripeService;
 import com.universidad.compusearch.util.Mapper;
 
 import jakarta.transaction.Transactional;
@@ -22,13 +23,15 @@ import lombok.extern.slf4j.Slf4j;
 public class PlanService {
 
     private final PlanRepository planRepository;
+    private final ProductStripeService productStripeService;
 
     // Obtener por nombre
     public Plan obtenerPorNombre(String nombre) {
         log.info("Obteniendo plan con el nombre {}", nombre);
 
         Plan plan = planRepository.findByNombre(nombre).orElse(null);
-        if (plan == null) throw PlanException.notFound();
+        if (plan == null)
+            throw PlanException.notFound();
 
         return plan;
     }
@@ -39,7 +42,7 @@ public class PlanService {
         log.info("Iniciando creación de plan: {}", request.getNombre());
 
         if (planRepository.existsByNombreIgnoreCaseAndActivo(request.getNombre(), true)) {
-            throw new ValidationException("Ya existe un plan ACTIVO con el nombre: " + request.getNombre());
+            throw PlanException.exist(request.getNombre());
         }
 
         Plan plan = new Plan();
@@ -49,6 +52,18 @@ public class PlanService {
         plan.setDescripcion(request.getDescripcion());
         plan.setBeneficios(request.getBeneficios());
         plan.setActivo(true);
+
+        try {
+            String productId = productStripeService.crearProductoStripe(plan);
+            plan.setStripeProductId(productId);
+
+            String priceId = productStripeService.crearPrecioStripe(plan, productId);
+            plan.setStripePriceId(priceId);
+
+        } catch (Exception e) {
+            log.error("Error creando plan en Stripe: {}", e.getMessage(), e);
+            throw PlanException.create();
+        }
 
         Plan nuevoPlan = planRepository.save(plan);
         log.info("Plan ID {} creado exitosamente.", nuevoPlan.getIdPlan());
@@ -72,7 +87,7 @@ public class PlanService {
             }
         } else {
             if (incluirInactivos) {
-                planesPage = planRepository.findAll(pageable); // Traer todos si se solicitan inactivos
+                planesPage = planRepository.findAll(pageable);
             } else {
                 planesPage = planRepository.findByActivo(activoFilter, pageable);
             }
@@ -91,6 +106,14 @@ public class PlanService {
         return Mapper.mapToPlan(plan);
     }
 
+    public Plan findById(Long id) {
+        log.info("Buscando plan con ID: {}", id);
+        Plan plan = planRepository.findById(id)
+                .orElseThrow(() -> PlanException.notFound());
+
+        return plan;
+    }
+
     // Actualizar el plan
     @Transactional
     public PlanResponse actualizarPlan(Long id, PlanRequest request) {
@@ -100,34 +123,73 @@ public class PlanService {
 
         if (!plan.getNombre().equalsIgnoreCase(request.getNombre()) &&
                 planRepository.existsByNombreIgnoreCaseAndActivo(request.getNombre(), true)) {
-            throw PlanException.exist();
+            throw PlanException.exist(request.getNombre());
         }
 
+        // boolean precioCambio = plan.getPrecioMensual().compareTo(request.getPrecioMensual()) != 0;
+
+        // 1. Actualizar entidad local
         plan.setNombre(request.getNombre());
         plan.setDuracionMeses(request.getDuracionMeses());
         plan.setPrecioMensual(request.getPrecioMensual());
         plan.setDescripcion(request.getDescripcion());
         plan.setBeneficios(request.getBeneficios());
 
+        try {
+            productStripeService.actualizarProductoStripe(plan.getStripeProductId(), plan);
+            /* 
+            // Si el precio cambió, migrar suscripciones
+            if (precioCambio) {
+
+                String nuevoPriceId = productStripeService.crearNuevoPrecioStripe(plan, plan.getStripeProductId());
+                plan.setStripePriceId(nuevoPriceId);
+
+                log.warn("Precio cambiado. Migrando suscripciones activas...");
+
+                List<Suscripcion> suscripcionesActivas =
+                        suscripcionRepository.findByPlanIdPlanAndEstado(plan.getIdPlan(), EstadoSuscripcion.ACTIVA);
+
+                for (Suscripcion suscripcion : suscripcionesActivas) {
+                    try {
+                        suscripcionService.actualizarSuscripcionConNuevoPrecio(
+                                suscripcion.getIdSuscripcion(),
+                                plan.getIdPlan()
+                        );
+                    } catch (Exception subEx) {
+                        log.error("Error migrando suscripción {}: {}", suscripcion.getIdSuscripcion(), subEx.getMessage());
+                    }
+                }
+
+                log.warn("Migración completada. Total: {}", suscripcionesActivas.size());
+            }
+                */
+
+        } catch (Exception e) {
+            log.error("Error al sincronizar con Stripe: {}", e.getMessage(), e);
+            throw new ValidationException("Error al sincronizar cambios con Stripe");
+        }
+
         Plan planActualizado = planRepository.save(plan);
         log.info("Plan ID {} modificado exitosamente.", id);
         return Mapper.mapToPlan(planActualizado);
     }
 
-    // Actualizar el estado del plan
+    // Actualizar estado activo
     @Transactional
     public void actualizarEstadoActivo(Long id, boolean activo) {
-        log.warn("Cambiando estado activo del plan ID {} a: {}", id, activo);
+        log.warn("Cambiando estado activo del plan ID {} a {}", id, activo);
+
         Plan plan = planRepository.findById(id)
                 .orElseThrow(() -> PlanException.notFound());
 
         if (plan.isActivo() == activo) {
-            log.warn("El plan ID {} ya tiene el estado activo={}. No se requiere actualización.", id, activo);
+            log.warn("Plan ID {} ya tiene activo={}", id, activo);
             return;
         }
 
         plan.setActivo(activo);
         planRepository.save(plan);
-        log.info("Estado del plan ID {} cambiado a activo={}.", id, activo);
+
+        log.info("Estado del plan ID {} actualizado a activo={}", id, activo);
     }
 }

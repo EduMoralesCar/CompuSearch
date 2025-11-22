@@ -7,7 +7,6 @@ const AsideDashboard = ({ setVistaActual, vistaActual, setSidebarAbierto }) => {
   const handleSelect = (vista) => {
     setVistaActual(vista);
 
-    // Cierra el sidebar solo si estamos en pantalla móvil (< 992px)
     if (window.innerWidth < 992) {
       setSidebarAbierto(false);
     }
@@ -15,7 +14,6 @@ const AsideDashboard = ({ setVistaActual, vistaActual, setSidebarAbierto }) => {
 
   return (
     <div className="d-flex flex-column justify-content-between h-100 p-3">
-      {/* Contenedor superior para Logo y Nav */}
       <div>
         <NavLink className="navbar-brand d-flex align-items-center" to="/">
           <img src={Logo} alt="Logo" height="50" className="mb-4" />

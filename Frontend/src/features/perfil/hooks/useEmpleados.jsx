@@ -48,35 +48,26 @@ const useEmpleados = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    /**
-     * Función de manejo de errores de Axios.
-     * @param {Error} err - Objeto de error de Axios.
-     * @param {string} defaultMessage - Mensaje por defecto si no se encuentra un mensaje específico.
-     * @returns {string} El mensaje de error extraído.
-     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleError = (err, defaultMessage) => {
-        // Extrae el mensaje de error de la respuesta si está disponible
         const errorMessage = err.response?.data?.message || err.message || defaultMessage;
         console.error("Error en la solicitud:", err);
         setError(errorMessage);
         return errorMessage; 
     };
     
-    // Función de ayuda para limpiar el error
     const clearError = useCallback(() => setError(null), []);
 
-    // 1. GET (Paginado y con filtro por username) - Similar a obtenerTodosLosPlanes
     const getEmpleados = useCallback(async (page = 0, size = 10, username = '') => {
         setIsLoading(true);
         setError(null);
         try {
             const response = await axios.get(API_BASE_URL, {
                 params: { page, size, username },
-                withCredentials: true // Asumiendo que usas cookies/sesiones
+                withCredentials: true
             });
             
             const data = response.data; 
-            /** @type {PageResponse} */
             
             setEmpleados(data.content || []);
             setTotalPages(data.totalPages || 0);
@@ -89,7 +80,6 @@ const useEmpleados = () => {
         }
     }, []);
 
-    // 2. GET (Por ID) - Similar a obtenerPlanPorId
     const getEmpleadoById = useCallback(async (id) => {
         setIsLoading(true);
         setError(null);
@@ -110,7 +100,6 @@ const useEmpleados = () => {
         }
     }, []);
 
-    // 3. POST (Crear Empleado) - Retorna { success: bool, data?: EmpleadoResponse, error?: string }
     const createEmpleado = useCallback(async (empleadoData) => {
         setIsLoading(true);
         setError(null);
@@ -119,20 +108,17 @@ const useEmpleados = () => {
                 withCredentials: true
             });
             
-            // Éxito: Retorna un objeto con success: true
             return { success: true, data: response.data }; 
 
         } catch (err) {
-            // Error: Retorna un objeto con success: false y el mensaje de error
             const errorMessage = handleError(err, "Error al crear el nuevo empleado.");
             return { success: false, error: errorMessage };
 
         } finally {
             setIsLoading(false);
         }
-    }, [handleError]); // Añadir handleError como dependencia
+    }, [handleError]);
 
-    // 4. PUT (Modificar Empleado) - Retorna { success: bool, data?: EmpleadoResponse, error?: string }
     const updateEmpleado = useCallback(async (id, empleadoData) => {
         setIsLoading(true);
         setError(null);
@@ -141,78 +127,65 @@ const useEmpleados = () => {
                 withCredentials: true
             });
 
-            // Si el empleado detallado actual es el que se actualizó, se refresca su estado
             if (empleadoDetalle && empleadoDetalle.idUsuario === id) {
                 setEmpleadoDetalle(response.data);
             }
             
-            // Éxito: Retorna un objeto con success: true
             return { success: true, data: response.data };
 
         } catch (err) {
-            // Error: Retorna un objeto con success: false y el mensaje de error
             const errorMessage = handleError(err, `Error al actualizar el empleado con ID: ${id}`);
             return { success: false, error: errorMessage };
             
         } finally {
             setIsLoading(false);
         }
-    }, [empleadoDetalle, handleError]); // Añadir empleadoDetalle y handleError como dependencia
+    }, [empleadoDetalle, handleError]);
     
-    // 5. PATCH (Actualizar estado activo) - Retorna { success: bool, error?: string }
     const updateEmpleadoActivo = useCallback(async (id, activo) => {
         setIsLoading(true);
         setError(null);
         try {
-            // Nota: El endpoint en tu controlador original usa "/activo"
             await axios.patch(`${API_BASE_URL}/${id}/activo`, null, {
                 params: { activo },
                 withCredentials: true
             });
 
-            // Actualiza inmediatamente la lista de empleados si el cambio fue exitoso
             setEmpleados(prevEmpleados => 
                 prevEmpleados.map(e => 
                     e.idUsuario === id ? { ...e, activo } : e
                 )
             );
 
-            // También actualiza el detalle si es el empleado que se está visualizando
             if (empleadoDetalle && empleadoDetalle.idUsuario === id) {
                 setEmpleadoDetalle(prevDetalle => ({ ...prevDetalle, activo }));
             }
             
-            // Éxito: Retorna un objeto con success: true
             return { success: true }; 
 
         } catch (err) {
-            // Error: Retorna un objeto con success: false y el mensaje de error
             const errorMessage = handleError(err, `Error al cambiar el estado activo del empleado ID: ${id}`);
             return { success: false, error: errorMessage };
             
         } finally {
             setIsLoading(false);
         }
-    }, [empleadoDetalle, handleError]); // Añadir empleadoDetalle y handleError como dependencia
+    }, [empleadoDetalle, handleError]);
 
 
-    // Retorna las funciones y los estados
     return useMemo(() => ({
-        // Estados
         empleados,
         empleadoDetalle,
         totalPages,
         isLoading,
         error,
         
-        // Funciones de la API
         getEmpleados,
         getEmpleadoById,
         createEmpleado,
         updateEmpleado,
         updateEmpleadoActivo,
         
-        // Helper para limpiar errores
         clearError,
     }), [
         empleados,

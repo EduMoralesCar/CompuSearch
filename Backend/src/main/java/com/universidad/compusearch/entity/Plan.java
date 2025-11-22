@@ -48,6 +48,12 @@ public class Plan {
     @Column(nullable = false)
     private boolean activo = true; 
 
+    @Column(nullable = true)
+    private String stripePriceId;
+
+    @Column(nullable = true)
+    private String stripeProductId;
+
     // Referencia a la lista de suscripciones que tienen el plan
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference

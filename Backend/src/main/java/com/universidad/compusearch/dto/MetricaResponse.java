@@ -9,10 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class AuthResponse {
-
-    private long idUsuario;
-    private String identificador;
-    private String tipoUsuario;
-    private String rol;
+public class MetricaResponse {
+    private Long idTienda;
+    private String nombre;
+    private Long metrica;
 }

@@ -1,6 +1,7 @@
 package com.universidad.compusearch.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.universidad.compusearch.dto.EstadoResponse;
@@ -47,8 +48,10 @@ public class TiendaController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TiendaInfoResponse>> getAllTiendas(Pageable pageable) {
-        Page<TiendaInfoResponse> tiendas = tiendaService.findAllTiendas(pageable);
+    public ResponseEntity<Page<TiendaInfoResponse>> getAllTiendas(
+            @RequestParam(required = false) String nombre,
+            Pageable pageable) {
+        Page<TiendaInfoResponse> tiendas = tiendaService.findAllTiendas(pageable, nombre);
         return ResponseEntity.ok(tiendas);
     }
 
@@ -63,7 +66,8 @@ public class TiendaController {
     }
 
     @PutMapping("/{idUsuario}/estado")
-    public ResponseEntity<TiendaDetallesResponse> actualizarEstado(@PathVariable Long idUsuario, @RequestBody EstadoResponse estadoDTO) {
+    public ResponseEntity<TiendaDetallesResponse> actualizarEstado(@PathVariable Long idUsuario,
+            @RequestBody EstadoResponse estadoDTO) {
         try {
             TiendaDetallesResponse tiendaActualizada = tiendaService.actualizarEstado(idUsuario, estadoDTO.isActivo());
             return ResponseEntity.ok(tiendaActualizada);
@@ -73,9 +77,11 @@ public class TiendaController {
     }
 
     @PutMapping("/{idUsuario}/verificacion")
-    public ResponseEntity<TiendaDetallesResponse> actualizarVerificacion(@PathVariable Long idUsuario, @RequestBody VerificacionResponse verificacionDTO) {
+    public ResponseEntity<TiendaDetallesResponse> actualizarVerificacion(@PathVariable Long idUsuario,
+            @RequestBody VerificacionResponse verificacionDTO) {
         try {
-            TiendaDetallesResponse tiendaActualizada = tiendaService.actualizarVerificacion(idUsuario, verificacionDTO.isVerificado());
+            TiendaDetallesResponse tiendaActualizada = tiendaService.actualizarVerificacion(idUsuario,
+                    verificacionDTO.isVerificado());
             return ResponseEntity.ok(tiendaActualizada);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();

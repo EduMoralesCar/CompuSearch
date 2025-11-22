@@ -1,12 +1,12 @@
 package com.universidad.compusearch.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
 import com.universidad.compusearch.dto.BuildRequest;
 import com.universidad.compusearch.dto.BuildsInfoResponse;
 import com.universidad.compusearch.dto.DetalleBuildRequest;
@@ -44,7 +44,7 @@ public class BuildService {
         build.setConsumoTotal(request.getConsumoTotal());
         build.setUsuario(usuario);
 
-        List<DetalleBuild> detalles = Lists.newArrayList(
+        List<DetalleBuild> detalles = new ArrayList<>(
                 request.getDetalles().stream().map(det -> {
                     DetalleBuild detalle = new DetalleBuild();
                     ProductoTienda productoTienda = new ProductoTienda();
@@ -55,6 +55,7 @@ public class BuildService {
                     detalle.setPrecioUnitario(det.getPrecioUnitario());
                     detalle.setSubTotal(det.getSubTotal());
                     detalle.setBuild(build);
+
                     return detalle;
                 }).toList());
 

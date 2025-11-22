@@ -57,12 +57,15 @@ public class Tienda extends Usuario {
     @Column(nullable = false)
     private boolean verificado;
 
+    @Column(nullable = true, unique = true)
+    private String stripeCustomerId;
+
     // Referencia a la lista de suscripciones de una tienda
     @OneToMany(mappedBy = "tienda", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Suscripcion> suscripciones = new ArrayList<>();
 
-    // Referencia a la api de la tienda 
+    // Referencia a la api de la tienda
     @OneToOne(mappedBy = "tienda", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private TiendaAPI tiendaAPI;

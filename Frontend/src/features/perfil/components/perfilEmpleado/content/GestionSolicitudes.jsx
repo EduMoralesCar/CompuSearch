@@ -9,11 +9,11 @@ import {
     Alert,
     Modal,
     Table,
-    Pagination, // <-- Importar Pagination
+    Pagination,
 } from "react-bootstrap";
 import { useSolicitudes } from "../../../hooks/useSolicitudes";
 
-const PAGE_SIZE = 10; // Definir el tamaño de página para consistencia
+const PAGE_SIZE = 10;
 
 const GestionSolicitudes = ({ idEmpleado }) => {
     const {
@@ -25,21 +25,17 @@ const GestionSolicitudes = ({ idEmpleado }) => {
         actualizarEstadoSolicitud,
     } = useSolicitudes();
 
-    // 1. ESTADO PARA LA PÁGINA ACTUAL (control local de la UI)
-    const [currentPage, setCurrentPage] = useState(0); 
+    const [currentPage, setCurrentPage] = useState(0);
 
     const [showModal, setShowModal] = useState(false);
     const [solicitudSeleccionada, setSolicitudSeleccionada] = useState(null);
     const [feedbackMessage, setFeedbackMessage] = useState(null);
     const [feedbackType, setFeedbackType] = useState(null);
 
-    // 2. Cargar solicitudes al montar el componente O al cambiar de página
     useEffect(() => {
-        // Se llama al hook con la página actual (currentPage) y el tamaño (PAGE_SIZE)
-        obtenerTodasSolicitudes(currentPage, PAGE_SIZE); 
-    // Se añade currentPage como dependencia para que recargue al cambiar de página
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPage]); 
+        obtenerTodasSolicitudes(currentPage, PAGE_SIZE);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage]);
 
     const mostrarMensaje = (mensaje, tipo = "success") => {
         setFeedbackMessage(mensaje);
@@ -50,18 +46,16 @@ const GestionSolicitudes = ({ idEmpleado }) => {
         }, 3000);
     };
 
-    // Handler genérico para recargar la página actual
     const recargarPagina = () => {
-        // Usamos el estado currentPage para recargar la página correcta
-        obtenerTodasSolicitudes(currentPage, PAGE_SIZE); 
+        obtenerTodasSolicitudes(currentPage, PAGE_SIZE);
     };
 
     const handleAceptar = async (idSolicitud) => {
         try {
             await actualizarEstadoSolicitud(idSolicitud, "APROBADA", idEmpleado);
             mostrarMensaje("Solicitud aprobada correctamente", "success");
-            recargarPagina(); // <-- Recarga la página actual
-        // eslint-disable-next-line no-unused-vars
+            recargarPagina();
+            // eslint-disable-next-line no-unused-vars
         } catch (err) {
             mostrarMensaje("Error al aprobar la solicitud", "danger");
         }
@@ -71,8 +65,8 @@ const GestionSolicitudes = ({ idEmpleado }) => {
         try {
             await actualizarEstadoSolicitud(idSolicitud, "RECHAZADA", idEmpleado);
             mostrarMensaje("Solicitud rechazada correctamente", "success");
-            recargarPagina(); // <-- Recarga la página actual
-        // eslint-disable-next-line no-unused-vars
+            recargarPagina();
+            // eslint-disable-next-line no-unused-vars
         } catch (err) {
             mostrarMensaje("Error al rechazar la solicitud", "danger");
         }
@@ -105,9 +99,7 @@ const GestionSolicitudes = ({ idEmpleado }) => {
 
     const renderDatosFormulario = (datosFormulario) => {
         try {
-            // Asumo que datosFormulario es un objeto JSON ya parseado o directamente el objeto
-            // Si viene como string JSON, debe ser parseado aquí: const parsed = JSON.parse(datosFormulario);
-            const parsed = datosFormulario; 
+            const parsed = datosFormulario;
             return (
                 <Table striped bordered hover size="sm">
                     <tbody>
@@ -122,30 +114,28 @@ const GestionSolicitudes = ({ idEmpleado }) => {
                     </tbody>
                 </Table>
             );
-        // eslint-disable-next-line no-unused-vars
+            // eslint-disable-next-line no-unused-vars
         } catch (e) {
             return <p>{datosFormulario}</p>;
         }
     };
-    
-    // 3. Renderizado de los botones de Paginación
+
     const renderPaginationItems = () => {
         const items = [];
-        // Limita el rango a un máximo de 5 botones visibles (ajustar según preferencia)
-        const maxPagesToShow = 5; 
-        
+        const maxPagesToShow = 5;
+
         let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
         let endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
-        
+
         if (totalPages > maxPagesToShow && endPage - startPage + 1 < maxPagesToShow) {
             startPage = Math.max(0, endPage - maxPagesToShow + 1);
         }
 
         for (let number = startPage; number <= endPage; number++) {
             items.push(
-                <Pagination.Item 
-                    key={number} 
-                    active={number === currentPage} 
+                <Pagination.Item
+                    key={number}
+                    active={number === currentPage}
                     onClick={() => setCurrentPage(number)}
                 >
                     {number + 1}
@@ -154,11 +144,13 @@ const GestionSolicitudes = ({ idEmpleado }) => {
         }
         return items;
     };
-    
+
 
     return (
-        <Card>
-            <Card.Header as="h5">Gestión de Solicitudes</Card.Header>
+        <Card className="shadow-lg border-0">
+            <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
+                Gestión de Solicitudes
+            </Card.Header>
             <Card.Body>
                 {loading && (
                     <div className="text-center my-4">
@@ -175,14 +167,12 @@ const GestionSolicitudes = ({ idEmpleado }) => {
                     </Alert>
                 )}
 
-                {/* Mensaje de No Solicitudes */}
                 {!loading && !error && solicitudes?.length === 0 && (
                     <p className="text-muted text-center">
                         No hay solicitudes pendientes en la página actual.
                     </p>
                 )}
 
-                {/* Renderizado de Cards de Solicitudes */}
                 <Row xs={1} md={2} className="g-4">
                     {solicitudes?.map((solicitud) => (
                         <Col key={solicitud.idSolicitudTienda}>
@@ -255,35 +245,33 @@ const GestionSolicitudes = ({ idEmpleado }) => {
                     ))}
                 </Row>
 
-                {/* COMPONENTE DE PAGINACIÓN */}
                 {totalPages > 1 && (
                     <div className="d-flex justify-content-center mt-4">
                         <Pagination>
-                            <Pagination.First 
-                                onClick={() => setCurrentPage(0)} 
-                                disabled={currentPage === 0} 
+                            <Pagination.First
+                                onClick={() => setCurrentPage(0)}
+                                disabled={currentPage === 0}
                             />
-                            <Pagination.Prev 
-                                onClick={() => setCurrentPage(currentPage - 1)} 
-                                disabled={currentPage === 0} 
+                            <Pagination.Prev
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                                disabled={currentPage === 0}
                             />
-                            
-                            {renderPaginationItems()} 
 
-                            <Pagination.Next 
-                                onClick={() => setCurrentPage(currentPage + 1)} 
-                                disabled={currentPage === totalPages - 1} 
+                            {renderPaginationItems()}
+
+                            <Pagination.Next
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                                disabled={currentPage === totalPages - 1}
                             />
-                            <Pagination.Last 
-                                onClick={() => setCurrentPage(totalPages - 1)} 
-                                disabled={currentPage === totalPages - 1} 
+                            <Pagination.Last
+                                onClick={() => setCurrentPage(totalPages - 1)}
+                                disabled={currentPage === totalPages - 1}
                             />
                         </Pagination>
                     </div>
                 )}
             </Card.Body>
 
-            {/* Modal de Detalles (sin cambios) */}
             <Modal
                 show={showModal}
                 onHide={() => setShowModal(false)}

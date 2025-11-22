@@ -80,6 +80,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.equals("/auth/refresh")
+                || path.equals("/auth/login");
+    }
+
     private String getCookieValue(HttpServletRequest request, String name) {
         if (request.getCookies() == null)
             return null;

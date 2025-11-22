@@ -17,8 +17,13 @@ public class PlanException extends CustomException {
         );
     }
 
-    public static PlanException exist() {
+    public static PlanException exist(String nombre) {
         return new PlanException(
-                "Ya existe un plan con el nombre proporcionado");
+                "Ya existe un plan con el nombre proporcionado: " + nombre);
+    }
+
+    public static PlanException create() {
+        return new PlanException(
+                "Error al crear el plan");
     }
 }

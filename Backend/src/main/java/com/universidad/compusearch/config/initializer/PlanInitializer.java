@@ -25,7 +25,7 @@ public class PlanInitializer {
                 BigDecimal.ZERO,
                 "Plan gratuito con acceso limitado a funcionalidades básicas.",
                 "✔ Acceso al catálogo público\n✔ Comparación básica de productos\n✖ Sin acceso a métricas avanzadas\n✖ Sin soporte prioritario");
-
+        /* 
         crearPlan(
                 "Estándar",
                 1,
@@ -46,7 +46,7 @@ public class PlanInitializer {
                 new BigDecimal("89.99"),
                 "Diseñado para empresas con grandes volúmenes de datos y necesidades avanzadas.",
                 "✔ Métricas avanzadas en tiempo real\n✔ Integración total por API\n✔ Asistencia personalizada 24/7");
-    }
+    */}
 
     private void crearPlan(String nombre, int duracionMeses, BigDecimal precioMensual,
             String descripcion, String beneficios) {

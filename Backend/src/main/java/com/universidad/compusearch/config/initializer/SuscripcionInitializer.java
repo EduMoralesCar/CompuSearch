@@ -43,15 +43,18 @@ public class SuscripcionInitializer {
         List<Plan> planes = planRepository.findAll();
 
         // Aseguramos que haya suficientes tiendas y planes (excluyendo el plan Gratis)
-        if (tiendas.size() < 3 || planes.size() < 4) {
+        /*if (tiendas.size() < 3 || planes.size() < 4) {
             log.warn("No hay suficientes tiendas o planes disponibles para la asignación inicial.");
             return;
         }
         
         // Obtener los planes de pago
-        Plan planEstandar = planes.stream().filter(p -> "Estándar".equals(p.getNombre())).findFirst().orElse(null);
         Plan planProfesional = planes.stream().filter(p -> "Profesional".equals(p.getNombre())).findFirst().orElse(null);
         Plan planEmpresarial = planes.stream().filter(p -> "Empresarial".equals(p.getNombre())).findFirst().orElse(null);
+        */
+        
+
+        Plan planEstandar = planes.stream().filter(p -> "Estándar".equals(p.getNombre())).findFirst().orElse(null);
 
         // Asignar los planes si existen
         if (planEstandar != null) {
@@ -61,17 +64,17 @@ public class SuscripcionInitializer {
             }
         }
         
-        if (planProfesional != null) {
+        if (planEstandar != null) {
             Tienda tienda2 = tiendas.stream().filter(t -> "tienda2@test.com".equals(t.getEmail())).findFirst().orElse(null);
             if (tienda2 != null) {
-                crearSuscripcion(tienda2, planProfesional);
+                crearSuscripcion(tienda2, planEstandar);
             }
         }
         
-        if (planEmpresarial != null) {
+        if (planEstandar != null) {
             Tienda tienda3 = tiendas.stream().filter(t -> "tienda3@test.com".equals(t.getEmail())).findFirst().orElse(null);
             if (tienda3 != null) {
-                crearSuscripcion(tienda3, planEmpresarial);
+                crearSuscripcion(tienda3, planEstandar);
             }
         }
     }
@@ -86,7 +89,7 @@ public class SuscripcionInitializer {
             return;
         }
         
-        LocalDateTime fechaInicio = LocalDateTime.now().minusDays(5); // Inicia hace 5 días como ejemplo
+        LocalDateTime fechaInicio = LocalDateTime.now().minusDays(5);
         Suscripcion suscripcion = new Suscripcion();
         suscripcion.setTienda(tienda);
         suscripcion.setPlan(plan);

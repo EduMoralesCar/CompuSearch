@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,12 +29,8 @@ public class Pago {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idPago;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal monto;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EstadoPago estado;
+    private BigDecimal monto;
 
     @Column(name = "id_operacion", nullable = false, unique = true, length = 100)
     private String idOperacion;
@@ -45,7 +39,7 @@ public class Pago {
     private LocalDateTime fechaPago;
 
     @Column(nullable = false)
-    private LocalDateTime fechaActualizacion;
+    private EstadoPago estadoPago;
 
     // Referencia a que suscripcion es el pago
     @ManyToOne(fetch = FetchType.EAGER)

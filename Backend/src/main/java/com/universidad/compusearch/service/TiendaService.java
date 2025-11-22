@@ -12,6 +12,7 @@ import com.universidad.compusearch.dto.TiendaInfoResponse;
 import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.exception.TiendaException;
 import com.universidad.compusearch.repository.TiendaRepository;
+import com.universidad.compusearch.stripe.CustomeStripeService;
 import com.universidad.compusearch.util.Mapper;
 
 import jakarta.persistence.EntityManager;
@@ -25,6 +26,7 @@ public class TiendaService {
 
     private final TiendaRepository tiendaRepository;
     private final EntityManager entityManager;
+    private final CustomeStripeService customeStripeService;
 
     // Obtener tiendas verificadas
     public List<Tienda> obtenerTiendasVerificadas() {
@@ -68,14 +70,21 @@ public class TiendaService {
 
         entityManager.flush();
 
-        log.info("Tienda insertada correctamente");
+        customeStripeService.crearCustomerSiNoExiste(tienda);
+
+        log.info("Tienda insertada correctamente con StripeCustomerId={}", tienda.getStripeCustomerId());
     }
 
     // Obtener todas las tiendas
-    public Page<TiendaInfoResponse> findAllTiendas(Pageable pageable) {
-        return tiendaRepository.findAll(pageable)
+    public Page<TiendaInfoResponse> findAllTiendas(Pageable pageable, String nombre) {
+    if (nombre != null && !nombre.isBlank()) {
+        return tiendaRepository.findByNombreContainingIgnoreCase(nombre, pageable)
                 .map(Mapper::mapToTiendaInfo);
     }
+    return tiendaRepository.findAll(pageable)
+            .map(Mapper::mapToTiendaInfo);
+}
+
 
     public Tienda bucarPorId(Long idTienda) {
         return tiendaRepository.findById(idTienda).orElseThrow(() -> TiendaException.notFound());
