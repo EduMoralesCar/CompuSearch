@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Spinner, Alert } from "react-bootstrap";
 
 import { categoriasMap } from "../utils/categoriasMap";
-import FiltrosSidebar from "../components/FiltroSidebar";
-import ProductoTiendaCard from "../components/ProductoTiendaCard";
-import Paginacion from "../components/Paginacion";
+import FiltrosSidebar from "../components/componentes/FiltroSidebar";
+import ProductoTiendaCard from "../components/componentes/ProductoTiendaCard";
+import Paginacion from "../components/componentes/Paginacion";
 
 import useFiltros from "../hooks/useFiltros";
 import useFiltrosAdicionales from "../hooks/useFiltrosAdicionales";
@@ -22,7 +21,7 @@ const Componentes = () => {
   const [page, setPage] = useState(0);
   const [filtrosExtra, setFiltrosExtra] = useState({});
 
-  // --- Filtros aplicados (enviados al hook de búsqueda) ---
+  // --- Estado para los filtros que se envían al hook de búsqueda ---
   const [filtrosAplicados, setFiltrosAplicados] = useState({
     categoria: "Todas",
     nombreTienda: "",
@@ -41,20 +40,34 @@ const Componentes = () => {
   const searchQuery = searchParams.get("search") || "";
 
   // --- Hooks de datos ---
-  const { filtroCategoria, filtroMarca, rangoPrecio, filtroTienda, loading, error } =
-    useFiltros(categoria);
+  const {
+    filtroCategoria,
+    filtroMarca,
+    rangoPrecio,
+    filtroTienda,
+    loading,
+    error,
+  } = useFiltros(categoria);
 
   const { valoresAtributos, loading: loadingAdicionales } =
     useFiltrosAdicionales(categoria);
 
-  const { productos, totalPages, loading: loadingProductos, error: errorProductos } =
-    useProductosTiendas({
-      ...filtrosAplicados,
-      nombreProducto: searchQuery,
-      page,
-    });
+  const {
+    productos,
+    totalPages,
+    loading: loadingProductos,
+    error: errorProductos,
+  } = useProductosTiendas({
+    ...filtrosAplicados,
+    nombreProducto: searchQuery,
+    page,
+  });
 
-  // --- Ciclo de Vida ---
+  // --- Efectos de Ciclo de Vida ---
+
+  // Efecto de inicialización: Lee la URL una sola vez al montar
+
+  // --- Efectos de Ciclo de Vida ---
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
@@ -76,22 +89,39 @@ const Componentes = () => {
 
     if (precioMinParam !== null) setPrecioMin(parseInt(precioMinParam, 10));
     if (precioMaxParam !== null) setPrecioMax(parseInt(precioMaxParam, 10));
-  }, []);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // El array vacío [] asegura que esto corra SOLO UNA VEZ
+
+  // Setea los precios por defecto (solo si no vienen de la URL o reset)
   useEffect(() => {
+
+    // Si el hook rangoPrecio ya cargó los datos
     if (rangoPrecio) {
-      if (!searchParams.has("precioMin") && !searchParams.has("precioMax")) {
+
+      // Si los precios NO vienen de la URL (carga normal o reset), y el precio visual está en 0 (señal de reset) O es la carga inicial.
+      if (
+        !searchParams.has("precioMin") &&
+        !searchParams.has("precioMax")
+      ) {
+        // Establece los sliders visuales al rango de la categoría actual
         setPrecioMax(rangoPrecio.precioMax);
         setPrecioMin(rangoPrecio.precioMin);
-      } else {
+      }
+
+      // Si los precios SÍ vienen de la URL (carga de página)
+      else {
         const precioMinParam = parseInt(searchParams.get("precioMin"), 10);
         const precioMaxParam = parseInt(searchParams.get("precioMax"), 10);
+
         if (!isNaN(precioMinParam)) setPrecioMin(precioMinParam);
         if (!isNaN(precioMaxParam)) setPrecioMax(precioMaxParam);
       }
     }
+
   }, [rangoPrecio, searchParams]);
 
+  // Carga los filtros extra (atributos) desde la URL
   useEffect(() => {
     if (Object.keys(valoresAtributos).length > 0) {
       const nuevosFiltros = {};
@@ -103,6 +133,7 @@ const Componentes = () => {
     }
   }, [valoresAtributos, searchParams]);
 
+  // Revisa si los filtros están en su estado "por defecto"
   useEffect(() => {
     const filtrosExtraActivos = Object.values(filtrosExtra).some(
       (valor) => valor !== "Todas" && valor !== ""
@@ -131,8 +162,10 @@ const Componentes = () => {
     searchQuery,
   ]);
 
+  // Aplica los filtros leídos de la URL *automáticamente* en la carga inicial
   useEffect(() => {
     if (isInitialLoad && !loading && !loadingAdicionales) {
+
       const filtrosLimpios = {};
       Object.entries(filtrosExtra).forEach(([clave, valor]) => {
         if (valor && valor !== "Todas") filtrosLimpios[clave] = valor;
@@ -166,7 +199,9 @@ const Componentes = () => {
     page,
   ]);
 
-  // --- Funciones de Filtros ---
+  // --- Funciones de Eventos ---
+
+  // Aplicar Filtros (Botón)
   const aplicarFiltros = () => {
     const filtrosLimpios = {};
     Object.entries(filtrosExtra).forEach(([clave, valor]) => {
@@ -180,13 +215,14 @@ const Componentes = () => {
       precioMin,
       disponible: disponibilidad,
       marca,
-      page: 0,
+      page: 0, // Resetea la página a 0 al aplicar filtros
       ...filtrosLimpios,
     };
 
     setFiltrosAplicados(nuevos);
     setPage(0);
 
+    // Actualiza la URL
     const params = new URLSearchParams();
     params.set("categoria", categoria);
     if (marca !== "Todas") params.set("marca", marca);
@@ -196,18 +232,24 @@ const Componentes = () => {
     params.set("precioMax", precioMax.toString());
     params.set("page", "0");
     if (searchQuery) params.set("search", searchQuery);
+
     Object.entries(filtrosLimpios).forEach(([clave, valor]) => {
       params.set(clave, valor);
     });
+
     setSearchParams(params);
   };
 
+  // Resetear Filtros (Botón)
   const resetearFiltros = () => {
+
+    // Resetea el estado visual
     setCategoria("Todas");
     setMarca("Todas");
     setTienda("Todas");
     setDisponibilidad("Todas");
     setPage(0);
+
     setPrecioMax(0);
     setPrecioMin(0);
 
@@ -216,6 +258,7 @@ const Componentes = () => {
     );
     setFiltrosExtra(resetFiltrosExtraVisual);
 
+    // Resetea el estado de filtros aplicados
     setFiltrosAplicados({
       categoria: "Todas",
       nombreTienda: "",
@@ -226,15 +269,16 @@ const Componentes = () => {
       page: 0,
     });
 
+
     setSearchParams(new URLSearchParams());
+
   };
 
   // --- Renderizado ---
   return (
-    <div className="container mt-4 mb-5">
+    <div className="container mt-4">
       <div className="row">
-        {/* --- Filtros Laterales --- */}
-        <div className="col-md-3 mb-4 mb-md-0">
+        <div className="col-md-3">
           <FiltrosSidebar
             categoria={categoria}
             setCategoria={setCategoria}
@@ -262,47 +306,30 @@ const Componentes = () => {
           />
         </div>
 
-        {/* --- Listado de Productos --- */}
         <div className="col-md-9">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <h3 className="fw-bold mb-0">Listado de productos</h3>
-            <span className="badge bg-secondary-subtle text-dark">
-              {productos.length} resultados
-            </span>
-          </div>
+          <h3 className="mb-3">Listado de productos</h3>
 
-          {loadingProductos && (
-            <div className="text-center py-5">
-              <Spinner animation="border" variant="primary" />
-              <p className="mt-3">Cargando productos...</p>
-            </div>
-          )}
-
+          {loadingProductos && <p>Cargando productos...</p>}
           {errorProductos && (
-            <Alert variant="danger" className="text-center">
-              Error al cargar productos. Intenta nuevamente.
-            </Alert>
+            <p className="text-danger">Error al cargar productos</p>
           )}
-
           {!loadingProductos && productos.length === 0 && (
-            <Alert variant="info" className="text-center">
-              No se encontraron productos con los filtros seleccionados.
-            </Alert>
+            <p>No se encontraron productos</p>
           )}
 
-          <div className="row g-4">
+          <div className="row">
             {productos.map((producto, i) => (
-              <div key={i} className="col-12 col-md-6 col-lg-4">
+              <div key={i} className="col-12 col-md-6 col-lg-4 mb-3">
                 <ProductoTiendaCard producto={producto} />
               </div>
             ))}
           </div>
 
-          {!loadingProductos && totalPages > 1 && (
-            <div className="mt-4">
-              <Paginacion page={page} totalPages={totalPages} onPageChange={setPage} />
-            </div>
-          )}
+          <Paginacion
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </div>
       </div>
     </div>

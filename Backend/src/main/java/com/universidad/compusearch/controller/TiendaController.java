@@ -14,6 +14,17 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Controlador REST para manejar operaciones relacionadas con las tiendas.
+ *
+ * <p>
+ * Proporciona endpoints para obtener información de tiendas verificadas.
+ * </p>
+ *
+ * <p>
+ * Base URL: <b>/tiendas</b>
+ * </p>
+ */
 @RestController
 @RequestMapping("/tiendas")
 @RequiredArgsConstructor
@@ -22,6 +33,16 @@ public class TiendaController {
 
     private final TiendaService tiendaService;
 
+    /**
+     * Obtiene la lista de tiendas verificadas.
+     *
+     * <p>
+     * Este endpoint retorna todas las tiendas que han sido marcadas como verificadas.
+     * Cada tienda se devuelve en forma de {@link TiendaResponse}.
+     * </p>
+     *
+     * @return Lista de tiendas verificadas
+     */
     @GetMapping("/verificadas")
     public ResponseEntity<List<TiendaResponse>> obtenerTiendasVerificadas() {
         log.info("GET /tiendas/verificadas - solicitando tiendas verificadas");

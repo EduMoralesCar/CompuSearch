@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import CategoriaCard from "../components/CategoriaCard";
-import useCategorias from "../hooks/useCategorias";
+import CategoriaCard from "../components/categorias/CategoriaCard";
+import { useCategorias } from "../hooks/useCategorias";
 import bannerCategorias from "../../../assets/banners/banner_categorias.jpg"
-import BannerHeader from "../components/BannerHeader"
+import BannerHeader from "../components/auxliar/BannerHeader"
 
 export default function Categorias() {
     const { categorias, loading, error } = useCategorias();

@@ -7,25 +7,38 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import lombok.extern.slf4j.Slf4j;
 
-// Configuracion para aceptar peticiones desde otro origen
+/**
+ * Configuración de CORS (Cross-Origin Resource Sharing) para la aplicación.
+ *
+ * <p>
+ * Permite que el frontend (por ejemplo, en http://localhost:5173) haga solicitudes
+ * al backend, incluyendo cookies y cabeceras de autenticación.
+ * </p>
+ */
 @Configuration
 @Slf4j
 public class CorsConfig {
 
+    /**
+     * Configura las reglas de CORS para toda la API.
+     *
+     * <p>
+     * Se permiten los métodos GET, POST, PUT, DELETE y OPTIONS desde el origen especificado.
+     * También se permite el envío de cookies o cabeceras de autenticación.
+     * </p>
+     *
+     * @return un {@link WebMvcConfigurer} con la configuración de CORS aplicada
+     */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                // Aplica CORS a todos los endpoints de la API
                 registry.addMapping("/**")
-                        // Permite peticiones desde el frontend
-                        .allowedOrigins("http://localhost:5173") 
-                        // Métodos HTTP que acepta tu backend desde ese origen
+                        .allowedOrigins("http://localhost:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        // Permite enviar cookies o cabeceras de autenticación 
-                        .allowCredentials(true); 
+                        .allowCredentials(true);
 
                 log.info("CORS configurado para origen: http://localhost:5173");
             }

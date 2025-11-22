@@ -22,6 +22,20 @@ import com.universidad.compusearch.util.CargarImagen;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Servicio encargado de exportar información de una {@link Build}
+ * a un archivo de Excel (.xlsx).
+ *
+ * <p>Incluye dos hojas:
+ * <ul>
+ *   <li><b>Resumen:</b> información general de la build y del usuario.</li>
+ *   <li><b>Detalle:</b> lista de productos, atributos y totales.</li>
+ * </ul>
+ *
+ * <p>Utiliza Apache POI para generar el archivo Excel y puede incluir
+ * un logotipo cargado desde los recursos del proyecto.</p>
+ *
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,6 +43,14 @@ public class BuildExportService {
 
     private final BuildRepository buildRepository;
 
+    /**
+     * Exporta una {@link Build} específica a un archivo Excel.
+     *
+     * @param idBuild el identificador único de la build a exportar.
+     * @return un {@link ByteArrayInputStream} que contiene los bytes del archivo Excel generado.
+     * @throws IOException si ocurre un error al escribir el archivo.
+     * @throws BuildException si no se encuentra la build solicitada.
+     */
     public ByteArrayInputStream exportarBuildAExcel(Long idBuild) throws IOException {
         Build build = buildRepository.findById(idBuild)
                 .orElseThrow(() -> {
@@ -40,17 +62,14 @@ public class BuildExportService {
             CreationHelper helper = workbook.getCreationHelper();
             DataFormat format = workbook.createDataFormat();
 
-            // Estilos
             CellStyle headerStyle = crearEstiloEncabezado(workbook);
             CellStyle currencyStyle = workbook.createCellStyle();
             currencyStyle.setDataFormat(format.getFormat("$#,##0.00"));
 
-            // Hoja resumen
             Sheet resumenSheet = workbook.createSheet("Resumen");
             agregarLogo(resumenSheet, helper, workbook);
             escribirResumen(resumenSheet, build, headerStyle, currencyStyle);
 
-            // Hoja detalle
             Sheet detalleSheet = workbook.createSheet("Detalle");
             escribirDetalle(detalleSheet, build, headerStyle, currencyStyle);
 
@@ -60,6 +79,12 @@ public class BuildExportService {
         }
     }
 
+    /**
+     * Crea un estilo de celda para los encabezados de las tablas.
+     *
+     * @param workbook el libro de trabajo de Excel donde se aplicará el estilo.
+     * @return un {@link CellStyle} configurado para encabezados.
+     */
     private CellStyle crearEstiloEncabezado(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
@@ -77,13 +102,18 @@ public class BuildExportService {
         return style;
     }
 
+    /**
+     * Inserta un logotipo en la parte superior de la hoja de resumen.
+     *
+     * @param sheet la hoja de Excel donde se insertará el logotipo.
+     * @param helper el {@link CreationHelper} del libro de trabajo.
+     * @param workbook el {@link Workbook} activo.
+     */
     private void agregarLogo(Sheet sheet, CreationHelper helper, Workbook workbook) {
-
         for (int r = 0; r < 6; r++) { 
             Row row = sheet.getRow(r);
             if (row == null)
                 row = sheet.createRow(r);
-
             for (int c = 0; c < 4; c++) {
                 Cell cell = row.createCell(c);
                 CellStyle bgStyle = workbook.createCellStyle();
@@ -99,15 +129,12 @@ public class BuildExportService {
             if (imageBytes != null) {
                 int pictureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
                 Drawing<?> drawing = sheet.createDrawingPatriarch();
-
                 ClientAnchor anchor = helper.createClientAnchor();
                 anchor.setCol1(0);
                 anchor.setRow1(0);
                 anchor.setCol2(4);
                 anchor.setRow2(6);
-
                 drawing.createPicture(anchor, pictureIdx);
-
                 log.info("Logo agregado correctamente a la hoja de resumen.");
             } else {
                 log.warn("No se pudo cargar el logo (bytes nulos).");
@@ -117,11 +144,18 @@ public class BuildExportService {
         }
     }
 
+    /**
+     * Escribe los datos generales de la build y del usuario en la hoja de resumen.
+     *
+     * @param sheet hoja donde se escribirá la información.
+     * @param build la build a exportar.
+     * @param headerStyle estilo para los encabezados.
+     * @param currencyStyle estilo para las celdas con formato monetario.
+     */
     private void escribirResumen(Sheet sheet, Build build, CellStyle headerStyle, CellStyle currencyStyle) {
         int rowIdx = 6;
         Usuario usuario = build.getUsuario();
 
-        // Estilo para compatibilidad
         CellStyle compatibleStyle = sheet.getWorkbook().createCellStyle();
         Font compFont = sheet.getWorkbook().createFont();
         compFont.setBold(true);
@@ -150,11 +184,8 @@ public class BuildExportService {
             Cell celdaTitulo = row.createCell(0);
             celdaTitulo.setCellValue(fila[0]);
             celdaTitulo.setCellStyle(headerStyle);
-
             Cell celdaValor = row.createCell(1);
             celdaValor.setCellValue(fila[1]);
-
-            // Estilo especial para compatibilidad
             if ("Compatible".equals(fila[0])) {
                 celdaValor.setCellStyle(compatibleStyle);
             }
@@ -164,13 +195,20 @@ public class BuildExportService {
         sheet.autoSizeColumn(1);
     }
 
+    /**
+     * Escribe el detalle de productos, atributos y totales en la hoja "Detalle".
+     *
+     * @param sheet hoja de detalle.
+     * @param build la build a exportar.
+     * @param headerStyle estilo para encabezados.
+     * @param currencyStyle estilo para valores monetarios.
+     */
     private void escribirDetalle(Sheet sheet, Build build, CellStyle headerStyle, CellStyle currencyStyle) {
         String[] columnasFijas = {
                 "Producto", "Marca", "Modelo", "Categoría",
                 "Cantidad", "Precio Unitario", "Subtotal"
         };
 
-        // Encabezado fijo
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < columnasFijas.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -178,7 +216,6 @@ public class BuildExportService {
             cell.setCellStyle(headerStyle);
         }
 
-        // Encabezado dinámico para atributos
         Cell attrNameHeader = headerRow.createCell(columnasFijas.length);
         attrNameHeader.setCellValue("Atributo");
         attrNameHeader.setCellStyle(headerStyle);
@@ -194,12 +231,10 @@ public class BuildExportService {
         for (DetalleBuild detalle : detalles) {
             Producto producto = detalle.getProductoTienda().getProducto();
             List<ProductoAtributo> atributos = producto.getAtributos();
-
             int startRow = rowIdx;
 
             for (ProductoAtributo atributo : atributos) {
                 Row row = sheet.createRow(rowIdx++);
-
                 if (row.getRowNum() == startRow) {
                     row.createCell(0).setCellValue(producto.getNombre());
                     row.createCell(1).setCellValue(producto.getMarca());
@@ -207,8 +242,7 @@ public class BuildExportService {
                     row.createCell(3).setCellValue(producto.getCategoria().getNombre());
                     row.createCell(4).setCellValue(detalle.getCantidad());
 
-                    BigDecimal precioUnitario = detalle.getPrecioUnitario() != null ? detalle.getPrecioUnitario()
-                            : BigDecimal.ZERO;
+                    BigDecimal precioUnitario = detalle.getPrecioUnitario() != null ? detalle.getPrecioUnitario() : BigDecimal.ZERO;
                     Cell precioCell = row.createCell(5);
                     precioCell.setCellValue(precioUnitario.doubleValue());
                     precioCell.setCellStyle(currencyStyle);
@@ -233,8 +267,7 @@ public class BuildExportService {
                 row.createCell(3).setCellValue(producto.getCategoria().getNombre());
                 row.createCell(4).setCellValue(detalle.getCantidad());
 
-                BigDecimal precioUnitario = detalle.getPrecioUnitario() != null ? detalle.getPrecioUnitario()
-                        : BigDecimal.ZERO;
+                BigDecimal precioUnitario = detalle.getPrecioUnitario() != null ? detalle.getPrecioUnitario() : BigDecimal.ZERO;
                 Cell precioCell = row.createCell(5);
                 precioCell.setCellValue(precioUnitario.doubleValue());
                 precioCell.setCellStyle(currencyStyle);
@@ -247,11 +280,9 @@ public class BuildExportService {
                 totalBuild = totalBuild.add(subtotal);
             }
 
-            // Fila vacía para separar productos
             rowIdx++;
         }
 
-        // Fila total
         Row totalRow = sheet.createRow(rowIdx++);
         Cell totalLabel = totalRow.createCell(5);
         totalLabel.setCellValue("TOTAL:");

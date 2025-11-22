@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import useTiendas from "../hooks/useTienda";
 import useEtiquetas from "../hooks/useEtiquetas";
-import TiendaFilters from "../components/TiendaFilters";
-import TiendaCard from "../components/TiendaCard";
+import TiendaFilters from "../components/tiendas/TiendaFilters";
+import TiendaCard from "../components/tiendas/TiendaCard";
 import bannerTiendas from "../../../assets/banners/banner_tiendas.jpg";
-import BannerHeader from "../components/BannerHeader";
+import BannerHeader from "../components/auxliar/BannerHeader"
+import {useAuthStatus } from "../../../hooks/useAuthStatus"
+import SolicitudTiendaForm from "../components/tiendas/SolicitudTiendaForm";
 
 export default function Tiendas() {
     const { tiendas, loading, error } = useTiendas();
     const { etiquetas, loading: loadingEtiquetas, error: errorEtiquetas } = useEtiquetas();
+    const { idUsuario, tipoUsuario } = useAuthStatus();
 
     const [etiquetaFilter, setEtiquetaFilter] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
@@ -28,8 +31,8 @@ export default function Tiendas() {
     return (
         <section>
             <BannerHeader
-                title="Tiendas de Componentes"
-                description="Explora nuestras tiendas y encuentra los mejores productos para tu PC."
+                title="Arma tu computadora"
+                description="Crea tu PC personalizada con los mejores componentes."
                 background={bannerTiendas}
             />
 
@@ -42,9 +45,7 @@ export default function Tiendas() {
                     etiquetasDisponibles={etiquetas}
                 />
 
-                {(loading || loadingEtiquetas) && (
-                    <p className="text-center">Cargando tiendas y etiquetas...</p>
-                )}
+                {(loading || loadingEtiquetas) && <p className="text-center">Cargando tiendas y etiquetas...</p>}
                 {(error || errorEtiquetas) && (
                     <p className="text-danger text-center">Error al cargar datos</p>
                 )}
@@ -67,6 +68,8 @@ export default function Tiendas() {
                         </div>
                     </>
                 )}
+
+                {tipoUsuario !== "TIENDA" && <SolicitudTiendaForm idUsuario={idUsuario} />}
             </main>
         </section>
     );

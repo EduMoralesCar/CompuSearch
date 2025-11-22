@@ -17,7 +17,13 @@ import com.universidad.compusearch.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// Servicio de reset token
+/**
+ * Servicio para manejar los tokens de reseteo de contraseña.
+ * <p>
+ * Permite crear, actualizar, validar y revocar tokens de tipo RESET para usuarios.
+ * Se asegura que los tokens estén activos y no expirados antes de ser usados.
+ * </p>
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,7 +32,17 @@ public class ResetTokenService {
     private final TokenRepository tokenRepository;
     private final JwtConfigHelper jwtConfigHelper;
 
-    // Crea o actualiza el token de reseteo según el estado del existente
+    /**
+     * Crea o actualiza un token de reseteo para un usuario en un dispositivo específico.
+     * <p>
+     * Si ya existe un token válido se devuelve, si está expirado o revocado se actualiza,
+     * y si no existe se crea uno nuevo.
+     * </p>
+     *
+     * @param usuario    el usuario asociado al token
+     * @param dispositivo identificador del dispositivo
+     * @return token de reseteo activo
+     */
     public Token createOrUpdateResetToken(Usuario usuario, String dispositivo) {
         log.info("Procesando token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
 
@@ -43,7 +59,12 @@ public class ResetTokenService {
                 });
     }
 
-    // Actualiza el token de reseteo
+    /**
+     * Actualiza un token de reseteo existente, renovando su valor y fecha de expiración.
+     *
+     * @param existingToken token a actualizar
+     * @return token actualizado
+     */
     private Token updateResetToken(Token existingToken) {
         log.info("Actualizando token de reseteo ID={} para usuario {}", existingToken.getIdToken(), existingToken.getUsuario().getIdUsuario());
 
@@ -55,7 +76,13 @@ public class ResetTokenService {
         return save(existingToken);
     }
 
-    // Crea un nuevo token de reseteo
+    /**
+     * Crea un nuevo token de reseteo para un usuario y dispositivo.
+     *
+     * @param usuario    usuario asociado
+     * @param dispositivo identificador del dispositivo
+     * @return token creado
+     */
     private Token createResetToken(Usuario usuario, String dispositivo) {
         log.info("Creando nuevo token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
 
@@ -71,7 +98,13 @@ public class ResetTokenService {
         return save(resetToken);
     }
 
-    // Valida que el token esté activo y no expirado
+    /**
+     * Valida que un token de reseteo esté activo y no haya expirado.
+     *
+     * @param token token recibido
+     * @return token válido
+     * @throws TokenException si el token es inválido o expirado
+     */
     public Token validateAndGetResetToken(String token) {
         log.debug("Validando token de reseteo: {}", token);
 
@@ -80,7 +113,12 @@ public class ResetTokenService {
                 .orElseThrow(() -> TokenException.invalid("Reset"));
     }
 
-    // Revoca el token de reseteo
+    /**
+     * Revoca un token de reseteo, impidiendo su uso futuro.
+     *
+     * @param token token a revocar
+     * @throws TokenException si el token no existe
+     */
     public void revokeResetToken(String token) {
         log.warn("Revocando token de reseteo: {}", token);
 
@@ -91,19 +129,35 @@ public class ResetTokenService {
         save(resetToken);
     }
 
-    // Guarda el token
+    /**
+     * Guarda un token en la base de datos.
+     *
+     * @param token token a guardar
+     * @return token guardado
+     */
     public Token save(Token token) {
         log.debug("Guardando token de reseteo ID={}", token.getIdToken());
         return tokenRepository.save(token);
     }
 
-    // Busca por token y tipo
+    /**
+     * Busca un token de reseteo por su valor.
+     *
+     * @param token valor del token
+     * @return token encontrado
+     */
     public Optional<Token> findByToken(String token) {
         log.debug("Buscando token de reseteo: {}", token);
         return tokenRepository.findByTokenAndTipo(token, TipoToken.RESET);
     }
 
-    // Busca por usuario, dispositivo y tipo
+    /**
+     * Busca un token de reseteo por usuario, dispositivo y tipo.
+     *
+     * @param usuario    usuario asociado
+     * @param dispositivo dispositivo asociado
+     * @return token encontrado
+     */
     public Optional<Token> findByUsuarioAndDispositivo(Usuario usuario, String dispositivo) {
         log.debug("Buscando token de reseteo para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
         return tokenRepository.findByUsuario_IdUsuarioAndIpDispositivoAndTipo(usuario.getIdUsuario(), dispositivo, TipoToken.RESET);

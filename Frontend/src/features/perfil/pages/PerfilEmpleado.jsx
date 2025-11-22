@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { BsArrowBarLeft, BsList } from "react-icons/bs"; 
-import AsideDashboard from "../components/AsideDashboard";
-import "./PerfilEmpleado.css";
+import AsideDashboard from "../components/perfilEmpleado/slider/AsideDashboard";
+import "../css/PerfilEmpleado.css";
 
-import GestionCategorias from "../modules/GestionCategorias";
-import GestionEtiquetas from "../modules/GestionEtiquetas";
-import GestionUsuarios from "../modules/GestionUsuarios";
-import GestionSolicitudes from "../modules/GestionSolicitudes";
-import GestionIncidencias from "../modules/GestionIncidencias";
+import GestionCategorias from "../components/perfilEmpleado/content/GestionCategorias";
+import GestionEtiquetas from "../components/perfilEmpleado/content/GestionEtiquetas";
+import GestionUsuarios from "../components/perfilEmpleado/content/GestionUsuarios";
+import GestionSolicitudes from "../components/perfilEmpleado/content/GestionSolicitudes";
+import GestionIncidencias from "../components/perfilEmpleado/content/GestionIncidencias";
+import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
 const PerfilEmpleado = () => {
     const [vistaActual, setVistaActual] = useState("categorias"); 
     const [sidebarAbierto, setSidebarAbierto] = useState(true); 
+
+    const { idUsuario } = useAuthStatus();
 
     const renderizarVista = () => {
         switch (vistaActual) {
@@ -23,7 +26,7 @@ const PerfilEmpleado = () => {
             case "usuarios":
                 return <GestionUsuarios />;
             case "solicitudes":
-                return <GestionSolicitudes />;
+                return <GestionSolicitudes idEmpleado={idUsuario} />;
             case "incidencias":
                 return <GestionIncidencias />;
             default:

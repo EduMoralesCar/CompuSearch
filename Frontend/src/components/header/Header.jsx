@@ -3,7 +3,9 @@ import NavbarMobile from "./NavbarMobile";
 import NavbarDesktop from "./NavbarDesktop";
 import SearchBar from "./SearchBar";
 import { NavLink } from "react-router-dom";
-import Logo from "../../assets/logo.webp";
+
+import Logo from "../../assets/logo/CompuSearch_Logo.gif"; //Importar el logo en gif
+
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min";
 
 const Header = () => {
@@ -71,7 +73,7 @@ const Header = () => {
                     <div className="container-fluid">
                         {/* Logo */}
                         <NavLink className="navbar-brand d-flex align-items-center" to="/">
-                            <img src={Logo} alt="Logo" height="40" className="me-2" />
+                            <img src={Logo} alt="Logo" height="60" className="me-2" />
                         </NavLink>
 
                         {/* Botón toggle */}

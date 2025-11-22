@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import RegistroForm from "../components/RegistroForm";
+import RegistroForm from "../components/registro/RegistroForm";
 import { validateRegistro } from "../validations/validateRegistro";
 import axios from "axios";
 import { useAuth } from "../../../context/useAuth";

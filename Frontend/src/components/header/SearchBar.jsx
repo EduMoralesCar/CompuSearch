@@ -47,8 +47,8 @@ const SearchBar = () => {
                 setSuggestions(res.data.content || []);
                 setTotalResults(res.data.totalElements || 0);
 
+            // eslint-disable-next-line no-unused-vars
             } catch (err) {
-                console.error(err);
                 setSuggestions([]);
                 setTotalResults(0);
             } finally {

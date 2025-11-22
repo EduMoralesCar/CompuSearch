@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -20,7 +19,15 @@ import com.universidad.compusearch.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// Configuramos la sseguridad de los endpoints
+/**
+ * Configuración de seguridad de la aplicación.
+ *
+ * <p>
+ * Esta clase habilita Spring Security, configura el filtro JWT, define los
+ * endpoints públicos y
+ * protegidos, y establece la política de manejo de sesiones.
+ * </p>
+ */
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
@@ -29,57 +36,82 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UsuarioService usuarioService;
+    private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Configura la cadena de filtros de seguridad (SecurityFilterChain) y las
+     * reglas de autorización.
+     *
+     * <p>
+     * - Deshabilita CSRF porque se usa JWT y no sesiones de navegador.
+     * - Habilita soporte CORS.
+     * - Define los endpoints públicos y los que requieren autenticación.
+     * - Configura la política de sesiones como stateless.
+     * - Registra el filtro JWT antes del filtro de login por username/password.
+     * </p>
+     *
+     * @param http configuración de HttpSecurity
+     * @return la cadena de filtros de seguridad
+     * @throws Exception si ocurre un error en la configuración
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Desabilita CSRF ya que trabajamos con JWT y no con sesiones
                 .csrf(csrf -> csrf.disable())
-                // Habilita soporte para CORS
                 .cors(cors -> {
                 })
-                // Configuramos las rutas y sus permisos
                 .authorizeHttpRequests(auth -> auth
-
-                        // Solo cuando el usuario este autenticado
-                        .requestMatchers("/auth/me").authenticated()
-                        // Endpoints públicos: login, registro, refresh token, etc.
+                        .requestMatchers("/auth/me",
+                                "/usuario/**",
+                                "/incidentes/**")
+                        .authenticated()
                         .requestMatchers("/auth/**").permitAll()
-                        // Las paginas de navegacion estan disponibles
-                        .requestMatchers("/", "/categorias/**", "/productos/**", "/tiendas/**", 
-                        "/builds/**", "/etiquetas/**", "/productos/**", "/filtro/**",
-                        "/componentes/**", "/categorias").permitAll()
-                        // Todo lo demás requiere autenticación
+                        .requestMatchers("/",
+                                "/categorias/**",
+                                "/productos/**",
+                                "/tiendas/**",
+                                "/builds/**",
+                                "/etiquetas/**",
+                                "/filtro/**",
+                                "/componentes/**")
+                        .permitAll()
                         .anyRequest().authenticated())
-
-                // Indicamos que no se usen sesiones: el estado lo mantiene el token
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Registramos nuestro AuthenticationProvider
                 .authenticationProvider(authenticationProvider())
-                // Agregamos el filtro JWT antes del filtro de login por username/password
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         log.info("Configuración de seguridad cargada correctamente. Filtros y endpoints asegurados.");
         return http.build();
     }
 
-    // Usamos BCrypt para codificar contraseñas de los usuarios
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    // Definimos cómo autenticar usuarios (cargar desde BD + validar password)
+    /**
+     * Define el AuthenticationProvider para autenticar usuarios.
+     *
+     * <p>
+     * Utiliza {@link DaoAuthenticationProvider} con {@link UsuarioService} como
+     * {@link org.springframework.security.core.userdetails.UserDetailsService} y
+     * {@link PasswordEncoder} para verificar contraseñas.
+     * </p>
+     *
+     * @return el AuthenticationProvider configurado
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(usuarioService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
 
         log.info("DaoAuthenticationProvider registrado con UsuarioService y BCryptPasswordEncoder.");
         return authProvider;
     }
 
-    // AuthenticationManager: orquesta todo el proceso de autenticación
+    /**
+     * Proporciona el {@link AuthenticationManager} que orquesta todo el proceso de
+     * autenticación.
+     *
+     * @param config configuración de autenticación
+     * @return AuthenticationManager inicializado
+     * @throws Exception si ocurre un error al inicializar
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         log.info("AuthenticationManager inicializado.");

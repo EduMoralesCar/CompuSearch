@@ -7,7 +7,14 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-// Servicio de email
+/**
+ * Servicio encargado del envío de correos electrónicos.
+ * 
+ * Actualmente soporta el envío de correos para recuperación de contraseña,
+ * pero puede extenderse para otros tipos de notificaciones.
+ * 
+ * 
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -15,8 +22,14 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+    /**
+     * Envía un correo electrónico de restablecimiento de contraseña a un usuario.
+     *
+     * @param to    la dirección de correo del destinatario.
+     * @param token el token único de recuperación de contraseña que se incluirá en el enlace.
+     * @throws RuntimeException si ocurre un error durante el envío del correo.
+     */
     public void sendPasswordResetEmail(String to, String token) {
-
         // Asunto del correo
         String subject = "Recuperación de contraseña - CompuSearch";
 
@@ -43,7 +56,7 @@ public class EmailService {
             log.info("Correo de restablecimiento enviado a: {}", to);
         } catch (Exception e) {
             log.error("Error al enviar correo de restablecimiento a {}", to, e);
-            throw e;
+            throw new RuntimeException("Error al enviar correo de recuperación de contraseña", e);
         }
     }
 }

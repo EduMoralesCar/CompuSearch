@@ -1,33 +1,34 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { AuthContext } from "./AuthContext";
-import { loginService } from "../features/auth/services/loginService";
-import { registerService } from "../features/auth/services/registerService";
-import { forgotService } from "../features/auth/services/forgotService";
-import { resetService } from "../features/auth/services/resetService";
+import { LoginService } from "../features/auth/services/LoginService";
+import { RegisterService } from "../features/auth/services/RegisterService";
+import { ForgotService } from "../features/auth/services/ForgotService";
+import { ResetService } from "../features/auth/services/ResetService";
+import { LogoutService } from "../features/auth/services/LogoutService";
+import { MeService } from "../features/auth/services/MeService";
+import { RefreshService } from "../features/auth/services/RefreshService";
 
 export const AuthProvider = ({ children }) => {
     const [tipoUsuario, setTipoUsuario] = useState(null);
     const [usuario, setUsuario] = useState(null);
     const [idUsuario, setIdUsuario] = useState(null);
+    const [rol, setRol] = useState(null);
     const [sessionReady, setSessionReady] = useState(false);
     const [sessionError, setSessionError] = useState(null);
 
     const login = async ({ identifier, password, ip, rememberMe }) => {
         try {
-            await loginService({ identifier, password, ip, rememberMe });
+            await LoginService({ identifier, password, ip, rememberMe });
 
-            const res = await axios.get("http://localhost:8080/auth/me", {
-                withCredentials: true
-            });
-
-            setUsuario(res.data);
-            setTipoUsuario(res.data.tipoUsuario);
-            setIdUsuario(res.data.idUsuario);
+            const resMe = await MeService();
+            setUsuario(resMe.data);
+            setTipoUsuario(resMe.data.tipoUsuario);
+            setIdUsuario(resMe.data.idUsuario);
+            setRol(resMe.data.rol);
 
             return { success: true };
         } catch (error) {
-            console.error("Error de login:", error);
+            setSessionError(error.response?.data?.message);
             return {
                 success: false,
                 message: error.response?.data?.message || "Error al iniciar sesión"
@@ -37,18 +38,18 @@ export const AuthProvider = ({ children }) => {
 
     const registro = async ({ username, email, password, ip }) => {
         try {
-            await registerService({ username, email, password, ip });
+            await RegisterService({ username, email, password, ip });
 
-            const res = await axios.get("http://localhost:8080/auth/me", {
-                withCredentials: true
-            });
+            const resMe = await MeService();
 
-            setUsuario(res.data);
-            setTipoUsuario(res.data.tipoUsuario);
-            setIdUsuario(res.data.idUsuario);
+            setUsuario(resMe.data);
+            setTipoUsuario(resMe.data.tipoUsuario);
+            setIdUsuario(resMe.data.idUsuario);
+            setRol(resMe.data.rol);
 
             return { success: true };
         } catch (error) {
+            setSessionError(error.response?.data?.message);
             return {
                 success: false,
                 message: error.response?.data?.message || "Error al registrar"
@@ -58,97 +59,91 @@ export const AuthProvider = ({ children }) => {
 
     const forgotPassword = async ({ email, ip }) => {
         try {
-            const res = await forgotService({ email, ip });
+            const res = await ForgotService({ email, ip });
             return { success: true, message: res.data.message };
-        } catch (err) {
-            const message = err.response?.data?.error || "Error de conexión con el servidor";
+        } catch (error) {
+            setSessionError(error.response?.data?.message);
+            const message = error.response?.data?.error || "Error de conexión con el servidor";
             return { success: false, message };
         }
     };
 
     const resetPassword = async ({ token, password }) => {
         try {
-            const res = await resetService({ token, password });
+            const res = await ResetService({ token, password });
             return { success: true, message: res.data.message };
-        } catch (err) {
-            const message = err.response?.data?.error || "Error de conexión con el servidor";
+        } catch (error) {
+            setSessionError(error.response?.data?.message);
+            const message = error.response?.data?.message || "Error de conexión con el servidor";
             return { success: false, message };
         }
     };
 
     const logout = async () => {
         try {
-            await axios.post("http://localhost:8080/auth/logout", null, {
-                withCredentials: true,
-            });
+            await LogoutService();
         } catch (error) {
-            console.error("Error al cerrar sesión:", error);
+            setSessionError(error.response?.data?.message);
         } finally {
             setUsuario(null);
             setTipoUsuario(null);
-            setIdUsuario(null)
+            setIdUsuario(null);
+            setRol(null);
         }
     };
 
     const refreshSession = async () => {
         try {
-            await axios.post("http://localhost:8080/auth/refresh", null, {
-                withCredentials: true,
-            });
+            await RefreshService();
+            const resMe = await MeService();
 
-            const res = await axios.get("http://localhost:8080/auth/me", {
-                withCredentials: true,
-            });
+            setUsuario(resMe.data);
+            setTipoUsuario(resMe.data.tipoUsuario);
+            setIdUsuario(resMe.data.idUsuario);
+            setRol(resMe.data.rol);
 
-            setUsuario(res.data);
-            setTipoUsuario(res.data.tipoUsuario);
-            setIdUsuario(res.data.idUsuario);
             return { success: true };
         } catch (error) {
-            console.error("Error al refrescar sesión:", error);
-            return {
-                success: false,
-                message: error.response?.data?.message || "No se pudo renovar la sesión",
-            };
+            setSessionError(error.response?.data?.message);
+            setUsuario(null);
+            setTipoUsuario(null);
+            setIdUsuario(null);
+            setRol(null);
+            return { success: false };
         }
     };
 
     useEffect(() => {
-        if (usuario && tipoUsuario && idUsuario) {
-            setSessionReady(true);
-            return;
-        }
-
-        axios.get("http://localhost:8080/auth/me", { withCredentials: true })
-            .then(res => {
-                setUsuario(res.data);
-                setTipoUsuario(res.data.tipoUsuario);
-                setIdUsuario(res.data.idUsuario);
-            })
-            .catch(async (err) => {
-                const status = err.response?.status;
-                if (status === 401 || status === 403) {
-                    const result = await refreshSession();
-                    if (!result.success) {
-                        setUsuario(null);
-                        setTipoUsuario(null);
-                        setIdUsuario(null);
-                    }
-                } else {
-                    setSessionError(err.response?.data?.message || "Error al cargar sesión");
-                    logout();
+        const loadSession = async () => {
+            try {
+                const refreshed = await refreshSession();
+                if (!refreshed.success) {
+                    setUsuario(null);
+                    setTipoUsuario(null);
+                    setIdUsuario(null);
+                    setRol(null);
                 }
-            })
-            .finally(() => {
+            } catch (error) {
+                setUsuario(null);
+                setTipoUsuario(null);
+                setIdUsuario(null);
+                setRol(null);
+                setSessionError(error.response?.data?.message || "Error al cargar sesión");
+            } finally {
                 setSessionReady(true);
-            });
-    }, [tipoUsuario, usuario, idUsuario]);
+            }
+        };
+
+        loadSession();
+    }, []);
+
 
     return (
         <AuthContext.Provider value={{
             usuario,
             tipoUsuario,
             idUsuario,
+            rol,
             sessionReady,
             sessionError,
             login,

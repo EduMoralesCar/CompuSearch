@@ -24,14 +24,32 @@ public class UsuarioInitializer {
     private final PasswordEncoder passwordEncoder;
 
     public void init() throws IOException {
+        // 1 Administrador (Empleado con Rol.ADMIN)
         crearEmpleado("admin@test.com", "admin", "123!123Aa",
                 "Administrador", "Principal", Rol.ADMIN);
+
+        // 4 Empleados
+        crearEmpleado("empleado1@test.com", "empleado1", "123!123Aa",
+                "Carlos", "Rodríguez", Rol.EMPLEADO);
+        crearEmpleado("empleado2@test.com", "empleado2", "123!123Aa",
+                "María", "González", Rol.EMPLEADO);
+        crearEmpleado("empleado3@test.com", "empleado3", "123!123Aa",
+                "Juan", "Pérez", Rol.EMPLEADO);
+        crearEmpleado("empleado4@test.com", "empleado4", "123!123Aa",
+                "Ana", "Martínez", Rol.EMPLEADO);
+
+        // Crear tiendas
         crearTiendas();
-        crearUsuario("usuario@test.com", "usuario", "123!123Aa");
+
+        // 4 Usuarios
+        crearUsuario("usuario1@test.com", "usuario1", "123!123Aa", true);
+        crearUsuario("usuario2@test.com", "usuario2", "123!123Aa", true);
+        crearUsuario("usuario3@test.com", "usuario3", "123!123Aa", true);
+        crearUsuario("usuario4@test.com", "usuario4", "123!123Aa", true);
     }
 
     // Método genérico para crear un Usuario normal
-    private void crearUsuario(String email, String username, String contrasena) {
+    private void crearUsuario(String email, String username, String contrasena, boolean activo) {
         if (usuarioRepository.findByEmail(email).isPresent())
             return;
 
@@ -40,7 +58,7 @@ public class UsuarioInitializer {
         usuario.setUsername(username);
         usuario.setContrasena(passwordEncoder.encode(contrasena));
         usuario.setTipoUsuario(TipoUsuario.USUARIO);
-        usuario.setActivo(true);
+        usuario.setActivo(activo);
 
         usuarioRepository.save(usuario);
         log.info("Usuario creado: {}", email);

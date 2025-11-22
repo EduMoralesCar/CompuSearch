@@ -1,5 +1,6 @@
 export const categoriasMap = {
   "Todas": "",
+  "Otros": "otros",
   "Almacenamiento": "almacenamiento",
   "Fuente de Poder": "fuente-poder",
   "Memoria RAM": "memoria",

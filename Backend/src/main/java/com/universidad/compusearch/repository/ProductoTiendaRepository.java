@@ -10,15 +10,33 @@ import org.springframework.data.repository.query.Param;
 
 import com.universidad.compusearch.entity.ProductoTienda;
 
+/**
+ * Repositorio para la entidad {@link ProductoTienda}.
+ * Permite realizar operaciones CRUD, búsquedas específicas y consultas con
+ * filtros dinámicos.
+ */
 public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, Long>,
                 JpaSpecificationExecutor<ProductoTienda> {
 
-        // Obtener un producto de una tienda por el id del usuario (tienda)
-        // y el id del producto
+        /**
+         * Obtiene un ProductoTienda específico dado el ID del producto y el ID del
+         * usuario (tienda).
+         *
+         * @param idProducto ID del producto.
+         * @param idTienda   ID del usuario que representa la tienda.
+         * @return Optional con el ProductoTienda encontrado, vacío si no existe.
+         */
         Optional<ProductoTienda> findByProducto_IdProductoAndTienda_IdUsuario(Long idProducto, Long idTienda);
 
-        // Obtener un objeto con el precio maximo y minimo
-        // de una categoria de productos
+        /**
+         * Obtiene el rango de precios (mínimo y máximo) de productos habilitados en una
+         * categoría específica.
+         *
+         * @param nombreCategoria Nombre de la categoría; si es null, considera todas
+         *                        las categorías.
+         * @return Object[] donde [0] = precio mínimo y [1] = precio máximo; null si no
+         *         hay productos.
+         */
         @Query("""
                         SELECT MIN(pt.precio), MAX(pt.precio)
                         FROM ProductoTienda pt
@@ -29,8 +47,14 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         """)
         Object obtenerRangoPrecioPorCategoria(@Param("nombreCategoria") String nombreCategoria);
 
-        // Obtener una lista del nombre de las distintas marcas
-        // por categoria
+        /**
+         * Obtiene la lista de marcas distintas de productos habilitados en una
+         * categoría específica.
+         *
+         * @param nombreCategoria Nombre de la categoría; si es null, considera todas
+         *                        las categorías.
+         * @return Lista de nombres de marcas distintas.
+         */
         @Query("""
                         SELECT DISTINCT p.marca
                         FROM ProductoTienda pt
@@ -41,8 +65,14 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         """)
         List<String> findDistinctMarcasByCategoria(@Param("nombreCategoria") String nombreCategoria);
 
-        // Obtener una lista del nombre todas las tiendas
-        // habilitadas por categoria
+        /**
+         * Obtiene la lista de nombres de tiendas que tienen productos habilitados en
+         * una categoría específica.
+         *
+         * @param nombreCategoria Nombre de la categoría; si es null, considera todas
+         *                        las categorías.
+         * @return Lista de nombres de tiendas distintas.
+         */
         @Query("""
                         SELECT DISTINCT t.nombre
                         FROM ProductoTienda pt
@@ -54,6 +84,14 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         """)
         List<String> findDistinctTiendasWithHabilitadosByCategoria(@Param("nombreCategoria") String nombreCategoria);
 
+        /**
+         * Obtiene un ProductoTienda específico dado el nombre del producto y el nombre
+         * de la tienda.
+         *
+         * @param nombreProducto Nombre del producto.
+         * @param nombreTienda   Nombre de la tienda.
+         * @return Optional con el ProductoTienda encontrado, vacío si no existe.
+         */
         @Query("""
                         SELECT pt
                         FROM ProductoTienda pt
@@ -67,6 +105,13 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         @Param("nombreProducto") String nombreProducto,
                         @Param("nombreTienda") String nombreTienda);
 
+        /**
+         * Obtiene todos los ProductosTienda habilitados con un nombre de producto
+         * específico.
+         *
+         * @param nombreProducto Nombre del producto.
+         * @return Lista de ProductosTienda que coinciden con el nombre.
+         */
         @Query("""
                         SELECT pt
                         FROM ProductoTienda pt
@@ -76,5 +121,4 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
                         AND p.nombre = :nombreProducto
                         """)
         List<ProductoTienda> findByNombreProducto(@Param("nombreProducto") String nombreProducto);
-
 }

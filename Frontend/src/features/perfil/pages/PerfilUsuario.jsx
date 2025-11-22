@@ -1,58 +1,90 @@
-import React, { useState, useCallback } from "react";
-import { Container, Row, Col, Spinner, Alert } from "react-bootstrap";
-import PerfilSidebar from "../components/PerfilSidebar";
-import PerfilContent from "../components/PerfilContent";
-import { useAuth } from "../../../context/useAuth";
+import React, { useState } from "react";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { useAuthStatus } from "../../../hooks/useAuthStatus";
+import { useDatosUsuario } from "../hooks/useDatosUsuario";
+import PerfilSidebar from "../components/perfilUsuario/slider/PerfilSidebar";
+import PerfilContent from "../components/perfilUsuario/content/PerfilContent";
+import Header from "../../../components/header/Header";
+import Footer from "../../../components/footer/Footer";
 
 const PerfilUsuario = () => {
-    const [activeView, setActiveView] = useState("informacion");
-    const { usuario, sessionReady } = useAuth();
-    
-    // El estado de las estadísticas se inicializa en cero.
-    const [stats, setStats] = useState({
-        construcciones: 0,
-        alertas: 0,
-    });
+    const [vista, setVista] = useState("informacion");
+    const { idUsuario } = useAuthStatus();
+    const { usuario, loading, error } = useDatosUsuario(idUsuario);
+    const navigate = useNavigate();
 
-    if (!sessionReady) {
+    if (loading)
         return (
-            <Container className="text-center my-5">
-                <Spinner animation="border" variant="primary" />
-                <p className="mt-2">Cargando perfil...</p>
-            </Container>
+            <>
+                <Header />
+                <div
+                    className="d-flex flex-column justify-content-center align-items-center"
+                    style={{ minHeight: "80vh" }}
+                >
+                    <Spinner animation="border" variant="primary" role="status" />
+                    <p className="text-secondary fs-5 mt-3">Cargando perfil...</p>
+                </div>
+                <Footer />
+            </>
         );
-    }
 
-    if (!usuario) {
+    if (error)
         return (
-            <Container className="my-5">
-                <Alert variant="warning">
-                    Debes <Alert.Link href="/login">iniciar sesión</Alert.Link> para ver tu perfil.
-                </Alert>
-            </Container>
+            <>
+                <Header />
+                <div
+                    className="d-flex flex-column justify-content-center align-items-center"
+                    style={{ minHeight: "80vh" }}
+                >
+                    <p className="text-danger fs-5 mb-2">{error}</p>
+                    <p className="text-muted">Por favor, intenta nuevamente más tarde.</p>
+                </div>
+                <Footer />
+            </>
         );
-    }
 
     return (
-        <Container className="my-5">
-            <h2 className="mb-4 fw-bold">Mi Perfil</h2>
-            <Row>
-                <Col md={4} lg={3} className="mb-4 mb-md-0">
-                    <PerfilSidebar
-                        usuario={usuario}
-                        stats={stats}
-                        activeView={activeView}
-                        setActiveView={setActiveView}
-                    />
-                </Col>
-                <Col md={8} lg={9}>
-                    <PerfilContent 
-                        activeView={activeView} 
-                        setStats={setStats} // Pasamos la función para que los hijos actualicen las stats
-                    />
-                </Col>
-            </Row>
-        </Container>
+        <>
+            <br /> <br />
+            <div style={{
+                display: "flex",
+                flexDirection: "column",
+                minHeight: "100vh",
+                marginTop: "80px" // Espacio para el header fijo
+            }}>
+                <Header />
+                <div style={{
+                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    paddingTop: "2rem",
+                    paddingBottom: "2rem"
+                }}>
+                    <Container className="position-relative" style={{ width: "100%" }}>
+                        <h2 className="mb-4 fw-bold text-center">Mi Perfil</h2>
+                        <Row>
+                            <Col md={4} lg={3} className="mb-4 mb-md-0">
+                                <PerfilSidebar
+                                    usuario={usuario}
+                                    vista={vista}
+                                    setVista={setVista}
+                                />
+                            </Col>
+                            <Col md={8} lg={9}>
+                                <PerfilContent
+                                    vista={vista}
+                                    username={usuario.username}
+                                    email={usuario.email}
+                                    fechaRegistro={usuario.fechaRegistro}
+                                />
+                            </Col>
+                        </Row>
+                    </Container>
+                </div>
+                <Footer />
+            </div>
+        </>
     );
 };
 
