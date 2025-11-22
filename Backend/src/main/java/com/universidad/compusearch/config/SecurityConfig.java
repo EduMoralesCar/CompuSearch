@@ -43,6 +43,7 @@ public class SecurityConfig {
                                 "/plan",
                                 "/reportes/**")
                         .authenticated()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/",
                                 "/categorias/**",

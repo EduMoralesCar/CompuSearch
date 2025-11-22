@@ -19,7 +19,7 @@ public class EmailService {
         String subject = "Recuperación de contraseña - CompuSearch";
 
         // URL de la página con el token de recuperación
-        String resetUrl = "http://localhost:5173/reset-password?token=" + token;
+        String resetUrl = "http://localhost:3000/reset-password?token=" + token;
 
         // Cuerpo del mensaje en texto plano
         String text = "Hola,\n\n" +

@@ -54,6 +54,7 @@ public class SuscripcionService {
                                         .setPrice(plan.getStripePriceId())
                                         .setQuantity(1L)
                                         .build())
+                        // Cambiar a backend por el docker
                         .setSuccessUrl("http://localhost:8080/suscripcion/success?session_id={CHECKOUT_SESSION_ID}")
                         .setCancelUrl("http://localhost:8080/suscripcion/cancel")
                         .build();
