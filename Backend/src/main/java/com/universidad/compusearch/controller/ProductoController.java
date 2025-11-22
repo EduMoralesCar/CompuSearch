@@ -13,17 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-/**
- * Controlador REST para manejar operaciones relacionadas con productos.
- *
- * <p>
- * Permite obtener la información de un producto por su ID.
- * </p>
- *
- * <p>
- * Base URL: <b>/productos</b>
- * </p>
- */
 @RestController
 @RequestMapping("/productos")
 @RequiredArgsConstructor
@@ -32,14 +21,6 @@ public class ProductoController {
 
     private final ProductoService productoService;
 
-    /**
-     * Obtiene un producto por su ID.
-     *
-     * Endpoint: GET /productos/{idProducto}
-     *
-     * @param idProducto ID del producto a obtener
-     * @return ResponseEntity con el producto encontrado o con un estado 404 si no se encuentra
-     */
     @GetMapping("/{idProducto}")
     public ResponseEntity<Producto> obtenerProductoPorId(@PathVariable Long idProducto) {
         log.debug("Solicitud para obtener producto con ID: {}", idProducto);

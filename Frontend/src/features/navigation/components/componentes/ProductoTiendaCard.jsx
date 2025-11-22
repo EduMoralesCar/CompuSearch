@@ -11,8 +11,8 @@ const ProductoTiendaCard = ({ producto }) => {
     if (producto.descripcion) return producto.descripcion;
 
     return `${producto.nombreProducto} disponible en ${producto.nombreTienda}. ${producto.stock > 0
-        ? `Stock disponible: ${producto.stock} unidades.`
-        : 'Consultar disponibilidad.'
+      ? `Stock disponible: ${producto.stock} unidades.`
+      : 'Consultar disponibilidad.'
       }`;
   };
 

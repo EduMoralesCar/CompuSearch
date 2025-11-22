@@ -1,39 +1,32 @@
 package com.universidad.compusearch.service;
 
 import java.util.Map;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.universidad.compusearch.dto.PasswordResetRequest;
 import com.universidad.compusearch.dto.UsuarioInfoResponse;
+import com.universidad.compusearch.dto.UsuarioResponse;
+import com.universidad.compusearch.entity.TipoUsuario;
 import com.universidad.compusearch.entity.Usuario;
-import com.universidad.compusearch.exception.AlreadyRegisteredException;
 import com.universidad.compusearch.exception.PasswordException;
 import com.universidad.compusearch.exception.TooManyAttemptsException;
 import com.universidad.compusearch.exception.UserException;
 import com.universidad.compusearch.repository.UsuarioRepository;
+import com.universidad.compusearch.util.Mapper;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Servicio responsable de la gestión de usuarios dentro del sistema.
- * <p>
- * Implementa {@link UserDetailsService} para permitir la autenticación
- * basada en credenciales de Spring Security.
- * </p>
- *
- * <p>
- * Provee métodos para:
- * </p>
- * <ul>
- * <li>Autenticar usuarios por email o username.</li>
- * <li>Buscar usuarios por su identificador.</li>
- * <li>Actualizar información personal y contraseñas.</li>
- * <li>Obtener información general de perfil del usuario.</li>
- * </ul>
- *
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -43,15 +36,7 @@ public class UsuarioService implements UserDetailsService {
     private final ChangeEmailService changeEmailService;
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * Carga un usuario por su identificador (email o username) para autenticación.
-     *
-     * @param identificador email o nombre de usuario.
-     * @return instancia de {@link UserDetails} correspondiente al usuario
-     *         autenticado.
-     * @throws UsernameNotFoundException si no se encuentra un usuario con el
-     *                                   identificador.
-     */
+    // Cargar usuario por identificador (email o username)
     @Override
     public UserDetails loadUserByUsername(String identificador) throws UsernameNotFoundException {
         log.debug("Intentando autenticar usuario con identificador: {}", identificador);
@@ -66,49 +51,16 @@ public class UsuarioService implements UserDetailsService {
         return usuario;
     }
 
-    /**
-     * Busca un usuario por su identificador único.
-     *
-     * @param idUsuario identificador del usuario.
-     * @return el usuario encontrado.
-     * @throws UserException si no existe un usuario con el id dado.
-     */
+    // Buscar usuario por id
     public Usuario buscarPorId(Long idUsuario) {
         log.debug("Buscando al usuario con id: {}", idUsuario);
         return usuarioRepository.findById(idUsuario)
-                .orElseThrow(UserException::notFound);
+                .orElseThrow(() -> UserException.notFoundId(idUsuario));
     }
 
-    /**
-     * Devuelve información resumida del usuario para vistas de perfil o dashboard.
-     *
-     * @param idUsuario identificador del usuario.
-     * @return un {@link UsuarioInfoResponse} con datos resumidos del usuario.
-     */
-    public UsuarioInfoResponse buscarInfoUsuario(long idUsuario) {
-        log.debug("Buscando información del usuario con id: {}", idUsuario);
-        Usuario usuario = buscarPorId(idUsuario);
-        return new UsuarioInfoResponse(
-                usuario.getUsername(),
-                usuario.getEmail(),
-                usuario.getFechaRegistro(),
-                usuario.getBuilds().size(),
-                usuario.getIncidentes().size(),
-                usuario.getSolicitudes().size());
-    }
-
-    /**
-     * Actualiza la información personal del usuario (actualmente, solo el email).
-     *
-     * @param id      identificador del usuario.
-     * @param cambios mapa con los cambios a aplicar, por ejemplo {"email":
-     *                "nuevo@email.com"}.
-     * @throws TooManyAttemptsException   si el cambio de email ha sido bloqueado
-     *                                    por demasiados intentos.
-     * @throws AlreadyRegisteredException si el nuevo email ya está registrado.
-     */
+    // Actualizar informacion del usuario
     public void actualizarInfoPersonal(Long id, Map<String, String> cambios) {
-        String key = "changeEmail:" + id;
+        String key = "changeInfo_" + id;
 
         if (changeEmailService.isBlocked(key)) {
             throw TooManyAttemptsException.info();
@@ -120,7 +72,7 @@ public class UsuarioService implements UserDetailsService {
             String nuevoEmail = cambios.get("email");
 
             if (usuarioRepository.existsByEmail(nuevoEmail)) {
-                throw AlreadyRegisteredException.email();
+                throw UserException.emailAlredyRegistered(nuevoEmail);
             }
 
             usuario.setEmail(nuevoEmail);
@@ -130,32 +82,13 @@ public class UsuarioService implements UserDetailsService {
         usuarioRepository.save(usuario);
     }
 
-    /**
-     * Actualiza la contraseña del usuario tras validar la actual y las nuevas
-     * credenciales.
-     *
-     * @param id      identificador del usuario.
-     * @param cambios mapa con las claves:
-     *                <ul>
-     *                <li>"currentPassword": contraseña actual</li>
-     *                <li>"newPassword": nueva contraseña</li>
-     *                <li>"confirmPassword": confirmación de la nueva
-     *                contraseña</li>
-     *                </ul>
-     * @throws PasswordException si alguna validación de contraseña falla.
-     */
-    public void actualizarPassword(Long id, Map<String, String> cambios) {
+    // Actualizar contraseña
+    public void actualizarPassword(Long id, PasswordResetRequest request) {
         Usuario usuario = buscarPorId(id);
 
-        if (!cambios.containsKey("currentPassword") ||
-                !cambios.containsKey("newPassword") ||
-                !cambios.containsKey("confirmPassword")) {
-            throw PasswordException.notFoundData();
-        }
-
-        String currentPassword = cambios.get("currentPassword");
-        String newPassword = cambios.get("newPassword");
-        String confirmPassword = cambios.get("confirmPassword");
+        String currentPassword = request.getActualConstrasena();
+        String newPassword = request.getContrasenaNueva();
+        String confirmPassword = request.getContrasenaConfirmada();
 
         if (!passwordEncoder.matches(currentPassword, usuario.getPassword())) {
             throw PasswordException.isInvalid();
@@ -173,63 +106,55 @@ public class UsuarioService implements UserDetailsService {
         usuarioRepository.save(usuario);
     }
 
-    /**
-     * Obtiene una lista paginada de usuarios filtrados por tipo de usuario.
-     * Para "ADMIN", filtra empleados con Rol.ADMIN.
-     * Para "EMPLEADO", filtra empleados con roles diferentes a ADMIN.
-     *
-     * @param tipoUsuario tipo de usuario a filtrar (USUARIO, EMPLEADO, ADMIN)
-     * @param page        número de página (0-indexed)
-     * @param size        tamaño de página
-     * @return Page de usuarios del tipo especificado
-     */
-    public org.springframework.data.domain.Page<Usuario> obtenerUsuariosPorTipo(
-            String tipoUsuario, int page, int size) {
-        log.debug("Obteniendo usuarios de tipo: {} (página: {}, tamaño: {})", tipoUsuario, page, size);
-
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
-
-        // Caso especial: ADMIN filtra empleados con Rol.ADMIN
-        if ("ADMIN".equalsIgnoreCase(tipoUsuario)) {
-            return usuarioRepository.findEmpleadosByRol(
-                    com.universidad.compusearch.entity.Rol.ADMIN,
-                    pageable);
-        }
-
-        // Caso especial: EMPLEADO filtra empleados con roles diferentes a ADMIN
-        if ("EMPLEADO".equalsIgnoreCase(tipoUsuario)) {
-            return usuarioRepository.findEmpleadosByRolNot(
-                    com.universidad.compusearch.entity.Rol.ADMIN,
-                    pageable);
-        }
-
-        // Caso normal: filtrar por TipoUsuario
-        return usuarioRepository.findByTipoUsuario(
-                com.universidad.compusearch.entity.TipoUsuario.valueOf(tipoUsuario.toUpperCase()),
-                pageable);
-    }
-
-    /**
-     * Habilita o deshabilita un usuario.
-     *
-     * @param id         identificador del usuario
-     * @param habilitado true para habilitar, false para deshabilitar
-     */
-    public void cambiarEstadoUsuario(Long id, boolean habilitado) {
-        log.info("Cambiando estado del usuario {} a: {}", id, habilitado ? "habilitado" : "deshabilitado");
+    // Actualizar contraseña por administrador
+    public void actualizarPasswordByAdmin(Long id, String newPassword) {
         Usuario usuario = buscarPorId(id);
-        usuario.setActivo(habilitado);
+        usuario.setContrasena(passwordEncoder.encode(newPassword));
         usuarioRepository.save(usuario);
     }
 
-    /**
-     * Elimina un usuario del sistema.
-     *
-     * @param id identificador del usuario a eliminar
-     */
-    public void eliminarUsuario(Long id) {
-        log.warn("Eliminando usuario con id: {}", id);
-        Usuario usuario = buscarPorId(id);
-        usuarioRepository.delete(usuario);
+    // Guardar usuario
+    public Usuario guardarUsuario(Usuario usuario) {
+        log.info("Guardando usuario con username {}", usuario.getUsername());
+        return usuarioRepository.save(usuario);
+    }
+
+    // Obtener usuario paginados
+    public Page<UsuarioResponse> obtenerUsuariosPaginados(int page, int size, String username) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("fechaRegistro").descending());
+
+        Page<Usuario> usuariosPage;
+
+        if (username != null && !username.trim().isEmpty()) {
+            log.info("Buscando usuarios con username similar a: {}", username);
+            usuariosPage = usuarioRepository.findByUsernameContainingIgnoreCaseAndTipoUsuario(
+                    username, TipoUsuario.USUARIO, pageable);
+        } else {
+            log.info("Obteniendo todos los usuarios tipo USUARIO paginados");
+            usuariosPage = usuarioRepository.findByTipoUsuario(TipoUsuario.USUARIO, pageable);
+        }
+
+        return usuariosPage.map(Mapper::mapToUsuario);
+    }
+
+    // Actualizar estado del usuario
+    @Transactional
+    public void actualizarActivo(Long id, boolean activo) {
+        log.debug("Verificando existencia del usuario con ID: {}", id);
+
+        if (!usuarioRepository.existsById(id)) {
+            log.warn("Intento de actualizar 'activo' para usuario inexistente con ID: {}", id);
+            throw UserException.notFound();
+        }
+
+        usuarioRepository.actualizarActivo(id, activo);
+        log.info("Estado 'activo' del usuario con ID {} actualizado a {}", id, activo);
+    }
+
+    public UsuarioInfoResponse buscarInfoUsuario(long idUsuario) {
+        log.debug("Buscando información del usuario con id: {}", idUsuario);
+        Usuario usuario = buscarPorId(idUsuario);
+
+        return Mapper.mapToUsuarioInfo(usuario);
     }
 }

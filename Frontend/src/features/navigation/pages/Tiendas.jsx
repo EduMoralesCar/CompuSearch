@@ -5,16 +5,20 @@ import TiendaFilters from "../components/tiendas/TiendaFilters";
 import TiendaCard from "../components/tiendas/TiendaCard";
 import bannerTiendas from "../../../assets/banners/banner_tiendas.jpg";
 import BannerHeader from "../components/auxliar/BannerHeader"
+import AuthModal from "../../../components/auth/AuthModal";
 import {useAuthStatus } from "../../../hooks/useAuthStatus"
 import SolicitudTiendaForm from "../components/tiendas/SolicitudTiendaForm";
 
 export default function Tiendas() {
+
     const { tiendas, loading, error } = useTiendas();
     const { etiquetas, loading: loadingEtiquetas, error: errorEtiquetas } = useEtiquetas();
-    const { idUsuario, tipoUsuario } = useAuthStatus();
+    const { idUsuario, tipoUsuario, isAuthenticated, sessionReady } = useAuthStatus();
 
     const [etiquetaFilter, setEtiquetaFilter] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
+
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     const filteredShops = tiendas.filter((shop) => {
         const matchesSearch = searchTerm
@@ -27,6 +31,14 @@ export default function Tiendas() {
 
         return matchesSearch && matchesEtiqueta;
     });
+
+    const validarAutenticacion = () => {
+        if (!sessionReady || !isAuthenticated) {
+            setShowAuthModal(true);
+            return false;
+        }
+        return true;
+    };
 
     return (
         <section>
@@ -69,7 +81,10 @@ export default function Tiendas() {
                     </>
                 )}
 
-                {tipoUsuario !== "TIENDA" && <SolicitudTiendaForm idUsuario={idUsuario} />}
+                <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} 
+                message="Debes iniciar sesión o registrarte para poder enviar esta solicitud."/>
+
+                {tipoUsuario !== "TIENDA" && <SolicitudTiendaForm idUsuario={idUsuario} validarAutenticacion = {validarAutenticacion} />}
             </main>
         </section>
     );

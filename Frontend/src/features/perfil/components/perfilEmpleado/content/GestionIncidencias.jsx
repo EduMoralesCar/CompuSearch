@@ -102,8 +102,10 @@ const GestionIncidencias = () => {
     };
 
     return (
-        <Card>
-            <Card.Header as="h5">Gestión de Incidencias</Card.Header>
+        <Card className="shadow-lg border-0">
+            <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
+                Gestión de Incidencias
+            </Card.Header>
             <Card.Body>
                 {mensajeExito && (
                     <Alert variant="success" className="text-center">
@@ -185,7 +187,6 @@ const GestionIncidencias = () => {
                 )}
             </Card.Body>
 
-            {/* Modal de detalle */}
             <Modal show={!!incidenteSeleccionado} onHide={handleCerrarModal} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Detalles del Incidente</Modal.Title>
@@ -226,7 +227,6 @@ const GestionIncidencias = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* Modal de confirmación de eliminación */}
             <ModalConfirmacion
                 show={showConfirm}
                 onHide={() => setShowConfirm(false)}

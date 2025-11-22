@@ -1,9 +1,11 @@
 package com.universidad.compusearch.config.initializer;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
+import com.universidad.compusearch.entity.Metrica;
 import com.universidad.compusearch.entity.Producto;
 import com.universidad.compusearch.entity.ProductoTienda;
 import com.universidad.compusearch.entity.Tienda;
@@ -161,7 +163,7 @@ public class ProductoTiendaInitializer {
                                 .orElseThrow(() -> ProductoException.notFound());
 
                 Tienda tienda = (Tienda) usuarioRepository.findByEmail(emailTienda)
-                                .orElseThrow(() -> UserException.notFoundEmail());
+                                .orElseThrow(() -> UserException.notFoundEmail(emailTienda));
 
                 boolean existe = productoTiendaRepository
                                 .findByProducto_IdProductoAndTienda_IdUsuario(producto.getIdProducto(),
@@ -178,6 +180,7 @@ public class ProductoTiendaInitializer {
                         productoTienda.setUrlImagen(urlImagen);
                         productoTienda.setHabilitado(true);
                         productoTienda.setIdProductoApi(idProductoApi);
+                        productoTienda.getMetricas().add(generarMetrica(productoTienda));
 
                         productoTiendaRepository.save(productoTienda);
 
@@ -187,5 +190,12 @@ public class ProductoTiendaInitializer {
                         log.debug("El producto '{}' ya está asociado a la tienda '{}'", producto.getNombre(),
                                         tienda.getNombre());
                 }
+        }
+
+        private Metrica generarMetrica(ProductoTienda producto){
+                Metrica metrica = new Metrica();
+                metrica.setProductoTienda(producto);
+                metrica.setFecha(LocalDateTime.now());
+                return metrica;
         }
 }

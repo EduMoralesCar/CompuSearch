@@ -18,18 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Controlador REST para manejo de tokens de refresco y cierre de sesión.
- *
- * <p>
- * Permite renovar el token de acceso mediante un refresh token y cerrar sesión
- * eliminando cookies.
- * </p>
- *
- * <p>
- * Base URL: <b>/auth</b>
- * </p>
- */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -40,20 +28,6 @@ public class RefreshTokenController {
         private final RefreshTokenService refreshTokenService;
         private final AuthService authService;
 
-        /**
-         * Renueva el token de acceso utilizando un refresh token válido.
-         *
-         * <p>
-         * Recibe el refresh token desde la cookie "refresh_token" y responde con un
-         * nuevo access token
-         * y un nuevo refresh token en cookies HTTP.
-         * </p>
-         *
-         * @param refreshTokenValue Valor del refresh token desde la cookie
-         * @param response          HttpServletResponse para agregar las cookies
-         *                          renovadas
-         * @return Mensaje indicando que el token de acceso fue renovado correctamente
-         */
         @PostMapping("/refresh")
         public ResponseEntity<MessageResponse> refresh(@CookieValue("refresh_token") String refreshTokenValue,
                         HttpServletResponse response) {
@@ -74,18 +48,7 @@ public class RefreshTokenController {
                 log.info("Access token renovado para usuario ID: {}", usuario.getIdUsuario());
                 return ResponseEntity.ok(new MessageResponse("Token de acceso renovado correctamente"));
         }
-
-        /**
-         * Cierra sesión del usuario eliminando las cookies de access y refresh tokens.
-         *
-         * <p>
-         * Recibe el refresh token desde la cookie "refresh_token" y lo revoca.
-         * </p>
-         *
-         * @param refreshTokenValue Valor del refresh token desde la cookie
-         * @param response          HttpServletResponse para limpiar las cookies
-         * @return Mensaje indicando que la sesión fue cerrada correctamente
-         */
+        
         @PostMapping("/logout")
         public ResponseEntity<MessageResponse> logout(@CookieValue("refresh_token") String refreshTokenValue,
                         HttpServletResponse response) {

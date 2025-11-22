@@ -19,15 +19,6 @@ import com.universidad.compusearch.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Configuración de seguridad de la aplicación.
- *
- * <p>
- * Esta clase habilita Spring Security, configura el filtro JWT, define los
- * endpoints públicos y
- * protegidos, y establece la política de manejo de sesiones.
- * </p>
- */
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
@@ -38,22 +29,6 @@ public class SecurityConfig {
     private final UsuarioService usuarioService;
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * Configura la cadena de filtros de seguridad (SecurityFilterChain) y las
-     * reglas de autorización.
-     *
-     * <p>
-     * - Deshabilita CSRF porque se usa JWT y no sesiones de navegador.
-     * - Habilita soporte CORS.
-     * - Define los endpoints públicos y los que requieren autenticación.
-     * - Configura la política de sesiones como stateless.
-     * - Registra el filtro JWT antes del filtro de login por username/password.
-     * </p>
-     *
-     * @param http configuración de HttpSecurity
-     * @return la cadena de filtros de seguridad
-     * @throws Exception si ocurre un error en la configuración
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -63,7 +38,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/me",
                                 "/usuario/**",
-                                "/incidentes/**")
+                                "/incidentes/**",
+                                "/empleado/**",
+                                "/plan",
+                                "/reportes/**")
                         .authenticated()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/",
@@ -73,7 +51,9 @@ public class SecurityConfig {
                                 "/builds/**",
                                 "/etiquetas/**",
                                 "/filtro/**",
-                                "/componentes/**")
+                                "/componentes/**",
+                                "/metricas/**",
+                                "/stripe")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -84,17 +64,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * Define el AuthenticationProvider para autenticar usuarios.
-     *
-     * <p>
-     * Utiliza {@link DaoAuthenticationProvider} con {@link UsuarioService} como
-     * {@link org.springframework.security.core.userdetails.UserDetailsService} y
-     * {@link PasswordEncoder} para verificar contraseñas.
-     * </p>
-     *
-     * @return el AuthenticationProvider configurado
-     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(usuarioService);
@@ -104,14 +73,6 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    /**
-     * Proporciona el {@link AuthenticationManager} que orquesta todo el proceso de
-     * autenticación.
-     *
-     * @param config configuración de autenticación
-     * @return AuthenticationManager inicializado
-     * @throws Exception si ocurre un error al inicializar
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         log.info("AuthenticationManager inicializado.");

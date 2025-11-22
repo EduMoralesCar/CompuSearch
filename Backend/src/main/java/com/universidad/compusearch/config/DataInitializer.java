@@ -6,9 +6,14 @@ import org.springframework.context.annotation.Configuration;
 
 import com.universidad.compusearch.config.initializer.*;
 
-// Inicializa los demas initializer
 @Configuration
 public class DataInitializer {
+
+    private final SuscripcionInitializer suscripcionInitializer;
+
+    DataInitializer(SuscripcionInitializer suscripcionInitializer) {
+        this.suscripcionInitializer = suscripcionInitializer;
+    }
 
     @Bean
     CommandLineRunner initData(
@@ -17,7 +22,9 @@ public class DataInitializer {
             UsuarioInitializer usuarioInitializer,
             AtributoInitializer atributoInitializer,
             ProductoInitializer productoInitializer,
-            ProductoTiendaInitializer productoTiendaInitializer) {
+            ProductoTiendaInitializer productoTiendaInitializer,
+            PlanInitializer planInitializer,
+            SuscripcionInitializer SuscripcionInitializer) {
 
         return args -> {
             etiquetaInitializer.init();
@@ -26,6 +33,8 @@ public class DataInitializer {
             atributoInitializer.init();
             productoInitializer.init();
             productoTiendaInitializer.init();
+            planInitializer.init();
+            suscripcionInitializer.init();
         };
     }
 }

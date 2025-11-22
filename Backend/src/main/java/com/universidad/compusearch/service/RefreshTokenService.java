@@ -17,13 +17,6 @@ import com.universidad.compusearch.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Servicio para gestionar Refresh Tokens.
- * <p>
- * Permite crear, actualizar, validar y revocar tokens de refresco para usuarios
- * según el dispositivo desde el cual se accede.
- * </p>
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,13 +25,7 @@ public class RefreshTokenService {
     private final TokenRepository tokenRepository;
     private final JwtConfigHelper jwtConfigHelper;
 
-    /**
-     * Crea o actualiza un token de refresco para un usuario y dispositivo.
-     *
-     * @param usuario    usuario para quien se genera el token
-     * @param dispositivo identificador del dispositivo
-     * @return token de refresco creado o actualizado
-     */
+    // Crear y actualizar token de refresco
     public Token createOrUpdateRefreshToken(Usuario usuario, String dispositivo) {
         log.info("Procesando token de refresco para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
 
@@ -52,12 +39,7 @@ public class RefreshTokenService {
                 .orElseGet(() -> createRefreshToken(usuario, dispositivo));
     }
 
-    /**
-     * Actualiza un token de refresco existente.
-     *
-     * @param existingToken token existente
-     * @return token actualizado
-     */
+    // Actualizar token de refresco
     private Token updateRefreshToken(Token existingToken) {
         log.info("Actualizando token de refresco ID={} para usuario {}", existingToken.getIdToken(),
                 existingToken.getUsuario().getIdUsuario());
@@ -70,13 +52,7 @@ public class RefreshTokenService {
         return save(existingToken);
     }
 
-    /**
-     * Crea un nuevo token de refresco para un usuario y dispositivo.
-     *
-     * @param usuario     usuario para quien se genera el token
-     * @param dispositivo identificador del dispositivo
-     * @return token de refresco creado
-     */
+    // Crear y actualizar el token de refresco
     private Token createRefreshToken(Usuario usuario, String dispositivo) {
         log.info("Creando nuevo token de refresco para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
 
@@ -92,13 +68,7 @@ public class RefreshTokenService {
         return save(refreshToken);
     }
 
-    /**
-     * Valida que un token de refresco esté activo y no expirado.
-     *
-     * @param token token a validar
-     * @return token válido
-     * @throws TokenException si el token es inválido
-     */
+    // Validar y obtener el token de refresco
     public Token validateAndGetRefreshToken(String token) {
         log.debug("Validando token de refresco: {}", token);
 
@@ -107,12 +77,7 @@ public class RefreshTokenService {
                 .orElseThrow(() -> TokenException.invalid("Refresh"));
     }
 
-    /**
-     * Revoca un token de refresco, marcándolo como inactivo.
-     *
-     * @param token token a revocar
-     * @throws TokenException si el token no existe
-     */
+    // Revocar el token de refresco
     public void revokeRefreshToken(String token) {
         log.warn("Revocando token de refresco: {}", token);
 
@@ -123,35 +88,19 @@ public class RefreshTokenService {
         save(refreshToken);
     }
 
-    /**
-     * Guarda un token en la base de datos.
-     *
-     * @param token token a guardar
-     * @return token guardado
-     */
+    // Guardar el token de refresco
     public Token save(Token token) {
         log.debug("Guardando token de refresco ID={}", token.getIdToken());
         return tokenRepository.save(token);
     }
 
-    /**
-     * Busca un token de refresco por su valor.
-     *
-     * @param token token a buscar
-     * @return optional con el token si existe
-     */
+    // Obtener el token de refresco
     public Optional<Token> findByToken(String token) {
         log.debug("Buscando token de refresco: {}", token);
         return tokenRepository.findByTokenAndTipo(token, TipoToken.REFRESH);
     }
-
-    /**
-     * Busca un token de refresco por usuario y dispositivo.
-     *
-     * @param usuario     usuario asociado al token
-     * @param dispositivo dispositivo asociado al token
-     * @return optional con el token si existe
-     */
+    
+    // Obtener token por usuario y dispositivo
     public Optional<Token> findByUsuarioAndDispositivo(Usuario usuario, String dispositivo) {
         log.debug("Buscando token de refresco para usuario {} en dispositivo {}", usuario.getIdUsuario(), dispositivo);
         return tokenRepository.findByUsuario_IdUsuarioAndIpDispositivoAndTipo(usuario.getIdUsuario(), dispositivo, TipoToken.REFRESH);
