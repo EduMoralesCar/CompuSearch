@@ -7,9 +7,7 @@ import { FiRefreshCw } from "react-icons/fi";
 import {
     Spinner,
     Row,
-    Col,
     Button,
-    Form,
     Card,
     InputGroup,
     Pagination,
@@ -89,6 +87,7 @@ const GestionTiendas = () => {
         setModalStore(null);
 
         const result = await obtenerTiendaPorId(idUsuario);
+        console.log(result)
         if (result.success) {
             setModalStore(result.data);
         } else {

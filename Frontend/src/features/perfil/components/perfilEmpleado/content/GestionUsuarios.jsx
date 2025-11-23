@@ -21,6 +21,7 @@ const GestionUsuarios = () => {
         const response = await obtenerUsuariosPaginados(0, 50, search);
         if (response.success) {
             setUsuarios(response.data.content);
+            console.log(response)
         } else {
             setGestionError(response.error || "Error al cargar la lista de usuarios.");
         }

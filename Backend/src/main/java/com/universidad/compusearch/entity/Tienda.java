@@ -68,7 +68,7 @@ public class Tienda extends Usuario {
     // Referencia a la api de la tienda
     @OneToOne(mappedBy = "tienda", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private TiendaAPI tiendaAPI;
+    private TiendaAPI tiendaAPI = null;
 
     // Referencias a las etiquetas que usa la tienda
     @ManyToMany(fetch = FetchType.LAZY)

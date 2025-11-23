@@ -12,7 +12,6 @@ import com.universidad.compusearch.dto.TiendaInfoResponse;
 import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.exception.TiendaException;
 import com.universidad.compusearch.repository.TiendaRepository;
-import com.universidad.compusearch.stripe.CustomeStripeService;
 import com.universidad.compusearch.util.Mapper;
 
 import jakarta.persistence.EntityManager;
@@ -26,7 +25,6 @@ public class TiendaService {
 
     private final TiendaRepository tiendaRepository;
     private final EntityManager entityManager;
-    private final CustomeStripeService customeStripeService;
 
     // Obtener tiendas verificadas
     public List<Tienda> obtenerTiendasVerificadas() {
@@ -48,43 +46,65 @@ public class TiendaService {
         tiendaRepository.save(tienda);
     }
 
-    // Insertar una tienda por sql
     @Transactional
-    public void insertarTiendaDirectamente(Tienda tienda) {
+    public Tienda insertarTiendaDirectamente(Tienda tienda) {
         log.info("Insertando tienda con ID {}", tienda.getIdUsuario());
 
-        String sql = """
-                INSERT INTO tienda (id_usuario, nombre, telefono, direccion, descripcion, url_pagina, verificado, fecha_afiliacion)
-                VALUES (:idUsuario, :nombre, :telefono, :direccion, :descripcion, :urlPagina, :verificado, CURRENT_TIMESTAMP())
-                """;
+        try {
+            String updateUsuario = """
+                    UPDATE usuario
+                    SET tipo_usuario = 'TIENDA'
+                    WHERE id_usuario = :idUsuario
+                    """;
 
-        entityManager.createNativeQuery(sql)
-                .setParameter("idUsuario", tienda.getIdUsuario())
-                .setParameter("nombre", tienda.getNombre())
-                .setParameter("telefono", tienda.getTelefono())
-                .setParameter("direccion", tienda.getDireccion())
-                .setParameter("descripcion", tienda.getDescripcion())
-                .setParameter("urlPagina", tienda.getUrlPagina())
-                .setParameter("verificado", tienda.isVerificado())
-                .executeUpdate();
+            entityManager.createNativeQuery(updateUsuario)
+                    .setParameter("idUsuario", tienda.getIdUsuario())
+                    .executeUpdate();
 
-        entityManager.flush();
+            String insertTienda = """
+                    INSERT INTO tienda (id_usuario, nombre, telefono, direccion, descripcion, url_pagina, verificado, fecha_afiliacion)
+                    VALUES (:idUsuario, :nombre, :telefono, :direccion, :descripcion, :urlPagina, :verificado, CURRENT_TIMESTAMP())
+                    """;
 
-        customeStripeService.crearCustomerSiNoExiste(tienda);
+            entityManager.createNativeQuery(insertTienda)
+                    .setParameter("idUsuario", tienda.getIdUsuario())
+                    .setParameter("nombre", tienda.getNombre())
+                    .setParameter("telefono", tienda.getTelefono())
+                    .setParameter("direccion", tienda.getDireccion())
+                    .setParameter("descripcion", tienda.getDescripcion())
+                    .setParameter("urlPagina", tienda.getUrlPagina())
+                    .setParameter("verificado", tienda.isVerificado())
+                    .executeUpdate();
 
-        log.info("Tienda insertada correctamente con StripeCustomerId={}", tienda.getStripeCustomerId());
+            entityManager.flush();
+            entityManager.clear();
+
+            Tienda tiendaPersistida = entityManager.find(Tienda.class, tienda.getIdUsuario());
+
+            if (tiendaPersistida == null) {
+                log.error("No se pudo recuperar la tienda con ID {}", tienda.getIdUsuario());
+                throw new RuntimeException("Error al recuperar tienda insertada");
+            }
+
+            log.info("Tienda con id {} registrada exitosamente", tiendaPersistida.getIdUsuario());
+
+            return tiendaPersistida;
+
+        } catch (Exception e) {
+            log.error("Error al insertar tienda: {}", e.getMessage(), e);
+            throw TiendaException.anyInfoIsUsed();
+        }
     }
 
     // Obtener todas las tiendas
     public Page<TiendaInfoResponse> findAllTiendas(Pageable pageable, String nombre) {
-    if (nombre != null && !nombre.isBlank()) {
-        return tiendaRepository.findByNombreContainingIgnoreCase(nombre, pageable)
+        if (nombre != null && !nombre.isBlank()) {
+            return tiendaRepository.findByNombreContainingIgnoreCase(nombre, pageable)
+                    .map(Mapper::mapToTiendaInfo);
+        }
+        return tiendaRepository.findAll(pageable)
                 .map(Mapper::mapToTiendaInfo);
     }
-    return tiendaRepository.findAll(pageable)
-            .map(Mapper::mapToTiendaInfo);
-}
-
 
     public Tienda bucarPorId(Long idTienda) {
         return tiendaRepository.findById(idTienda).orElseThrow(() -> TiendaException.notFound());

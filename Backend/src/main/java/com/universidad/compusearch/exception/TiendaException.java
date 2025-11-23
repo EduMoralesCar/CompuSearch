@@ -8,6 +8,11 @@ public class TiendaException extends CustomException{
 
     public static TiendaException notFound() {
         return new TiendaException(
-                "Empleado no encontrada");
+                "Tienda no encontrada");
+    }
+
+    public static TiendaException anyInfoIsUsed() {
+        return new TiendaException(
+                "La solicitud tiene datos importantes de otra tienda");
     }
 }

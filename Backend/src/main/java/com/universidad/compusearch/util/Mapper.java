@@ -107,9 +107,9 @@ public class Mapper {
                 .email(usuario.getEmail())
                 .activo(usuario.isActivo())
                 .fechaRegistro(usuario.getFechaRegistro())
-                .cantidadBuilds(usuario.getBuilds() != null ? usuario.getBuilds().size() : 0)
-                .cantidadIncidentes(usuario.getIncidentes() != null ? usuario.getIncidentes().size() : 0)
-                .cantidadSolicitudes(usuario.getSolicitudes() != null ? usuario.getIncidentes().size() : 0)
+                .cantidadBuilds(usuario.getBuilds().size())
+                .cantidadIncidentes(usuario.getIncidentes().size())
+                .cantidadSolicitudes(usuario.getSolicitudes().size())
                 .build();
     }
 
@@ -185,6 +185,7 @@ public class Mapper {
         dto.setIdUsuario(build.getUsuario().getIdUsuario());
         dto.setCompatible(build.isCompatible());
         dto.setCostoTotal(build.getCostoTotal());
+        dto.setDetalles(mapToDetalleBuild(build.getDetalles()));
         return dto;
     }
 
@@ -202,6 +203,7 @@ public class Mapper {
                     dto.setCantidad(detalle.getCantidad());
                     dto.setCategoria(detalle.getProductoTienda().getProducto().getCategoria().getNombre());
                     dto.setUrlProducto(detalle.getProductoTienda().getUrlProducto());
+                    dto.setDetalles(mapToDetalleAtributo(detalle.getProductoTienda().getProducto().getAtributos()));
 
                     return dto;
                 })
@@ -222,6 +224,15 @@ public class Mapper {
     }
 
     public static TiendaDetallesResponse mapToTiendaDetalles(Tienda tienda) {
+
+        Suscripcion lastSuscripcion = tienda.getSuscripciones().isEmpty()
+                ? null
+                : tienda.getSuscripciones().getLast();
+
+        TiendaSuscripcionActualInfoResponse suscripcionResponse = (lastSuscripcion != null)
+                ? mapToTiendaSuscripcionActualInfo(lastSuscripcion)
+                : null;
+
         return new TiendaDetallesResponse(
                 tienda.getIdUsuario(),
                 tienda.getNombre(),
@@ -233,7 +244,7 @@ public class Mapper {
                 tienda.getDireccion(),
                 tienda.getUrlPagina(),
                 tienda.getTiendaAPI(),
-                mapToTiendaSuscripcionActualInfo(tienda.getSuscripciones().getLast()),
+                suscripcionResponse,
                 tienda.getEtiquetas(),
                 mapToProductoTiendaInfo(tienda.getProductos()));
     }
@@ -256,12 +267,11 @@ public class Mapper {
                 productoTienda.getHabilitado());
     }
 
-    public static TiendaSuscripcionActualInfoResponse mapToTiendaSuscripcionActualInfo(Suscripcion suscripcion){
+    public static TiendaSuscripcionActualInfoResponse mapToTiendaSuscripcionActualInfo(Suscripcion suscripcion) {
         return new TiendaSuscripcionActualInfoResponse(
-            suscripcion.getFechaInicio(),
-            suscripcion.getFechaFin(),
-            suscripcion.getEstado().name(),
-            suscripcion.getPlan().getNombre()
-        );
+                suscripcion.getFechaInicio(),
+                suscripcion.getFechaFin(),
+                suscripcion.getEstado().name(),
+                suscripcion.getPlan().getNombre());
     }
 }

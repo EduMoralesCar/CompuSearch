@@ -43,22 +43,6 @@ public class TiendaAPI {
     @Column(nullable = false)
     private EstadoAPI estadoAPI;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoAutenticacion tipoAutenticacion;
-
-    @Column(nullable = true)
-    private String apiKey;
-
-    @Column(nullable = true)
-    private String bearerToken;
-
-    @Column(nullable = true)
-    private String apiUsuario;
-
-    @Column(nullable = true)
-    private String apiContrasena;
-
     // Referencia a la tienda a la que esta asociada
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tienda", referencedColumnName = "idUsuario", nullable = false, unique = true)

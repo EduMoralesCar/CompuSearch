@@ -1,46 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
 import axios from 'axios';
 
-// --- Definiciones de Tipos (Mock, adaptar según tu DTO real) ---
 
-/**
- * @typedef {Object} EmpleadoResponse
- * @property {number} idUsuario - El ID del usuario/empleado.
- * @property {string} username - Nombre de usuario.
- * @property {string} nombre - Nombre completo.
- * @property {string} email - Correo electrónico.
- * @property {string} telefono - Teléfono.
- * @property {boolean} activo - Estado de actividad del empleado.
- * @property {string} rol - Rol del empleado (e.g., "ADMIN", "USER").
- */
-
-/**
- * @typedef {Omit<EmpleadoResponse, 'idUsuario' | 'activo' | 'rol'> & { password?: string }} EmpleadoRequest
- */
-
-/**
- * @typedef {Object} PageResponse
- * @property {EmpleadoResponse[]} content - Lista de empleados en la página.
- * @property {boolean} last - Si es la última página.
- * @property {number} totalPages - Número total de páginas.
- * @property {number} totalElements - Número total de elementos.
- * @property {number} size - Tamaño de la página actual.
- * @property {number} number - Índice de la página actual (cero basado).
- * @property {boolean} first - Si es la primera página.
- * @property {number} numberOfElements - Número de elementos en la página actual.
- */
-
-// ----------------------------------------------------------------
-
-// URL base de tu API Spring Boot
 const API_BASE_URL = 'http://localhost:8080/empleado'; 
 
-/**
- * Hook personalizado de React para manejar las operaciones CRUD y paginadas 
- * de los empleados, interactuando con la API REST utilizando Axios.
- * * @returns {object} Un objeto con estados (loading, error, empleados, totalPages) 
- * y las funciones para interactuar con la API.
- */
 const useEmpleados = () => {
     const [empleados, setEmpleados] = useState([]);
     const [empleadoDetalle, setEmpleadoDetalle] = useState(null);
@@ -179,7 +142,6 @@ const useEmpleados = () => {
         totalPages,
         isLoading,
         error,
-        
         getEmpleados,
         getEmpleadoById,
         createEmpleado,

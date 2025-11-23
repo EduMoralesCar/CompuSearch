@@ -36,14 +36,14 @@ public class TiendaController {
 
     @GetMapping("/verificadas")
     public ResponseEntity<List<TiendaResponse>> obtenerTiendasVerificadas() {
-        log.info("GET /tiendas/verificadas - solicitando tiendas verificadas");
+        log.info("GET /tiendas/verificadas - Solicitando tiendas verificadas");
 
         List<TiendaResponse> tiendasResponse = tiendaService.obtenerTiendasVerificadas()
                 .stream()
                 .map(Mapper::mapToTienda)
                 .toList();
 
-        log.info("Se retornaron {} tiendas verificadas.", tiendasResponse.size());
+        log.info("Se retornaron {} tiendas verificadas", tiendasResponse.size());
         return ResponseEntity.ok(tiendasResponse);
     }
 
@@ -51,39 +51,62 @@ public class TiendaController {
     public ResponseEntity<Page<TiendaInfoResponse>> getAllTiendas(
             @RequestParam(required = false) String nombre,
             Pageable pageable) {
+
+        log.info("GET /tiendas - Consultando tiendas con filtro nombre='{}' y pageable={}", nombre, pageable);
+
         Page<TiendaInfoResponse> tiendas = tiendaService.findAllTiendas(pageable, nombre);
+
+        log.info("Consulta completada. Total elementos: {}, Total páginas: {}",
+                tiendas.getTotalElements(), tiendas.getTotalPages());
+
         return ResponseEntity.ok(tiendas);
     }
 
     @GetMapping("/{idUsuario}")
     public ResponseEntity<TiendaDetallesResponse> getTiendaById(@PathVariable Long idUsuario) {
-        try {
-            TiendaDetallesResponse tienda = tiendaService.findTiendaById(idUsuario);
-            return ResponseEntity.ok(tienda);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+        log.info("GET /tiendas/{} - Solicitando tienda por ID de usuario", idUsuario);
+
+        TiendaDetallesResponse tienda = tiendaService.findTiendaById(idUsuario);
+        log.info("Tienda encontrada para usuario {}", idUsuario);
+        return ResponseEntity.ok(tienda);
     }
 
     @PutMapping("/{idUsuario}/estado")
-    public ResponseEntity<TiendaDetallesResponse> actualizarEstado(@PathVariable Long idUsuario,
+    public ResponseEntity<TiendaDetallesResponse> actualizarEstado(
+            @PathVariable Long idUsuario,
             @RequestBody EstadoResponse estadoDTO) {
+
+        log.info("PUT /tiendas/{}/estado - Actualizando estado a {}", idUsuario, estadoDTO.isActivo());
+
         try {
             TiendaDetallesResponse tiendaActualizada = tiendaService.actualizarEstado(idUsuario, estadoDTO.isActivo());
+
+            log.info("Estado actualizado correctamente para el usuario {}", idUsuario);
             return ResponseEntity.ok(tiendaActualizada);
+
         } catch (NoSuchElementException e) {
+            log.warn("No se pudo actualizar estado. Tienda no encontrada para usuario {}", idUsuario);
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/{idUsuario}/verificacion")
-    public ResponseEntity<TiendaDetallesResponse> actualizarVerificacion(@PathVariable Long idUsuario,
+    public ResponseEntity<TiendaDetallesResponse> actualizarVerificacion(
+            @PathVariable Long idUsuario,
             @RequestBody VerificacionResponse verificacionDTO) {
+
+        log.info("PUT /tiendas/{}/verificacion - Actualizando verificación a {}",
+                idUsuario, verificacionDTO.isVerificado());
+
         try {
             TiendaDetallesResponse tiendaActualizada = tiendaService.actualizarVerificacion(idUsuario,
                     verificacionDTO.isVerificado());
+
+            log.info("Verificación actualizada correctamente para el usuario {}", idUsuario);
             return ResponseEntity.ok(tiendaActualizada);
+
         } catch (NoSuchElementException e) {
+            log.warn("No se pudo actualizar verificación. Tienda no encontrada para usuario {}", idUsuario);
             return ResponseEntity.notFound().build();
         }
     }

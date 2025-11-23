@@ -335,6 +335,10 @@ const Builds = () => {
             return;
         }
 
+        ejecutarActualizacion();
+    }
+
+    const ejecutarActualizacion = async () => {
         const detalles = Object.values(buildActualizada).map(item => ({
             idProductoTienda: item.idProductoTienda,
             cantidad: item.cantidad,
@@ -360,7 +364,7 @@ const Builds = () => {
                 ? "¡Tu build fue actualizado exitosamente!"
                 : "Error al actualizar tu build. Intenta nuevamente."
         );
-    }
+    };
 
     // Elimina la build
     const handleEliminar = async () => {
@@ -386,7 +390,6 @@ const Builds = () => {
                 : "Error al eliminar el armado. Intenta nuevamente."
         );
     }
-
 
     const handleSeleccionarBuild = (build) => {
         const armado = convertirBuildADisplay(build.detalles);
@@ -437,11 +440,10 @@ const Builds = () => {
                 errores={erroresCompatibilidad}
                 onConfirmar={() => {
                     setShowCompatModal(false);
-                    guardarBuildFinal();
+                    idBuild === null ? guardarBuildFinal() : ejecutarActualizacion();
                 }}
                 onCancelar={() => setShowCompatModal(false)}
             />
-
 
             <BuildsModal
                 show={showModalBuild}

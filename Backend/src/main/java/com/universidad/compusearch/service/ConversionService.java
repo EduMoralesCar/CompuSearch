@@ -1,20 +1,17 @@
 package com.universidad.compusearch.service;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Importación necesaria
+import org.springframework.transaction.annotation.Transactional;
 
-import com.universidad.compusearch.entity.EstadoSuscripcion;
-import com.universidad.compusearch.entity.Plan;
 import com.universidad.compusearch.entity.SolicitudTienda;
-import com.universidad.compusearch.entity.Suscripcion;
 import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.entity.TipoUsuario;
 import com.universidad.compusearch.entity.Usuario;
-import com.universidad.compusearch.exception.PlanException;
+import com.universidad.compusearch.stripe.CustomerStripeService;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,11 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ConversionService {
 
     private final TiendaService tiendaService;
-    private final SuscripcionService suscripcionService;
-    private final PlanService planService;
-    private final UsuarioService usuarioService;
-    
+    private final CustomerStripeService customerStripeService;
+    private final EntityManager entityManager;
+
     // Convertir un usuario en tienda
+    @Transactional
     public void convertirUsuarioEnTienda(SolicitudTienda solicitudTienda) {
         Usuario usuario = solicitudTienda.getUsuario();
 
@@ -37,43 +34,31 @@ public class ConversionService {
             return;
         }
 
-        actualizarRolUsuario(usuario);
-        crearTiendaYSuscripcion(solicitudTienda);
+        if (entityManager.contains(usuario)) {
+            entityManager.detach(usuario);
+        }
+
+        Tienda tienda = crearTienda(solicitudTienda);
+
+        customerStripeService.crearCustomer(tienda);
 
         log.info("Usuario {} convertido exitosamente.", usuario.getUsername());
     }
 
-    // Actualizar el rol de USUARIO a TIENDA
-    @Transactional
-    public void actualizarRolUsuario(Usuario usuario) {
-        log.info("Actualizando rol de Usuario {}", usuario.getIdUsuario());
+    public Tienda crearTienda(SolicitudTienda solicitudTienda) {
+        log.info("Creando Tienda.");
 
-
-        usuario.setTipoUsuario(TipoUsuario.TIENDA);
-
-        usuarioService.guardarUsuario(usuario);
-
-        log.info("Actualizacion completada.");
-    }
-
-    // Crear tienda y suscripcion
-    @Transactional
-    public void crearTiendaYSuscripcion(SolicitudTienda solicitudTienda) {
-        log.info("Creando Tienda y Suscripción.");
-
-        Usuario usuario = solicitudTienda.getUsuario();
+        Usuario usuarioBase = solicitudTienda.getUsuario();
         Map<String, Object> datos = solicitudTienda.getDatosFormulario();
 
-        Usuario usuarioActualizado = usuarioService.buscarPorId(usuario.getIdUsuario());
-
         Tienda tienda = new Tienda();
-        tienda.setIdUsuario(usuarioActualizado.getIdUsuario());
-        tienda.setUsername(usuarioActualizado.getUsername());
-        tienda.setEmail(usuarioActualizado.getEmail());
-        tienda.setContrasena(usuarioActualizado.getContrasena());
-        tienda.setActivo(usuarioActualizado.isActivo());
+        tienda.setIdUsuario(usuarioBase.getIdUsuario());
+        tienda.setUsername(usuarioBase.getUsername());
+        tienda.setEmail(usuarioBase.getEmail());
+        tienda.setContrasena(usuarioBase.getContrasena());
+        tienda.setActivo(usuarioBase.isActivo());
         tienda.setTipoUsuario(TipoUsuario.TIENDA);
-        tienda.setFechaRegistro(usuarioActualizado.getFechaRegistro());
+        tienda.setFechaRegistro(usuarioBase.getFechaRegistro());
 
         tienda.setNombre((String) datos.getOrDefault("nombreTienda", "Tienda sin nombre"));
         tienda.setTelefono((String) datos.getOrDefault("telefono", "Sin telefono"));
@@ -82,30 +67,8 @@ public class ConversionService {
         tienda.setUrlPagina((String) datos.getOrDefault("sitioWeb", "Sin sitio web"));
         tienda.setVerificado(false);
 
-        tiendaService.insertarTiendaDirectamente(tienda);
+        log.info("Tienda creada. Lista para persistir.");
 
-        Plan planGratuito = planService.obtenerPorNombre("Básico (Gratis)");
-
-        if (planGratuito == null) {
-            log.error("El plan GRATUITO no se encontró. Fallo de integridad de datos.");
-
-            throw PlanException.notFound();
-        }
-
-        Suscripcion suscripcion = new Suscripcion();
-        LocalDateTime ahora = LocalDateTime.now();
-        suscripcion.setTienda(tienda);
-        suscripcion.setPlan(planGratuito);
-        suscripcion.setFechaInicio(ahora);
-
-        if (planGratuito.getDuracionMeses() > 0) {
-            suscripcion.setFechaFin(ahora.plusMonths(planGratuito.getDuracionMeses()));
-        } else {
-            suscripcion.setFechaFin(null);
-        }
-        suscripcion.setEstado(EstadoSuscripcion.ACTIVA);
-        suscripcionService.guardarSuscripcion(suscripcion);
-
-        log.info("Tienda creada y suscrita.");
+        return tiendaService.insertarTiendaDirectamente(tienda);
     }
 }

@@ -15,17 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CustomeStripeService {
+public class CustomerStripeService {
 
     private final TiendaRepository tiendaRepository;
 
     @Transactional
-    public String crearCustomerSiNoExiste(Tienda tienda) {
-        if (tienda.getStripeCustomerId() != null) {
-            log.info("La tienda {} ya tiene un Stripe Customer ID: {}", tienda.getNombre(),
-                    tienda.getStripeCustomerId());
-            return tienda.getStripeCustomerId();
-        }
+    public String crearCustomer(Tienda tienda) {
 
         try {
             log.info("Creando Stripe Customer para la tienda {}", tienda.getNombre());

@@ -22,6 +22,7 @@ export function useTiendas() {
                 baseUrl,
                 { params, withCredentials: true }
             );
+            console.log(response.data)
             return { success: true, data: response.data };
         } catch (err) {
             const message = err.response?.data?.message || "Error al obtener la lista de tiendas";

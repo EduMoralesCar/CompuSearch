@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 
 const ModalFormularioEmpleado = ({
     show,
@@ -154,7 +154,7 @@ const ModalFormularioEmpleado = ({
                             disabled={isSubmitting}
                         >
                             <option value="ADMIN">ADMIN</option>
-                            <option value="MONITORIO">MONITORIO</option>
+                            <option value="MONITOREO">MONITORIO</option>
                             <option value="SOPORTE">SOPORTE</option>
                         </Form.Select>
                     </Form.Group>
