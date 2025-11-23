@@ -6,10 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * DTO utilizado para representar la respuesta de una incidencia.
- * Contiene la información básica del reporte realizado por un usuario.
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

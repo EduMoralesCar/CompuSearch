@@ -6,9 +6,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-/**
- * DTO utilizado para la creación y modificación de Planes.
- */
 @Getter
 @Setter
 public class PlanRequest {

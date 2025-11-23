@@ -6,7 +6,7 @@ const TablaEmpleados = ({ empleados, onVerInfo, onToggleActivo, onEditar, isTogg
         <Table striped bordered hover responsive size="sm" className="mt-3">
             <thead>
                 <tr>
-                    <th>ID Empleado</th>
+                    <th>ID</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Nombre</th>

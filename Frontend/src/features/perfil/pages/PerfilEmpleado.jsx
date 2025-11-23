@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { BsArrowBarLeft, BsList } from "react-icons/bs";
-import AsideDashboard from "../components/perfilEmpleado/slider/AsideDashboard";
-import "../css/PerfilEmpleado.css";
+import DashboardSidebarLayout from "../components/auxiliar/DashboardSidebarLayout";
+import "../css/AsidebarPerfil.css"
 
 import GestionCategorias from "../components/perfilEmpleado/content/GestionCategorias";
 import GestionEtiquetas from "../components/perfilEmpleado/content/GestionEtiquetas";
@@ -11,15 +11,26 @@ import GestionSolicitudes from "../components/perfilEmpleado/content/GestionSoli
 import GestionIncidencias from "../components/perfilEmpleado/content/GestionIncidencias";
 import GestionPlanes from "../components/perfilEmpleado/content/GestionPlanes";
 import GestionEmpleados from "../components/perfilEmpleado/content/GestionEmpleados";
+import GestionTiendas from "../components/perfilEmpleado/content/GestionTiendas";
 
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
-import GestionTiendas from "../components/perfilEmpleado/content/GestionTiendas";
 
 const PerfilEmpleado = () => {
     const [vistaActual, setVistaActual] = useState("categorias");
     const [sidebarAbierto, setSidebarAbierto] = useState(true);
 
     const { idUsuario } = useAuthStatus();
+
+    const EMPLOYEE_NAV_ITEMS = [
+        { eventKey: "categorias", label: "Categorías", icon: "bi bi-grid-3x3-gap-fill" },
+        { eventKey: "etiquetas", label: "Etiquetas", icon: "bi bi-tags-fill" },
+        { eventKey: "usuarios", label: "Usuarios", icon: "bi bi-people-fill" },
+        { eventKey: "tiendas", label: "Tiendas", icon: "bi bi-shop-window" },
+        { eventKey: "empleados", label: "Empleados", icon: "bi bi-person-badge" },
+        { eventKey: "solicitudes", label: "Solicitudes", icon: "bi bi-envelope-fill" },
+        { eventKey: "incidencias", label: "Incidencias", icon: "bi bi-exclamation-triangle-fill" },
+        { eventKey: "planes", label: "Planes", icon: "bi bi-card-checklist" },
+    ];
 
     const renderizarVista = () => {
         switch (vistaActual) {
@@ -55,10 +66,12 @@ const PerfilEmpleado = () => {
             )}
 
             <aside className={`sidebar ${sidebarAbierto ? "abierto" : "cerrado"}`}>
-                <AsideDashboard
+                <DashboardSidebarLayout 
+                    navItems={EMPLOYEE_NAV_ITEMS}
                     setVistaActual={setVistaActual}
                     vistaActual={vistaActual}
                     setSidebarAbierto={setSidebarAbierto}
+                    headerTitle="Panel Administrador"
                 />
             </aside>
 

@@ -8,10 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * DTO que representa los datos de las solicitudes
- * de los usuarios para convertirse en tiendas
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

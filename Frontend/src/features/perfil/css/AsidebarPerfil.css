@@ -42,7 +42,6 @@
     transition: all 0.3s ease;
 }
 
-
 /*  Media Query para pantallas grandes (Desktop)  */
 @media (min-width: 992px) {
         
@@ -67,7 +66,6 @@
     }
 }
 
-
 /* Estilos para el texto del Sidebar */
 
 .sidebar .navbar-brand {
@@ -88,4 +86,19 @@
 .sidebar .nav-pills .show > .nav-link {
     color: #0d6efd; 
     background-color: #ffffff;
+}
+
+.sidebar .sidebar-logout-btn {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: transparent;
+}
+
+.sidebar .sidebar-logout-btn:hover,
+.sidebar .sidebar-logout-btn:focus,
+.sidebar .sidebar-logout-btn:active {
+    color: #ffffff; 
+    border-color: #ffffff; 
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: none;
 }

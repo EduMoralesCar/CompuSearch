@@ -69,7 +69,7 @@ const AppRoute = () => {
                 <Route
                     path="/perfil/usuario"
                     element={
-                        <RequireTipoUsuario tiposPermitidos={["USUARIO"]}>
+                        <RequireTipoUsuario tiposPermitidos={["USUARIO", "TIENDA"]}>
                             <PerfilUsuario />
                         </RequireTipoUsuario>
                     }

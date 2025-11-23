@@ -5,9 +5,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-/**
- * DTO utilizado para devolver la información de un Plan.
- */
 @Getter
 @Setter
 public class PlanResponse {

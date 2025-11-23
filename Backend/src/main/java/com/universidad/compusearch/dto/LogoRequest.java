@@ -1,17 +1,17 @@
 package com.universidad.compusearch.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class DetalleAtributoResponse {
-
-    private String nombreAtributo;
-
-    private String valor;
+public class LogoRequest {
+    
+    @NotNull(message = "El logo no debe enviarse vacio")
+    private byte[] logo;
 }

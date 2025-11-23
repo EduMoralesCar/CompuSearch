@@ -11,8 +11,13 @@ public class TiendaException extends CustomException{
                 "Tienda no encontrada");
     }
 
-    public static TiendaException anyInfoIsUsed() {
+    public static TiendaException InfoIsUsed() {
         return new TiendaException(
-                "La solicitud tiene datos importantes de otra tienda");
+                "La solicitud tiene datos duplicados de otra tienda");
+    }
+
+    public static TiendaException errorInsertDirect() {
+        return new TiendaException(
+                "Error al insertar la tienda directamente");
     }
 }

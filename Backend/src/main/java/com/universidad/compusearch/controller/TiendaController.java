@@ -110,4 +110,6 @@ public class TiendaController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    
 }

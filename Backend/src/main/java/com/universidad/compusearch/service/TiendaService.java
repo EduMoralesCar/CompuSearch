@@ -2,6 +2,7 @@ package com.universidad.compusearch.service;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -83,16 +84,20 @@ public class TiendaService {
 
             if (tiendaPersistida == null) {
                 log.error("No se pudo recuperar la tienda con ID {}", tienda.getIdUsuario());
-                throw new RuntimeException("Error al recuperar tienda insertada");
+                throw TiendaException.notFound();
             }
 
             log.info("Tienda con id {} registrada exitosamente", tiendaPersistida.getIdUsuario());
 
             return tiendaPersistida;
 
+        } catch (DataIntegrityViolationException e) {
+            log.warn("Violación de unicidad o integridad de datos al insertar tienda: {}", e.getMessage());
+            throw TiendaException.InfoIsUsed();
+
         } catch (Exception e) {
-            log.error("Error al insertar tienda: {}", e.getMessage(), e);
-            throw TiendaException.anyInfoIsUsed();
+            log.error("Error inesperado al insertar tienda: {}", e.getMessage(), e);
+            throw TiendaException.errorInsertDirect();
         }
     }
 
