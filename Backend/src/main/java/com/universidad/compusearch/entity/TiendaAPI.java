@@ -37,6 +37,9 @@ public class TiendaAPI {
     @Column(nullable = false)
     private EstadoAPI estadoAPI;
 
+    @Column(nullable = false)
+    private boolean probada;
+
     // Referencia a la tienda a la que esta asociada
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tienda", referencedColumnName = "idUsuario", nullable = false, unique = true)

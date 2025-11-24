@@ -14,7 +14,6 @@ import com.universidad.compusearch.dto.TiendaInfoResponse;
 import com.universidad.compusearch.dto.TiendaResponse;
 import com.universidad.compusearch.dto.VerificacionResponse;
 import com.universidad.compusearch.entity.EstadoAPI;
-import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.entity.TiendaAPI;
 import com.universidad.compusearch.service.TiendaService;
 import com.universidad.compusearch.util.Mapper;
@@ -159,15 +158,15 @@ public class TiendaController {
     }
 
     @PutMapping("/{idTienda}/api")
-    public ResponseEntity<MessageResponse> actualizarApi(
+    public ResponseEntity<EstadoAPI> actualizarApi(
             @PathVariable Long idTienda,
             @RequestBody String api) {
         log.info("Actualizando API de la tienda con id {}", idTienda);
 
-        tiendaService.actualizarApi(idTienda, api);
+        EstadoAPI estado = tiendaService.actualizarApi(idTienda, api);
 
         log.info("Datos de la tienda con id {} actualizados correctamente", idTienda);
-        return ResponseEntity.ok(new MessageResponse("API actualizada correctamente."));
+        return ResponseEntity.ok(estado);
     }
 
     @GetMapping("/{idTienda}/api")

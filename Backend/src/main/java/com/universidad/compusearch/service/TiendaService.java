@@ -173,7 +173,7 @@ public class TiendaService {
     }
 
     @Transactional
-    public void actualizarApi(Long idTienda, String urlApi) {
+    public EstadoAPI actualizarApi(Long idTienda, String urlApi) {
         Tienda tienda = tiendaRepository.findById(idTienda)
                 .orElseThrow(() -> TiendaException.notFound());
 
@@ -185,9 +185,11 @@ public class TiendaService {
         }
 
         api.setUrlBase(urlApi);
+        api.setProbada(false);
         api.setEstadoAPI(EstadoAPI.INACTIVA);
 
         tienda.setTiendaAPI(api);
+        return api.getEstadoAPI();
     }
 
     @Transactional
@@ -203,6 +205,7 @@ public class TiendaService {
         EstadoAPI estado = llamarApiExterna(api); 
         
         api.setEstadoAPI(estado);
+        api.setProbada(true);
 
         log.info("Estado de la API: {}", estado.name());
         return estado;

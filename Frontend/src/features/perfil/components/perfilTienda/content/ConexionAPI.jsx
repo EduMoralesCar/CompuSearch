@@ -38,7 +38,7 @@ const ConexionAPI = ({ idTienda }) => {
         const resp = await actualizarApi(idTienda, nuevaUrl);
 
         if (resp.success) {
-            setApiActual(prev => ({ ...prev, urlBase: nuevaUrl }));
+            setApiActual(prev => ({ ...prev, urlBase: nuevaUrl, estadoAPI: resp.data }));
             showStatus("success", "API actualizada correctamente.");
         } else {
             showStatus("danger", "Error al actualizar la API.");
