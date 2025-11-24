@@ -33,12 +33,6 @@ public class TiendaAPI {
     @Column(nullable = false)
     private String urlBase;
 
-    @Column(nullable = true)
-    private String endpointCatalogo;
-
-    @Column(nullable = true)
-    private String endpointProducto;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoAPI estadoAPI;

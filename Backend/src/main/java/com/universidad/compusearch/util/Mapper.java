@@ -16,6 +16,7 @@ import com.universidad.compusearch.dto.ProductoTiendaInfoResponse;
 import com.universidad.compusearch.dto.ProductoTiendaResponse;
 import com.universidad.compusearch.dto.SolicitudTiendaResponse;
 import com.universidad.compusearch.dto.TiendaDetallesResponse;
+import com.universidad.compusearch.dto.TiendaInfoDetalleResponse;
 import com.universidad.compusearch.dto.TiendaInfoResponse;
 import com.universidad.compusearch.dto.TiendaResponse;
 import com.universidad.compusearch.dto.TiendaSuscripcionActualInfoResponse;
@@ -247,6 +248,22 @@ public class Mapper {
                 suscripcionResponse,
                 tienda.getEtiquetas(),
                 mapToProductoTiendaInfo(tienda.getProductos()));
+    }
+
+    public static TiendaInfoDetalleResponse mapToTiendaInfoDetalle(Tienda tienda) {
+        return new TiendaInfoDetalleResponse(
+                tienda.getIdUsuario(),
+                tienda.getNombre(),
+                tienda.getEmail(),
+                tienda.isActivo(),
+                tienda.getDescripcion(),
+                tienda.getFechaAfiliacion(),
+                tienda.getTelefono(),
+                tienda.getDireccion(),
+                tienda.getUrlPagina(),
+                tienda.getEtiquetas(),
+                tienda.getProductos().size(),
+                tienda.getLogo());
     }
 
     public static List<ProductoTiendaInfoResponse> mapToProductoTiendaInfo(List<ProductoTienda> productosTienda) {

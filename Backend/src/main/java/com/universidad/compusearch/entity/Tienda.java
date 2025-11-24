@@ -36,7 +36,7 @@ public class Tienda extends Usuario {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String telefono;
 
     @Column(nullable = true)

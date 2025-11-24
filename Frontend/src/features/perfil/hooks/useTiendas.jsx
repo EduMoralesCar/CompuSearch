@@ -11,8 +11,8 @@ export function useTiendas() {
         setLoading(true);
         setError(null);
 
-        const params = { 
-            page, 
+        const params = {
+            page,
             size,
             ...filters
         };
@@ -33,16 +33,38 @@ export function useTiendas() {
         }
     }, [baseUrl]);
 
-    const obtenerTiendaPorId = useCallback(async (idUsuario) => {
+    const obtenerTiendaPorId = useCallback(async (idUsuario, empleado) => {
+        setLoading(true);
+        setError(null);
+
+        const url = empleado
+            ? `${baseUrl}/empleado/${idUsuario}`
+            : `${baseUrl}/tienda/${idUsuario}`;
+
+        try {
+            const response = await axios.get(url, { withCredentials: true });
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message || "Error al obtener información de la tienda";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    }, [baseUrl]);
+
+
+    const actualizarDatosTienda = useCallback(async (idUsuario, datosNuevos) => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await axios.get(
-                `${baseUrl}/${idUsuario}`,
+            const response = await axios.put(
+                `${baseUrl}/actualizar/${idUsuario}`,
+                datosNuevos,
                 { withCredentials: true }
             );
-            return { success: true, data: response.data };
+            return { success: true, data: response.message };
         } catch (err) {
             const message = err.response?.data?.message || "Error al obtener información de la tienda";
             setError(message);
@@ -74,6 +96,32 @@ export function useTiendas() {
         }
     }, [baseUrl]);
 
+    const actualizarLogo = useCallback(async (idUsuario, file) => {
+        setLoading(true);
+        setError(null);
+
+        const formData = new FormData();
+        formData.append("logo", file);
+
+        try {
+            const response = await axios.put(
+                `${baseUrl}/${idUsuario}/logo`,
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                    withCredentials: true,
+                }
+            );
+            return { success: true, data: response.message };
+        } catch (err) {
+            const message = err.response?.data?.message || "Error al actualizar el logo.";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    }, [baseUrl]);
+
     const actualizarVerificacion = useCallback(async (idUsuario, nuevoEstadoVerificado) => {
         setLoading(true);
         setError(null);
@@ -96,12 +144,78 @@ export function useTiendas() {
         }
     }, [baseUrl]);
 
+    const actualizarApi = useCallback(async (idTienda, api) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.put(
+                `${baseUrl}/${idTienda}/api`,
+                api,
+                {
+                    headers: { "Content-Type": "text/plain" },
+                    withCredentials: true
+                }
+            );
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message || "Error al actualizar la API.";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    }, [baseUrl]);
+
+    const obtenerApi = useCallback(async (idTienda) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.get(
+                `${baseUrl}/${idTienda}/api`,
+                { withCredentials: true }
+            );
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message || "Error al obtener la API.";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    }, [baseUrl]);
+
+    const probarApi = useCallback(async (idTienda) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.put(
+                `${baseUrl}/${idTienda}/probar`,
+                {},
+                { withCredentials: true }
+            );
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message || "Error al probar la API.";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    }, [baseUrl]);
 
     return {
         obtenerTiendasPaginadas,
         obtenerTiendaPorId,
         actualizarEstado,
         actualizarVerificacion,
+        actualizarDatosTienda,
+        actualizarLogo,
+        actualizarApi,
+        obtenerApi,
+        probarApi,
         loading,
         error
     };

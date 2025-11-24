@@ -3,15 +3,18 @@ import { Button } from "react-bootstrap";
 import { BsArrowBarLeft, BsList } from "react-icons/bs";
 import DashboardSidebarLayout from "../components/auxiliar/DashboardSidebarLayout";
 import "../css/AsidebarPerfil.css"
-import InformacionTienda from "../components/perfilTienda/InformacionTienda";
-import MisProductos from "../components/perfilTienda/MisProductos";
-import ObtenerPlan from "../components/perfilTienda/ObtenerPlan";
-import ConexionAPI from "../components/perfilTienda/ConexionAPI";
-import HistorialPagos from "../components/perfilTienda/HistorialPagos";
+import InformacionTienda from "../components/perfilTienda//content/InformacionTienda";
+import MisProductos from "../components/perfilTienda/content/MisProductos";
+import ObtenerPlan from "../components/perfilTienda/content/ObtenerPlan";
+import ConexionAPI from "../components/perfilTienda/content/ConexionAPI";
+import HistorialPagos from "../components/perfilTienda/content/HistorialPagos";
+import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
 const PerfilTienda = () => {
     const [vistaActual, setVistaActual] = useState("dashboard");
     const [sidebarAbierto, setSidebarAbierto] = useState(true);
+
+    const { idUsuario } = useAuthStatus();
 
     const STORE_NAV_ITEMS = [
         { eventKey: "informacion", label: "Información", icon: "bi bi-info-circle-fill" },
@@ -24,7 +27,7 @@ const PerfilTienda = () => {
     const renderizarVista = () => {
         switch (vistaActual) {
             case "informacion":
-                return <InformacionTienda />
+                return <InformacionTienda idTienda={idUsuario}/>
             case "productos":
                 return <MisProductos />
             case "planes":
@@ -32,14 +35,14 @@ const PerfilTienda = () => {
             case "pagos":
                 return <HistorialPagos />
             case "conexion":
-                return <ConexionAPI />
+                return <ConexionAPI idTienda={idUsuario}/>
             default:
-                return <InformacionTienda />
+                return <InformacionTienda idTienda={idUsuario}/>
         }
     };
 
     return (
-        <div className="dashboard-layout">
+        <div className={`dashboard-layout ${sidebarAbierto ? "sidebar-open" : "sidebar-closed"}`}>
 
             {sidebarAbierto && (
                 <div

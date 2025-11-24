@@ -11,7 +11,7 @@ public class TiendaException extends CustomException{
                 "Tienda no encontrada");
     }
 
-    public static TiendaException InfoIsUsed() {
+    public static TiendaException duplicatedData() {
         return new TiendaException(
                 "La solicitud tiene datos duplicados de otra tienda");
     }
@@ -19,5 +19,10 @@ public class TiendaException extends CustomException{
     public static TiendaException errorInsertDirect() {
         return new TiendaException(
                 "Error al insertar la tienda directamente");
+    }
+
+    public static TiendaException dataInUse(String data) {
+        return new TiendaException(
+                "El valor ingresado ya esta en otra tienda: " + data);
     }
 }

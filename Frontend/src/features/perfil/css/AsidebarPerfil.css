@@ -2,29 +2,29 @@
     display: flex;
     min-height: 100vh;
     width: 100%;
-    position: relative; 
 }
 
-/* Barra Lateral (Aside) */
+/* Sidebar (móvil y desktop por defecto) */
 .sidebar {
-    background-color: #0d6efd; 
-    transition: all 0.3s ease;
-    overflow-x: hidden;
-    position: absolute; 
+    background-color: #0d6efd;
+    position: fixed;               /* Fijo siempre */
     top: 0;
     left: 0;
-    height: 100%;     
-    z-index: 1030;    
-    width: 0; 
+    height: 100vh;                 /* Ocupa toda la altura */
+    overflow-y: auto;              /* Scroll si se llena */
+    transition: all 0.3s ease;
+    z-index: 1030;
+    width: 0;
     padding: 0;
 }
 
+/* Sidebar abierto en móvil */
 .sidebar.abierto {
-    min-width: 250px;
     width: 250px;
     padding: 1rem;
 }
 
+/* Fondo oscuro en móvil */
 .dashboard-backdrop {
     position: fixed;
     top: 0;
@@ -35,25 +35,19 @@
     z-index: 1020;
 }
 
-/*  Contenido Principal  */
+/* Contenido */
 .dashboard-content {
-    flex-grow: 1; 
+    flex-grow: 1;
     padding: 2rem;
     transition: all 0.3s ease;
+    margin-left: 0;
 }
 
-/*  Media Query para pantallas grandes (Desktop)  */
+/* Desktop */
 @media (min-width: 992px) {
-        
+
     .sidebar {
-        /* Deshacemos el overlay móvil */
-        position: relative;
-        height: auto;
-        z-index: auto;
-        
-        /* Restauramos el estado "push" */
-        min-width: 250px;
-        width: 250px;
+        width: 250px; 
         padding: 1rem;
     }
 
@@ -62,12 +56,11 @@
     }
 
     .dashboard-content {
-        margin-left: 0;
+        margin-left: 250px; 
     }
 }
 
-/* Estilos para el texto del Sidebar */
-
+/* Estilos internos */
 .sidebar .navbar-brand {
     color: #ffffff;
 }
@@ -79,12 +72,12 @@
 }
 .sidebar .nav-link:hover,
 .sidebar .nav-link:focus {
-    color: #ffffff; 
-    background-color: rgba(255, 255, 255, 0.1); 
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 .sidebar .nav-pills .nav-link.active,
 .sidebar .nav-pills .show > .nav-link {
-    color: #0d6efd; 
+    color: #0d6efd;
     background-color: #ffffff;
 }
 
@@ -93,12 +86,24 @@
     border-color: rgba(255, 255, 255, 0.5);
     background-color: transparent;
 }
-
 .sidebar .sidebar-logout-btn:hover,
 .sidebar .sidebar-logout-btn:focus,
 .sidebar .sidebar-logout-btn:active {
-    color: #ffffff; 
-    border-color: #ffffff; 
+    color: #ffffff;
+    border-color: #ffffff;
     background-color: rgba(255, 255, 255, 0.15);
     box-shadow: none;
 }
+
+/* Desktop */
+@media (min-width: 992px) {
+
+    .dashboard-layout.sidebar-open .dashboard-content {
+        margin-left: 250px;
+    }
+
+    .dashboard-layout.sidebar-closed .dashboard-content {
+        margin-left: 0;
+    }
+}
+

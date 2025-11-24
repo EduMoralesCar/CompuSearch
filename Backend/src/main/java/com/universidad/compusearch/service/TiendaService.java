@@ -7,10 +7,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 
 import com.universidad.compusearch.dto.TiendaDetallesResponse;
+import com.universidad.compusearch.dto.TiendaFormRequest;
+import com.universidad.compusearch.dto.TiendaInfoDetalleResponse;
 import com.universidad.compusearch.dto.TiendaInfoResponse;
+import com.universidad.compusearch.entity.EstadoAPI;
 import com.universidad.compusearch.entity.Tienda;
+import com.universidad.compusearch.entity.TiendaAPI;
+import com.universidad.compusearch.exception.TiendaAPIException;
 import com.universidad.compusearch.exception.TiendaException;
 import com.universidad.compusearch.repository.TiendaRepository;
 import com.universidad.compusearch.util.Mapper;
@@ -26,6 +35,7 @@ public class TiendaService {
 
     private final TiendaRepository tiendaRepository;
     private final EntityManager entityManager;
+    private final RestTemplate restTemplate;
 
     // Obtener tiendas verificadas
     public List<Tienda> obtenerTiendasVerificadas() {
@@ -93,7 +103,7 @@ public class TiendaService {
 
         } catch (DataIntegrityViolationException e) {
             log.warn("Violación de unicidad o integridad de datos al insertar tienda: {}", e.getMessage());
-            throw TiendaException.InfoIsUsed();
+            throw TiendaException.duplicatedData();
 
         } catch (Exception e) {
             log.error("Error inesperado al insertar tienda: {}", e.getMessage(), e);
@@ -115,10 +125,17 @@ public class TiendaService {
         return tiendaRepository.findById(idTienda).orElseThrow(() -> TiendaException.notFound());
     }
 
-    // Obtener tienda por id para el fronted
-    public TiendaDetallesResponse findTiendaById(Long idUsuario) {
+    // Obtener tienda por id para el apartado del administrador empleado
+    public TiendaDetallesResponse findTiendaByIdForEmpleado(Long idUsuario) {
         return tiendaRepository.findById(idUsuario)
                 .map(Mapper::mapToTiendaDetalles)
+                .orElseThrow(TiendaException::notFound);
+    }
+
+    // Obtener tienda por id para el apartado del administrador tienda
+    public TiendaInfoDetalleResponse findTiendaByIdForTienda(Long idUsuario) {
+        return tiendaRepository.findById(idUsuario)
+                .map(Mapper::mapToTiendaInfoDetalle)
                 .orElseThrow(TiendaException::notFound);
     }
 
@@ -138,5 +155,96 @@ public class TiendaService {
         tienda.setVerificado(verificado);
         tiendaRepository.save(tienda);
         return Mapper.mapToTiendaDetalles(tienda);
+    }
+
+    // Actualiza los datos de la tienda
+    @Transactional
+    public void actualizarDatos(Long idTienda, TiendaFormRequest formulario) {
+        Tienda tienda = tiendaRepository.findById(idTienda)
+                .orElseThrow(() -> TiendaException.notFound());
+
+        tienda.setDescripcion(formulario.getDescripcion());
+        tienda.setTelefono(formulario.getTelefono());
+        tienda.setDireccion(formulario.getDireccion());
+        tienda.setUrlPagina(formulario.getUrlPagina());
+        tienda.setNombre(formulario.getNombre());
+
+        tiendaRepository.save(tienda);
+    }
+
+    @Transactional
+    public void actualizarApi(Long idTienda, String urlApi) {
+        Tienda tienda = tiendaRepository.findById(idTienda)
+                .orElseThrow(() -> TiendaException.notFound());
+
+        TiendaAPI api = tienda.getTiendaAPI();
+
+        if (api == null) {
+            api = new TiendaAPI();
+            api.setTienda(tienda);
+        }
+
+        api.setUrlBase(urlApi);
+        api.setEstadoAPI(EstadoAPI.INACTIVA);
+
+        tienda.setTiendaAPI(api);
+    }
+
+    @Transactional
+    public EstadoAPI probarApi(Long idTienda) {
+        Tienda tienda = tiendaRepository.findById(idTienda)
+                .orElseThrow(() -> TiendaException.notFound());
+
+        TiendaAPI api = tienda.getTiendaAPI();
+        if (api == null) {
+            throw TiendaAPIException.notRegistered(idTienda);
+        }
+        
+        EstadoAPI estado = llamarApiExterna(api); 
+        
+        api.setEstadoAPI(estado);
+
+        log.info("Estado de la API: {}", estado.name());
+        return estado;
+    }
+    
+    public EstadoAPI llamarApiExterna(TiendaAPI api) {
+        String url = api.getUrlBase();
+
+        log.info("Probando la url de la api: {}", url);
+        
+        try {
+            restTemplate.getForEntity(url, Void.class);
+            return EstadoAPI.ACTIVA;
+            
+        } catch (HttpClientErrorException | HttpServerErrorException httpError) {
+            log.error("Error HTTP de la API externa: {}", httpError.getMessage());
+            return EstadoAPI.ERROR;
+            
+        } catch (ResourceAccessException connectionError) {
+            log.error("Error de conexión (Timeout, I/O): {}", connectionError.getMessage());
+            return EstadoAPI.ERROR;
+            
+        } catch (Exception e) {
+            log.error("Error desconocido al probar la API: {}", e.getMessage());
+            return EstadoAPI.ERROR;
+        }
+    }
+
+    public TiendaAPI buscarApi(Long idTienda) {
+        Tienda tienda = tiendaRepository.findById(idTienda)
+                .orElseThrow(() -> TiendaException.notFound());
+
+        return tienda.getTiendaAPI();
+    }
+
+    @Transactional
+    public void actualizarLogo(Long idTienda, byte[] logo) {
+        Tienda tienda = tiendaRepository.findById(idTienda)
+                .orElseThrow(() -> TiendaException.notFound());
+
+        tienda.setLogo(logo);
+
+        tiendaRepository.save(tienda);
     }
 }

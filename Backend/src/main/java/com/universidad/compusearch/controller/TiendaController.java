@@ -3,18 +3,26 @@ package com.universidad.compusearch.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.universidad.compusearch.dto.EstadoResponse;
+import com.universidad.compusearch.dto.MessageResponse;
 import com.universidad.compusearch.dto.TiendaDetallesResponse;
+import com.universidad.compusearch.dto.TiendaFormRequest;
+import com.universidad.compusearch.dto.TiendaInfoDetalleResponse;
 import com.universidad.compusearch.dto.TiendaInfoResponse;
 import com.universidad.compusearch.dto.TiendaResponse;
 import com.universidad.compusearch.dto.VerificacionResponse;
+import com.universidad.compusearch.entity.EstadoAPI;
+import com.universidad.compusearch.entity.Tienda;
+import com.universidad.compusearch.entity.TiendaAPI;
 import com.universidad.compusearch.service.TiendaService;
 import com.universidad.compusearch.util.Mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -62,11 +70,20 @@ public class TiendaController {
         return ResponseEntity.ok(tiendas);
     }
 
-    @GetMapping("/{idUsuario}")
-    public ResponseEntity<TiendaDetallesResponse> getTiendaById(@PathVariable Long idUsuario) {
+    @GetMapping("/empleado/{idUsuario}")
+    public ResponseEntity<TiendaDetallesResponse> getTiendaByIdForEmpleado(@PathVariable Long idUsuario) {
         log.info("GET /tiendas/{} - Solicitando tienda por ID de usuario", idUsuario);
 
-        TiendaDetallesResponse tienda = tiendaService.findTiendaById(idUsuario);
+        TiendaDetallesResponse tienda = tiendaService.findTiendaByIdForEmpleado(idUsuario);
+        log.info("Tienda encontrada para usuario {}", idUsuario);
+        return ResponseEntity.ok(tienda);
+    }
+
+    @GetMapping("/tienda/{idUsuario}")
+    public ResponseEntity<TiendaInfoDetalleResponse> getTiendaByIdForTienda(@PathVariable Long idUsuario) {
+        log.info("GET /tiendas/{} - Solicitando tienda por ID de usuario", idUsuario);
+
+        TiendaInfoDetalleResponse tienda = tiendaService.findTiendaByIdForTienda(idUsuario);
         log.info("Tienda encontrada para usuario {}", idUsuario);
         return ResponseEntity.ok(tienda);
     }
@@ -111,5 +128,69 @@ public class TiendaController {
         }
     }
 
-    
+    @PutMapping("/actualizar/{idTienda}")
+    public ResponseEntity<MessageResponse> actualizarDatosTienda(
+            @PathVariable Long idTienda,
+            @RequestBody TiendaFormRequest formulario) {
+        log.info("Actualizando datos de la tienda con id {}", idTienda);
+
+        tiendaService.actualizarDatos(idTienda, formulario);
+
+        log.info("Datos de la tienda con id {} actualizados correctamente", idTienda);
+        return ResponseEntity.ok(new MessageResponse("Datos actualizados correctamente."));
+    }
+
+    @PutMapping("/{idTienda}/logo")
+    public ResponseEntity<MessageResponse> actualizarLogo(
+            @PathVariable Long idTienda,
+            @RequestParam("logo") MultipartFile logoFile) {
+        try {
+            log.info("Actualizando el logo para la tienda con id: {}", idTienda);
+            byte[] logoBytes = logoFile.getBytes();
+
+            tiendaService.actualizarLogo(idTienda, logoBytes);
+
+            log.info("Logo actualizado correctamente para la tiend con id: {}", idTienda);
+            return ResponseEntity.ok(new MessageResponse("Logo actualizado correctamente."));
+        } catch (IOException e) {
+            log.error("Error al actualizar el logo para la tienda con id: {}", idTienda);
+            return ResponseEntity.badRequest().body(new MessageResponse("Error al procesar el archivo."));
+        }
+    }
+
+    @PutMapping("/{idTienda}/api")
+    public ResponseEntity<MessageResponse> actualizarApi(
+            @PathVariable Long idTienda,
+            @RequestBody String api) {
+        log.info("Actualizando API de la tienda con id {}", idTienda);
+
+        tiendaService.actualizarApi(idTienda, api);
+
+        log.info("Datos de la tienda con id {} actualizados correctamente", idTienda);
+        return ResponseEntity.ok(new MessageResponse("API actualizada correctamente."));
+    }
+
+    @GetMapping("/{idTienda}/api")
+    public ResponseEntity<TiendaAPI> obtenerApi(
+        @PathVariable Long idTienda
+    ) {
+        log.info("Enviado api de la tienda con id {}", idTienda);
+
+        TiendaAPI api = tiendaService.buscarApi(idTienda);
+
+        log.info("Api enviada correctamente de la tienda con id {}", idTienda);
+        return ResponseEntity.ok(api);
+    }
+
+    @PutMapping("/{idTienda}/probar")
+    public ResponseEntity<EstadoAPI> probarApi(
+            @PathVariable Long idTienda) {
+        log.info("Probando API de la tienda con id {}", idTienda);
+
+        EstadoAPI estado = tiendaService.probarApi(idTienda);
+
+        log.info("Api probada correctamente", idTienda);
+        return ResponseEntity.ok(estado);
+    }
+
 }

@@ -86,7 +86,7 @@ const GestionTiendas = () => {
         setDetailsLoading(true);
         setModalStore(null);
 
-        const result = await obtenerTiendaPorId(idUsuario);
+        const result = await obtenerTiendaPorId(idUsuario, true);
         console.log(result)
         if (result.success) {
             setModalStore(result.data);

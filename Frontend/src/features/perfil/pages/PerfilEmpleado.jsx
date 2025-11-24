@@ -56,7 +56,7 @@ const PerfilEmpleado = () => {
     };
 
     return (
-        <div className="dashboard-layout">
+        <div className={`dashboard-layout ${sidebarAbierto ? "sidebar-open" : "sidebar-closed"}`}>
 
             {sidebarAbierto && (
                 <div
