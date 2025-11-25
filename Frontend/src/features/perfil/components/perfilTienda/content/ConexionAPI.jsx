@@ -108,6 +108,11 @@ const ConexionAPI = ({ idTienda }) => {
 
                     <Form.Group className="mb-3">
                         <Form.Label className="fw-medium">Nueva URL base</Form.Label>
+
+                        <Form.Text className="text-muted d-block mb-2">
+                            Ingresa aquí el endpoint base de tu API para realizar las pruebas.
+                        </Form.Text>
+
                         <Form.Control
                             type="text"
                             value={nuevaUrl}
@@ -116,6 +121,7 @@ const ConexionAPI = ({ idTienda }) => {
                             disabled={loading}
                         />
                     </Form.Group>
+
 
                     <Button
                         variant="primary"

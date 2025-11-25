@@ -17,5 +17,4 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     // Verificar si existe una categoria por su id
     boolean existsByCategoria_IdCategoria(Long idCategoria);
-
 }

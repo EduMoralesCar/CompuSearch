@@ -17,22 +17,22 @@ public class DataInitializer {
 
     @Bean
     CommandLineRunner initData(
-            EtiquetaInitializer etiquetaInitializer,
+            // EtiquetaInitializer etiquetaInitializer,
             CategoriaInitializer categoriaInitializer,
             UsuarioInitializer usuarioInitializer,
             AtributoInitializer atributoInitializer,
-            ProductoInitializer productoInitializer,
-            ProductoTiendaInitializer productoTiendaInitializer,
+            // ProductoInitializer productoInitializer,
+            // ProductoTiendaInitializer productoTiendaInitializer,
             PlanInitializer planInitializer,
             SuscripcionInitializer SuscripcionInitializer) {
 
         return args -> {
-            etiquetaInitializer.init();
+            // etiquetaInitializer.init();
             categoriaInitializer.init();
             usuarioInitializer.init();
             atributoInitializer.init();
-            productoInitializer.init();
-            productoTiendaInitializer.init();
+            // productoInitializer.init();
+            // productoTiendaInitializer.init();
             planInitializer.init();
             suscripcionInitializer.init();
         };

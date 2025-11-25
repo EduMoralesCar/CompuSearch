@@ -11,6 +11,7 @@ import com.universidad.compusearch.dto.CategoriaRequest;
 import com.universidad.compusearch.entity.Categoria;
 import com.universidad.compusearch.exception.CategoriaException;
 import com.universidad.compusearch.repository.CategoriaRepository;
+import com.universidad.compusearch.repository.ProductoRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
-    private final ProductoService productoService;
+    private final ProductoRepository productoRepository;
 
     // Obtener todos los nombres de las categorias
     public List<String> obtenerTodasLosNombres() {
@@ -81,7 +82,7 @@ public class CategoriaService {
             throw CategoriaException.notFound();
         }
 
-        if (productoService.existeProductoEnCategoria(idCategoria)) {
+        if (productoRepository.existsByCategoria_IdCategoria(idCategoria)) {
             throw CategoriaException.inUse();
         }
 
@@ -114,5 +115,13 @@ public class CategoriaService {
     // Obtener las categorias paginadas
     public Page<Categoria> obtenerTodosPaginados(Pageable pageable) {
         return categoriaRepository.findAll(pageable); 
+    }
+
+    public Categoria obtenerCategoriaNula(){
+        return categoriaRepository.findByNombre("Otros").orElseThrow(() -> CategoriaException.notFound());
+    }
+
+    public Categoria obtenerPorNombre(String nombre){
+        return categoriaRepository.findByNombre(nombre).orElseThrow(() -> CategoriaException.notFound());
     }
 }

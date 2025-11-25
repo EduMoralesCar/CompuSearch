@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.universidad.compusearch.entity.ProductoTienda;
+import com.universidad.compusearch.entity.Tienda;
 
 public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, Long>,
                 JpaSpecificationExecutor<ProductoTienda> {
@@ -79,5 +80,9 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
         @Modifying
         @Query("UPDATE ProductoTienda p SET p.habilitado = :habilitado WHERE p.id = :id")
         void actualizarHabilitado(@Param("id") Long id, @Param("habilitado") boolean habilitado);
+
+        Optional<ProductoTienda> findByIdProductoApiAndTienda_Nombre(Long idProductoApi, String nombreTienda);
+
+        List<ProductoTienda> findByTienda(Tienda tienda);
 
 }

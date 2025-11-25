@@ -207,12 +207,18 @@ public class TiendaService {
         api.setEstadoAPI(estado);
         api.setProbada(true);
 
+        if (api.getEstadoAPI() == EstadoAPI.ACTIVA) {
+            tienda.setVerificado(true);
+        } else {
+            tienda.setVerificado(false);
+        }
+
         log.info("Estado de la API: {}", estado.name());
         return estado;
     }
     
     public EstadoAPI llamarApiExterna(TiendaAPI api) {
-        String url = api.getUrlBase();
+        String url = "http://localhost:8081/";
 
         log.info("Probando la url de la api: {}", url);
         

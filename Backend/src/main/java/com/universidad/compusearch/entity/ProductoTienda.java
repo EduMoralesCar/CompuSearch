@@ -49,7 +49,7 @@ public class ProductoTienda {
     private Boolean habilitado = true;
 
     @Column(nullable = true)
-    private String idProductoApi;
+    private long idProductoApi;
 
     // Referencia al producto
     @ManyToOne(fetch = FetchType.EAGER)
