@@ -1,3 +1,6 @@
+import React from 'react';
+
+import Tienda_Sin_Logo from "../../../../assets/logo/Tienda_Sin_Logo.jpg";
 
 export default function TiendaCard({
     nombre,
@@ -8,14 +11,22 @@ export default function TiendaCard({
     urlPagina,
     etiquetas = [],
 }) {
+    const imgSrc = (logo && logo.trim() !== "") 
+        ? `data:image/png;base64,${logo}`
+        : Tienda_Sin_Logo;
+
     return (
         <article className="card h-100 rounded-3 border shadow-sm">
             <div className="p-3">
                 <div className="ratio ratio-16x9">
                     <img
-                        src={`data:image/png;base64,${logo}`}
+                        src={imgSrc}
                         alt={nombre}
                         className="img-fluid object-fit-cover rounded"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = Tienda_Sin_Logo; 
+                        }}
                     />
                 </div>
             </div>

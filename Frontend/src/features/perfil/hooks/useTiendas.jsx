@@ -206,7 +206,98 @@ export function useTiendas() {
         }
     }, [baseUrl]);
 
+    const obtenerProductosAdmin = async (
+        idTienda,
+        page = 0,
+        size = 12,
+        categoria = null,
+        sort = "precio,asc"
+    ) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.get(
+                `http://localhost:8080/componentes/${idTienda}`,
+                {
+                    params: {
+                        page,
+                        size,
+                        categoria: categoria || undefined,
+                        sort
+                    },
+                    withCredentials: true
+                }
+            );
+
+            return { success: true, data: response.data };
+
+        } catch (err) {
+            const message = err.response?.data?.message ||
+                "Error al obtener productos para el administrador tienda.";
+
+            setError(message);
+            return { success: false, error: message };
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const cambiarHabilitadoProducto = async (idProductoTienda, habilitado) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.patch(
+                `http://localhost:8080/componentes/${idProductoTienda}/habilitado`,
+                null,
+                {
+                    params: { habilitado },
+                    withCredentials: true
+                }
+            );
+
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message
+                || "Error al cambiar habilitado.";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const obtenerProductosDesdeApi = async (idTienda) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.post(
+                `http://localhost:8080/api/${idTienda}/actualizar`,
+                null,
+                {
+                    withCredentials: true
+                }
+            );
+
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message
+                || "Error al actualizar productos desde la api";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return {
+        obtenerProductosDesdeApi,
+        obtenerProductosAdmin,
+        cambiarHabilitadoProducto,
         obtenerTiendasPaginadas,
         obtenerTiendaPorId,
         actualizarEstado,

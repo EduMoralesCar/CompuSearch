@@ -29,7 +29,7 @@ const PerfilTienda = () => {
             case "informacion":
                 return <InformacionTienda idTienda={idUsuario}/>
             case "productos":
-                return <MisProductos />
+                return <MisProductos idTienda={idUsuario} />
             case "planes":
                 return <ObtenerPlan />
             case "pagos":

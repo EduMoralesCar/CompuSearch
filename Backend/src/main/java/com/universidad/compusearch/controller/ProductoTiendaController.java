@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.universidad.compusearch.dto.MessageResponse;
 import com.universidad.compusearch.dto.ProductoInfoResponse;
+import com.universidad.compusearch.dto.ProductoTiendaAdminResponse;
 import com.universidad.compusearch.dto.ProductoTiendaResponse;
 import com.universidad.compusearch.dto.TiendaProductoDisponibleResponse;
 import com.universidad.compusearch.entity.ProductoTienda;
@@ -117,4 +118,23 @@ public class ProductoTiendaController {
 
                 return ResponseEntity.ok(new MessageResponse("Habilitado moficado correctamente"));
         }
+
+        @GetMapping("/{id}")
+        public ResponseEntity<Page<ProductoTiendaAdminResponse>> obtenerProductosAdmin(
+                        @PathVariable Long id,
+                        @RequestParam(defaultValue = "0") int page,
+                        @RequestParam(defaultValue = "12") int size,
+                        @RequestParam(required = false) String categoria,
+                        @RequestParam(defaultValue = "precio,asc") String sort
+        ) {
+
+                log.info("Obteniendo productos para tienda {} con filtros: categoria={}, sort={}, page={}, size={}",
+                                id, categoria, sort, page, size);
+
+                Page<ProductoTiendaAdminResponse> productos = productoTiendaService.obtenerProductosFiltrados(id, page,
+                                size, categoria, sort);
+
+                return ResponseEntity.ok(productos);
+        }
+
 }

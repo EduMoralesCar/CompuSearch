@@ -2,7 +2,9 @@ package com.universidad.compusearch.util;
 
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.universidad.compusearch.dto.BuildsInfoResponse;
@@ -12,6 +14,7 @@ import com.universidad.compusearch.dto.EmpleadoResponse;
 import com.universidad.compusearch.dto.PlanResponse;
 import com.universidad.compusearch.dto.ProductoBuildResponse;
 import com.universidad.compusearch.dto.ProductoInfoResponse;
+import com.universidad.compusearch.dto.ProductoTiendaAdminResponse;
 import com.universidad.compusearch.dto.ProductoTiendaInfoResponse;
 import com.universidad.compusearch.dto.ProductoTiendaResponse;
 import com.universidad.compusearch.dto.SolicitudTiendaResponse;
@@ -25,6 +28,7 @@ import com.universidad.compusearch.dto.UsuarioResponse;
 import com.universidad.compusearch.entity.Build;
 import com.universidad.compusearch.entity.DetalleBuild;
 import com.universidad.compusearch.entity.Empleado;
+import com.universidad.compusearch.entity.Metrica;
 import com.universidad.compusearch.entity.Plan;
 import com.universidad.compusearch.entity.ProductoAtributo;
 import com.universidad.compusearch.entity.ProductoTienda;
@@ -125,12 +129,16 @@ public class Mapper {
     }
 
     public static TiendaResponse mapToTienda(Tienda tienda) {
+        String logoBase64 = tienda.getLogo() != null
+                ? Base64.getEncoder().encodeToString(tienda.getLogo())
+                : "";
+
         TiendaResponse dto = new TiendaResponse(
                 tienda.getNombre(),
                 tienda.getDescripcion(),
                 tienda.getTelefono(),
                 tienda.getDireccion(),
-                Base64.getEncoder().encodeToString(tienda.getLogo()),
+                logoBase64,
                 tienda.getUrlPagina(),
                 tienda.getEtiquetas());
 
@@ -291,4 +299,54 @@ public class Mapper {
                 suscripcion.getEstado().name(),
                 suscripcion.getPlan().getNombre());
     }
+
+    public static ProductoTiendaAdminResponse mapToProductoTiendaAdminResponse(ProductoTienda producto) {
+        ProductoTiendaAdminResponse pt = new ProductoTiendaAdminResponse();
+
+        if (producto == null)
+            return pt;
+
+        pt.setIdProductoTienda(producto.getIdProductoTienda());
+
+        if (producto.getProducto() != null) {
+            pt.setNombre(producto.getProducto().getNombre());
+            pt.setMarca(producto.getProducto().getMarca());
+            pt.setModelo(producto.getProducto().getModelo());
+            pt.setDescripcion(producto.getProducto().getDescripcion());
+            if (producto.getProducto().getCategoria() != null) {
+                pt.setCategoria(producto.getProducto().getCategoria().getNombre());
+            }
+        }
+
+        pt.setPrecio(producto.getPrecio());
+        pt.setStock(producto.getStock());
+        pt.setUrlProducto(producto.getUrlProducto());
+        pt.setUrlImagen(producto.getUrlImagen());
+        pt.setHabilitado(producto.getHabilitado());
+        pt.setIdProductoApi(producto.getIdProductoApi());
+
+        List<Metrica> metricas = producto.getMetricas();
+        if (metricas == null || metricas.isEmpty()) {
+            pt.setVisitas(0);
+            pt.setClicks(0);
+            pt.setBuilds(0);
+        } else {
+            Metrica ultima = metricas.stream()
+                    .filter(Objects::nonNull)
+                    .max(Comparator.comparing(Metrica::getFecha))
+                    .orElse(null);
+            if (ultima != null) {
+                pt.setVisitas(ultima.getVisitas());
+                pt.setClicks(ultima.getClicks());
+                pt.setBuilds(ultima.getBuilds());
+            } else {
+                pt.setVisitas(0);
+                pt.setClicks(0);
+                pt.setBuilds(0);
+            }
+        }
+
+        return pt;
+    }
+
 }

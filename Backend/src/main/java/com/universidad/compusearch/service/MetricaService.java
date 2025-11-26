@@ -103,7 +103,7 @@ public class MetricaService {
         return ultima;
     }
 
-    private Metrica crearNuevaMetrica(ProductoTienda producto, LocalDateTime fecha) {
+    public Metrica crearNuevaMetrica(ProductoTienda producto, LocalDateTime fecha) {
         Metrica nueva = new Metrica();
         nueva.setProductoTienda(producto);
         nueva.setFecha(fecha);

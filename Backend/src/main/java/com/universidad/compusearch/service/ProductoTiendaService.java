@@ -8,14 +8,19 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.universidad.compusearch.dto.ProductoBuildResponse;
+import com.universidad.compusearch.dto.ProductoTiendaAdminResponse;
 import com.universidad.compusearch.dto.TiendaProductoDisponibleResponse;
 import com.universidad.compusearch.entity.ProductoTienda;
+import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.exception.ProductoTiendaException;
+import com.universidad.compusearch.exception.TiendaException;
 import com.universidad.compusearch.repository.ProductoTiendaRepository;
+import com.universidad.compusearch.repository.TiendaRepository;
 import com.universidad.compusearch.specification.ProductoTiendaSpecification;
 import com.universidad.compusearch.specification.ProductoTiendaSpecificationFactory;
 import com.universidad.compusearch.util.Mapper;
@@ -30,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductoTiendaService {
 
         private final ProductoTiendaRepository productoTiendaRepository;
+        private final TiendaRepository tiendaRepository;
 
         // Filtrar productos de tiendas por diferentes parametros
         public Page<ProductoTienda> filtrarPorCategoria(
@@ -121,4 +127,51 @@ public class ProductoTiendaService {
                 productoTiendaRepository.actualizarHabilitado(id, habilitado);
                 log.info("Habilitado modificado correctamente a {}", habilitado);
         }
+
+        public Page<ProductoTiendaAdminResponse> obtenerProductosFiltrados(
+                        Long idTienda,
+                        int page,
+                        int size,
+                        String categoria,
+                        String sort) {
+
+                Tienda tienda = tiendaRepository.findById(idTienda)
+                                .orElseThrow(null);
+
+                if (tienda == null)
+                        throw TiendaException.notFound();
+
+                Sort sortConfig = parseSort(sort);
+
+                Pageable pageable = PageRequest.of(page, size, sortConfig);
+
+                Page<ProductoTienda> pageProductos;
+
+                if (categoria != null && !categoria.isBlank()) {
+                        pageProductos = productoTiendaRepository
+                                        .findByTienda_IdUsuarioAndProducto_Categoria_NombreIgnoreCase(
+                                                        idTienda, categoria, pageable);
+
+                } else {
+                        pageProductos = productoTiendaRepository.findByTienda_idUsuario(idTienda, pageable);
+                }
+
+                return pageProductos.map(Mapper::mapToProductoTiendaAdminResponse);
+        }
+
+        private Sort parseSort(String sort) {
+                try {
+                        String[] parts = sort.split(",");
+                        String field = parts[0];
+                        String direction = parts.length > 1 ? parts[1] : "asc";
+
+                        return direction.equalsIgnoreCase("desc")
+                                        ? Sort.by(field).descending()
+                                        : Sort.by(field).ascending();
+
+                } catch (Exception e) {
+                        return Sort.by("precio").ascending();
+                }
+        }
+
 }

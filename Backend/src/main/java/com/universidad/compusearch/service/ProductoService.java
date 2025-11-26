@@ -1,5 +1,6 @@
 package com.universidad.compusearch.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.universidad.compusearch.dto.ProductoRequest;
 import com.universidad.compusearch.entity.Categoria;
+import com.universidad.compusearch.entity.Metrica;
 import com.universidad.compusearch.entity.Producto;
 import com.universidad.compusearch.entity.ProductoAtributo;
 import com.universidad.compusearch.entity.ProductoTienda;
@@ -32,6 +34,7 @@ public class ProductoService {
     private final ProductoAtributoService productoAtributoService;
     private final ProductoTiendaRepository productoTiendaRepository;
     private final ProductoAtributoRepository productoAtributoRepository;
+    private final MetricaService metricaService;
 
     // Obtener productos por categorias
     public List<Producto> obtenerPorCategoria(String nombreCategoria) {
@@ -148,6 +151,9 @@ public class ProductoService {
             return;
         }
 
+        List<Metrica> metricas = pt.getMetricas();
+        metricas.add(metricaService.crearNuevaMetrica(pt, LocalDateTime.now()));
+
         pt.setPrecio(pro.getPrecio());
         pt.setStock(pro.getStock());
         pt.setUrlProducto(pro.getUrlProducto());
@@ -155,6 +161,7 @@ public class ProductoService {
         pt.setIdProductoApi(pro.getId());
         pt.setProducto(producto);
         pt.setTienda(tienda);
+        pt.setMetricas(metricas);
         productoTiendaRepository.save(pt);
     }
 

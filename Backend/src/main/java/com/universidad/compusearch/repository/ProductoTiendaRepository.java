@@ -3,6 +3,8 @@ package com.universidad.compusearch.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -84,5 +86,12 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
         Optional<ProductoTienda> findByIdProductoApiAndTienda_Nombre(Long idProductoApi, String nombreTienda);
 
         List<ProductoTienda> findByTienda(Tienda tienda);
+
+        Page<ProductoTienda> findByTienda_idUsuario(Long idTienda, Pageable pageable);
+
+        Page<ProductoTienda> findByTienda_IdUsuarioAndProducto_Categoria_NombreIgnoreCase(
+                        Long idTienda,
+                        String categoria,
+                        Pageable pageable);
 
 }

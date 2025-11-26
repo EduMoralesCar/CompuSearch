@@ -108,7 +108,6 @@ const InformacionTienda = ({ idTienda }) => {
 
             <Row className="g-4">
 
-                {/* Card de información principal */}
                 <Col lg={7}>
                     <Card className="shadow-sm border-0">
                         <Card.Body>
@@ -184,7 +183,6 @@ const InformacionTienda = ({ idTienda }) => {
                     </Card>
                 </Col>
 
-                {/* Card con formulario de datos */}
                 <Col lg={5}>
                     <Card className="shadow-sm border-0">
                         <Card.Body>
