@@ -1,8 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import axios from 'axios';
 
-
-const API_BASE_URL = 'http://localhost:8080/empleado'; 
+const API_BASE_URL = 'http://localhost:8080/empleado';
 
 const useEmpleados = () => {
     const [empleados, setEmpleados] = useState([]);
@@ -11,14 +10,13 @@ const useEmpleados = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const handleError = (err, defaultMessage) => {
+    const handleError = useCallback((err, defaultMessage) => {
         const errorMessage = err.response?.data?.message || err.message || defaultMessage;
         console.error("Error en la solicitud:", err);
         setError(errorMessage);
-        return errorMessage; 
-    };
-    
+        return errorMessage;
+    }, []);
+
     const clearError = useCallback(() => setError(null), []);
 
     const getEmpleados = useCallback(async (page = 0, size = 10, username = '') => {
@@ -29,9 +27,7 @@ const useEmpleados = () => {
                 params: { page, size, username },
                 withCredentials: true
             });
-            
-            const data = response.data; 
-            
+            const data = response.data;
             setEmpleados(data.content || []);
             setTotalPages(data.totalPages || 0);
             return data;
@@ -41,7 +37,7 @@ const useEmpleados = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [handleError]);
 
     const getEmpleadoById = useCallback(async (id) => {
         setIsLoading(true);
@@ -50,7 +46,6 @@ const useEmpleados = () => {
             const response = await axios.get(`${API_BASE_URL}/${id}`, {
                 withCredentials: true
             });
-            /** @type {EmpleadoResponse} */
             const data = response.data;
             setEmpleadoDetalle(data);
             return data;
@@ -61,7 +56,7 @@ const useEmpleados = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [handleError]);
 
     const createEmpleado = useCallback(async (empleadoData) => {
         setIsLoading(true);
@@ -70,13 +65,10 @@ const useEmpleados = () => {
             const response = await axios.post(API_BASE_URL, empleadoData, {
                 withCredentials: true
             });
-            
-            return { success: true, data: response.data }; 
-
+            return { success: true, data: response.data };
         } catch (err) {
             const errorMessage = handleError(err, "Error al crear el nuevo empleado.");
             return { success: false, error: errorMessage };
-
         } finally {
             setIsLoading(false);
         }
@@ -93,18 +85,16 @@ const useEmpleados = () => {
             if (empleadoDetalle && empleadoDetalle.idUsuario === id) {
                 setEmpleadoDetalle(response.data);
             }
-            
-            return { success: true, data: response.data };
 
+            return { success: true, data: response.data };
         } catch (err) {
             const errorMessage = handleError(err, `Error al actualizar el empleado con ID: ${id}`);
             return { success: false, error: errorMessage };
-            
         } finally {
             setIsLoading(false);
         }
     }, [empleadoDetalle, handleError]);
-    
+
     const updateEmpleadoActivo = useCallback(async (id, activo) => {
         setIsLoading(true);
         setError(null);
@@ -114,27 +104,37 @@ const useEmpleados = () => {
                 withCredentials: true
             });
 
-            setEmpleados(prevEmpleados => 
-                prevEmpleados.map(e => 
-                    e.idUsuario === id ? { ...e, activo } : e
-                )
-            );
+            setEmpleados(prev => prev.map(e => e.idUsuario === id ? { ...e, activo } : e));
 
             if (empleadoDetalle && empleadoDetalle.idUsuario === id) {
-                setEmpleadoDetalle(prevDetalle => ({ ...prevDetalle, activo }));
+                setEmpleadoDetalle(prev => ({ ...prev, activo }));
             }
-            
-            return { success: true }; 
 
+            return { success: true };
         } catch (err) {
             const errorMessage = handleError(err, `Error al cambiar el estado activo del empleado ID: ${id}`);
             return { success: false, error: errorMessage };
-            
         } finally {
             setIsLoading(false);
         }
     }, [empleadoDetalle, handleError]);
 
+    const obtenerEmpleadoDashboard = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`${API_BASE_URL}/dashboard`, {
+                withCredentials: true
+            });
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message || "Error al obtener el dashboard del empleado";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
 
     return useMemo(() => ({
         empleados,
@@ -147,19 +147,20 @@ const useEmpleados = () => {
         createEmpleado,
         updateEmpleado,
         updateEmpleadoActivo,
-        
-        clearError,
+        obtenerEmpleadoDashboard,
+        clearError
     }), [
         empleados,
         empleadoDetalle,
         totalPages,
-        isLoading, 
-        error, 
-        getEmpleados, 
-        getEmpleadoById, 
-        createEmpleado, 
-        updateEmpleado, 
+        isLoading,
+        error,
+        getEmpleados,
+        getEmpleadoById,
+        createEmpleado,
+        updateEmpleado,
         updateEmpleadoActivo,
+        obtenerEmpleadoDashboard,
         clearError
     ]);
 };

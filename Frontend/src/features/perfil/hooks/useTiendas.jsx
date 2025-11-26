@@ -294,7 +294,32 @@ export function useTiendas() {
         }
     };
 
+    const ObtenerTiendaDashboard = async (idTienda) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.get(
+                `http://localhost:8080/tiendas/dashboard/${idTienda}`,
+                null,
+                {
+                    withCredentials: true
+                }
+            );
+
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message
+                || "Error al actualizar productos desde la api";
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return {
+        ObtenerTiendaDashboard,
         obtenerProductosDesdeApi,
         obtenerProductosAdmin,
         cambiarHabilitadoProducto,

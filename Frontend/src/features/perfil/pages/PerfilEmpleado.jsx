@@ -12,16 +12,18 @@ import GestionIncidencias from "../components/perfilEmpleado/content/GestionInci
 import GestionPlanes from "../components/perfilEmpleado/content/GestionPlanes";
 import GestionEmpleados from "../components/perfilEmpleado/content/GestionEmpleados";
 import GestionTiendas from "../components/perfilEmpleado/content/GestionTiendas";
+import EmpleadoDashboard from "../components/perfilEmpleado/content/EmpleadoDashboard";
 
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
 const PerfilEmpleado = () => {
-    const [vistaActual, setVistaActual] = useState("categorias");
+    const [vistaActual, setVistaActual] = useState("dashboard");
     const [sidebarAbierto, setSidebarAbierto] = useState(true);
 
     const { idUsuario } = useAuthStatus();
 
     const EMPLOYEE_NAV_ITEMS = [
+        { eventKey: "dashboard", label: "Dashboard", icon: "bi bi-speedometer2" },
         { eventKey: "categorias", label: "Categorías", icon: "bi bi-grid-3x3-gap-fill" },
         { eventKey: "etiquetas", label: "Etiquetas", icon: "bi bi-tags-fill" },
         { eventKey: "usuarios", label: "Usuarios", icon: "bi bi-people-fill" },
@@ -34,6 +36,8 @@ const PerfilEmpleado = () => {
 
     const renderizarVista = () => {
         switch (vistaActual) {
+            case "dashboard":
+                return <EmpleadoDashboard />;
             case "categorias":
                 return <GestionCategorias />;
             case "etiquetas":
@@ -51,7 +55,7 @@ const PerfilEmpleado = () => {
             case "planes":
                 return <GestionPlanes />
             default:
-                return <GestionCategorias />;
+                return <EmpleadoDashboard />;
         }
     };
 

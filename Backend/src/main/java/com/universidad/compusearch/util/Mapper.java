@@ -1,5 +1,6 @@
 package com.universidad.compusearch.util;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,17 +19,23 @@ import com.universidad.compusearch.dto.ProductoTiendaAdminResponse;
 import com.universidad.compusearch.dto.ProductoTiendaInfoResponse;
 import com.universidad.compusearch.dto.ProductoTiendaResponse;
 import com.universidad.compusearch.dto.SolicitudTiendaResponse;
+import com.universidad.compusearch.dto.SusTiendaResponse;
+import com.universidad.compusearch.dto.TiendaDashboardResponse;
 import com.universidad.compusearch.dto.TiendaDetallesResponse;
 import com.universidad.compusearch.dto.TiendaInfoDetalleResponse;
 import com.universidad.compusearch.dto.TiendaInfoResponse;
 import com.universidad.compusearch.dto.TiendaResponse;
 import com.universidad.compusearch.dto.TiendaSuscripcionActualInfoResponse;
+import com.universidad.compusearch.dto.UltimaTiendaResponse;
+import com.universidad.compusearch.dto.UltimoEmpleadoResponse;
+import com.universidad.compusearch.dto.UltimoPagoResponse;
 import com.universidad.compusearch.dto.UsuarioInfoResponse;
 import com.universidad.compusearch.dto.UsuarioResponse;
 import com.universidad.compusearch.entity.Build;
 import com.universidad.compusearch.entity.DetalleBuild;
 import com.universidad.compusearch.entity.Empleado;
 import com.universidad.compusearch.entity.Metrica;
+import com.universidad.compusearch.entity.Pago;
 import com.universidad.compusearch.entity.Plan;
 import com.universidad.compusearch.entity.ProductoAtributo;
 import com.universidad.compusearch.entity.ProductoTienda;
@@ -349,4 +356,75 @@ public class Mapper {
         return pt;
     }
 
+    public static TiendaDashboardResponse mapToTiendaDashboardResponse(Tienda tienda) {
+
+        String logoBase64 = tienda.getLogo() != null
+                ? Base64.getEncoder().encodeToString(tienda.getLogo())
+                : "";
+
+        LocalDateTime ahora = LocalDateTime.now();
+
+        Suscripcion activa = tienda.getSuscripciones().stream()
+                .filter(s -> s.getFechaInicio().isBefore(ahora) && s.getFechaFin().isAfter(ahora))
+                .findFirst()
+                .orElse(null);
+
+        Suscripcion ultima = tienda.getSuscripciones().stream()
+                .max(Comparator.comparing(Suscripcion::getFechaFin))
+                .orElse(null);
+
+        Suscripcion seleccionada = activa != null ? activa : ultima;
+
+        SusTiendaResponse susRes = mapToSusTiendaResponse(seleccionada);
+
+        return new TiendaDashboardResponse(tienda.getIdUsuario(),
+                tienda.getNombre(),
+                tienda.getDescripcion(),
+                tienda.getTelefono(),
+                tienda.getDireccion(),
+                tienda.getUrlPagina(),
+                tienda.isVerificado(),
+                tienda.getFechaAfiliacion(),
+                logoBase64,
+                tienda.getProductos().size(),
+                tienda.getEtiquetas().size(),
+                tienda.getSuscripciones().size(),
+                tienda.getTiendaAPI(),
+                susRes);
+    }
+
+    public static SusTiendaResponse mapToSusTiendaResponse(Suscripcion suscripcion) {
+        if (suscripcion == null)
+            return null;
+
+        return new SusTiendaResponse(suscripcion.getPlan().getNombre(),
+                suscripcion.getFechaInicio(),
+                suscripcion.getFechaFin(),
+                suscripcion.getEstado().name());
+    }
+
+    public static UltimaTiendaResponse mapToUltimaTiendaResponse(Tienda tienda) {
+        return new UltimaTiendaResponse(
+                tienda.getIdUsuario(),
+                tienda.getNombre(),
+                tienda.isVerificado(),
+                tienda.getFechaAfiliacion());
+    }
+
+    public static UltimoEmpleadoResponse mapToUltimoEmpleadoResponse(Empleado empleado) {
+        return new UltimoEmpleadoResponse(
+                empleado.getIdUsuario(),
+                empleado.getNombre(),
+                empleado.getEmail(),
+                empleado.getFechaRegistro());
+    }
+
+    public static UltimoPagoResponse mapToUltimoPagoResponse(Pago pago) {
+        return new UltimoPagoResponse(
+                pago.getIdPago(),
+                pago.getMonto(),
+                pago.getFechaPago(),
+                pago.getEstadoPago().name(),
+                pago.getSuscripcion().getTienda().getNombre());
+    }
 }

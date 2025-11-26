@@ -8,6 +8,7 @@ import MisProductos from "../components/perfilTienda/content/MisProductos";
 import ObtenerPlan from "../components/perfilTienda/content/ObtenerPlan";
 import ConexionAPI from "../components/perfilTienda/content/ConexionAPI";
 import HistorialPagos from "../components/perfilTienda/content/HistorialPagos";
+import TiendaDashboard from "../components/perfilTienda/content/TiendaDashboard";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
 const PerfilTienda = () => {
@@ -17,6 +18,7 @@ const PerfilTienda = () => {
     const { idUsuario } = useAuthStatus();
 
     const STORE_NAV_ITEMS = [
+        { eventKey: "dashboard", label: "Dashboard", icon: "bi bi-speedometer2" },
         { eventKey: "informacion", label: "Información", icon: "bi bi-info-circle-fill" },
         { eventKey: "productos", label: "Productos", icon: "bi bi-box-seam" },
         { eventKey: "planes", label: "Planes", icon: "bi bi-card-list" },
@@ -26,6 +28,8 @@ const PerfilTienda = () => {
 
     const renderizarVista = () => {
         switch (vistaActual) {
+            case "dashboard":
+                return <TiendaDashboard idTienda={idUsuario}/>
             case "informacion":
                 return <InformacionTienda idTienda={idUsuario}/>
             case "productos":
@@ -37,7 +41,7 @@ const PerfilTienda = () => {
             case "conexion":
                 return <ConexionAPI idTienda={idUsuario}/>
             default:
-                return <InformacionTienda idTienda={idUsuario}/>
+                return <TiendaDashboard idTienda={idUsuario}/>
         }
     };
 

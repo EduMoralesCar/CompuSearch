@@ -12,6 +12,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import com.universidad.compusearch.dto.TiendaDashboardResponse;
 import com.universidad.compusearch.dto.TiendaDetallesResponse;
 import com.universidad.compusearch.dto.TiendaFormRequest;
 import com.universidad.compusearch.dto.TiendaInfoDetalleResponse;
@@ -201,9 +202,9 @@ public class TiendaService {
         if (api == null) {
             throw TiendaAPIException.notRegistered(idTienda);
         }
-        
-        EstadoAPI estado = llamarApiExterna(api); 
-        
+
+        EstadoAPI estado = llamarApiExterna(api);
+
         api.setEstadoAPI(estado);
         api.setProbada(true);
 
@@ -216,24 +217,24 @@ public class TiendaService {
         log.info("Estado de la API: {}", estado.name());
         return estado;
     }
-    
+
     public EstadoAPI llamarApiExterna(TiendaAPI api) {
         String url = "http://localhost:8081/";
 
         log.info("Probando la url de la api: {}", url);
-        
+
         try {
             restTemplate.getForEntity(url, Void.class);
             return EstadoAPI.ACTIVA;
-            
+
         } catch (HttpClientErrorException | HttpServerErrorException httpError) {
             log.error("Error HTTP de la API externa: {}", httpError.getMessage());
             return EstadoAPI.ERROR;
-            
+
         } catch (ResourceAccessException connectionError) {
             log.error("Error de conexión (Timeout, I/O): {}", connectionError.getMessage());
             return EstadoAPI.ERROR;
-            
+
         } catch (Exception e) {
             log.error("Error desconocido al probar la API: {}", e.getMessage());
             return EstadoAPI.ERROR;
@@ -255,5 +256,15 @@ public class TiendaService {
         tienda.setLogo(logo);
 
         tiendaRepository.save(tienda);
+    }
+
+    public TiendaDashboardResponse obtenerDatosTienda(Long idTienda) {
+        log.info("Obteniendo datos de dashboard para tienda con id {}", idTienda);
+
+        Tienda tienda = tiendaRepository.findById(idTienda)
+                .orElseThrow(() -> TiendaException.notFound());
+
+        log.info("Tienda encontrada devolviendo datos para la tienda {}", tienda.getNombre());
+        return Mapper.mapToTiendaDashboardResponse(tienda);
     }
 }

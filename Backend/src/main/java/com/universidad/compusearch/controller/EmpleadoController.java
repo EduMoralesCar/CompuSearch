@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.universidad.compusearch.dto.AdminDashboardResponse;
 import com.universidad.compusearch.dto.EmpleadoRequest;
 import com.universidad.compusearch.dto.EmpleadoResponse;
 import com.universidad.compusearch.service.EmpleadoService;
@@ -36,13 +37,14 @@ public class EmpleadoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String username) {
-        
-        log.info("GET /empleados - Solicitud para obtener empleados paginados. Page={}, Size={}, Username={}", page, size, username);
-        
+
+        log.info("GET /empleados - Solicitud para obtener empleados paginados. Page={}, Size={}, Username={}", page,
+                size, username);
+
         Pageable pageable = PageRequest.of(page, size);
 
         Page<EmpleadoResponse> empleados = empleadoService.obtenerTodosEmpleados(pageable, username);
-        
+
         log.info("Retornando página {} de empleados (Total: {}).", page, empleados.getTotalElements());
         return ResponseEntity.ok(empleados);
     }
@@ -54,7 +56,6 @@ public class EmpleadoController {
         log.info("Empleado ID {} encontrado y retornando DTO.", id);
         return ResponseEntity.ok(empleado);
     }
-
 
     @PostMapping
     public ResponseEntity<EmpleadoResponse> crearEmpleado(@Valid @RequestBody EmpleadoRequest request) {
@@ -84,6 +85,23 @@ public class EmpleadoController {
         } else {
             log.warn("Fallo al cambiar el estado del empleado ID {}. No encontrado o error en servicio.", id);
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<AdminDashboardResponse> obtenerDashboard() {
+        log.info("Solicitando dashboard del administrador del sistema");
+
+        try {
+            AdminDashboardResponse dashboard = empleadoService.obtenerDashboard();
+            log.info("Dashboard generado correctamente con {} tiendas, {} empleados y {} pagos",
+                    dashboard.getTotalTiendas(),
+                    dashboard.getTotalEmpleados(),
+                    dashboard.getTotalPagos());
+            return ResponseEntity.ok(dashboard);
+        } catch (Exception e) {
+            log.error("Error al generar el dashboard del administrador", e);
+            return ResponseEntity.status(500).build();
         }
     }
 }

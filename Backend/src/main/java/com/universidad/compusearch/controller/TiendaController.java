@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.universidad.compusearch.dto.EstadoResponse;
 import com.universidad.compusearch.dto.MessageResponse;
+import com.universidad.compusearch.dto.TiendaDashboardResponse;
 import com.universidad.compusearch.dto.TiendaDetallesResponse;
 import com.universidad.compusearch.dto.TiendaFormRequest;
 import com.universidad.compusearch.dto.TiendaInfoDetalleResponse;
@@ -171,8 +172,7 @@ public class TiendaController {
 
     @GetMapping("/{idTienda}/api")
     public ResponseEntity<TiendaAPI> obtenerApi(
-        @PathVariable Long idTienda
-    ) {
+            @PathVariable Long idTienda) {
         log.info("Enviado api de la tienda con id {}", idTienda);
 
         TiendaAPI api = tiendaService.buscarApi(idTienda);
@@ -192,4 +192,9 @@ public class TiendaController {
         return ResponseEntity.ok(estado);
     }
 
+    @GetMapping("/dashboard/{id}")
+    public ResponseEntity<TiendaDashboardResponse> obtenerDashboard(@PathVariable Long id) {
+        log.info("GET - Obteniendo datos para la dashboard de la tienda con id: {}", id);
+        return ResponseEntity.ok(tiendaService.obtenerDatosTienda(id));
+    }
 }
