@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import axios from "axios";
+
+const BASE_URL = "http://localhost:8080/incidentes";
 
 export function useIncidentes() {
     const [respuesta, setRespuesta] = useState([]);
@@ -7,81 +9,73 @@ export function useIncidentes() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const obtenerIncidentes = async (idUsuario, page = 0, size = 5) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await axios.get(
-                `http://localhost:8080/incidentes/${idUsuario}`,
-                {
-                    params: { page, size },
-                    withCredentials: true
-                }
-            );
-            const data = response.data;
-            setRespuesta(data.content || []);
-            setTotalPages(data.totalPages || 0);
-        } catch (err) {
-            setError(err.response?.data?.message || "Error al obtener los incidentes del usuario");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const handleError = useCallback((err, defaultMessage) => {
+        const message = err.response?.data?.message || defaultMessage;
+        console.error("Error en la solicitud:", err);
+        setError(message);
+        return message;
+    }, []);
 
-    const obtenerTodosIncidentes = async (page = 0, size = 10) => {
+    const obtenerIncidentes = useCallback(async (idUsuario, page = 0, size = 5) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get("http://localhost:8080/incidentes", {
+            const { data } = await axios.get(`${BASE_URL}/${idUsuario}`, {
                 params: { page, size },
-                withCredentials: true
+                withCredentials: true,
             });
-            const data = response.data;
             setRespuesta(data.content || []);
             setTotalPages(data.totalPages || 0);
+            return data;
         } catch (err) {
-            setError(err.response?.data?.message || "Error al obtener todos los incidentes");
+            handleError(err, "Error al obtener los incidentes del usuario");
+            return { content: [], totalPages: 0 };
         } finally {
             setLoading(false);
         }
-    };
+    }, [handleError]);
 
-    const eliminarIncidente = async (id) => {
+    const obtenerTodosIncidentes = useCallback(async (page = 0, size = 10) => {
+        setLoading(true);
+        setError(null);
         try {
-            await axios.delete(`http://localhost:8080/incidentes/${id}`, {
-                withCredentials: true
+            const { data } = await axios.get(BASE_URL, {
+                params: { page, size },
+                withCredentials: true,
             });
-            setRespuesta((prev) => prev.filter((inc) => inc.idIncidente !== id));
+            setRespuesta(data.content || []);
+            setTotalPages(data.totalPages || 0);
+            return data;
         } catch (err) {
-            console.error("Error al eliminar el incidente:", err);
-            setError(err.response?.data?.message || "Error al eliminar el incidente");
+            handleError(err, "Error al obtener todos los incidentes");
+            return { content: [], totalPages: 0 };
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [handleError]);
 
-    const actualizarRevisado = async (id, revisado) => {
+    const eliminarIncidente = useCallback(async (id) => {
         try {
-            await axios.put(
-                `http://localhost:8080/incidentes/${id}/revisado`,
-                null,
-                {
-                    params: { revisado },
-                    withCredentials: true,
-                }
-            );
-
-            setRespuesta((prev) =>
-                prev.map((inc) =>
-                    inc.idIncidente === id ? { ...inc, revisado } : inc
-                )
-            );
+            await axios.delete(`${BASE_URL}/${id}`, { withCredentials: true });
+            setRespuesta(prev => prev.filter(inc => inc.idIncidente !== id));
+            return { success: true };
         } catch (err) {
-            console.error("Error al actualizar el estado revisado:", err);
-            setError(
-                err.response?.data?.message ||
-                "Error al actualizar el estado revisado del incidente"
-            );
+            return { success: false, error: handleError(err, "Error al eliminar el incidente") };
         }
-    };
+    }, [handleError]);
+
+    const actualizarRevisado = useCallback(async (id, revisado) => {
+        try {
+            await axios.put(`${BASE_URL}/${id}/revisado`, null, {
+                params: { revisado },
+                withCredentials: true,
+            });
+            setRespuesta(prev => prev.map(inc => inc.idIncidente === id ? { ...inc, revisado } : inc));
+            return { success: true };
+        } catch (err) {
+            return { success: false, error: handleError(err, "Error al actualizar el estado revisado del incidente") };
+        }
+    }, [handleError]);
 
     return {
         respuesta,

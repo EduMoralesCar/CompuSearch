@@ -1,15 +1,18 @@
-
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Pagination } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
+import { FiPlus } from "react-icons/fi";
+
 import { usePlanes } from '../../../hooks/usePlanes';
-import ModalConfirmacion from "../modal/ModalConfirmacion"
+import ModalConfirmacion from "../modal/ModalConfirmacion";
 import ModalGestionPlan from '../modal/ModalGestionPlan';
-import TablaPlanes from "../table/TablaPlanes"
-import ModalDetallePlan from "../modal/ModalDetallePlan"
+import ModalDetallePlan from "../modal/ModalDetallePlan";
+import TablaPlanes from "../table/TablaPlanes";
+import HeaderBase from '../auxiliar/HeaderBase';
+import PaginacionBase from '../auxiliar/PaginacionBase';
 
 const PAGE_SIZE = 10;
 
-export const GestionPlanes = () => {
+const GestionPlanes = () => {
     const {
         planes,
         totalPages,
@@ -27,7 +30,6 @@ export const GestionPlanes = () => {
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [planSeleccionado, setPlanSeleccionado] = useState(null);
     const [planDetalleData, setPlanDetalleData] = useState(null);
-
     const [mensaje, setMensaje] = useState("");
     const [tipoMensaje, setTipoMensaje] = useState("success");
     const [showConfirm, setShowConfirm] = useState(false);
@@ -37,6 +39,7 @@ export const GestionPlanes = () => {
         obtenerTodosLosPlanes(currentPage, PAGE_SIZE, '', true);
     }, [currentPage, obtenerTodosLosPlanes]);
 
+    // ---- HANDLERS ----
     const handleCrear = () => {
         setPlanSeleccionado(null);
         setMensaje("");
@@ -88,52 +91,27 @@ export const GestionPlanes = () => {
         let result;
         if (!planSeleccionado) {
             result = await crearPlan(planData);
-            if (result.success) {
-                setTipoMensaje("success");
-                setMensaje("Plan creado correctamente.");
-            } else {
-                setTipoMensaje("danger");
-                setMensaje(result.error || "Error al crear el plan.");
-            }
+            setTipoMensaje(result.success ? "success" : "danger");
+            setMensaje(result.success ? "Plan creado correctamente." : result.error || "Error al crear el plan.");
         } else {
             result = await actualizarPlan(planSeleccionado.idPlan, planData);
-            if (result.success) {
-                setTipoMensaje("success");
-                setMensaje("Plan actualizado correctamente.");
-            } else {
-                setTipoMensaje("danger");
-                setMensaje(result.error || "Error al actualizar el plan.");
-            }
+            setTipoMensaje(result.success ? "success" : "danger");
+            setMensaje(result.success ? "Plan actualizado correctamente." : result.error || "Error al actualizar el plan.");
         }
+
         setShowModal(false);
         obtenerTodosLosPlanes(currentPage, PAGE_SIZE, '', true);
-    };
-
-    const renderPaginationItems = () => {
-        const items = [];
-        for (let number = 0; number < totalPages; number++) {
-            items.push(
-                <Pagination.Item
-                    key={number}
-                    active={number === currentPage}
-                    onClick={() => setCurrentPage(number)}
-                >
-                    {number + 1}
-                </Pagination.Item>
-            );
-        }
-        return items;
     };
 
     return (
         <>
             <Card className="shadow-lg border-0">
-                <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
-                    Gestión de Planes de Suscripción
-                    <Button variant="primary" onClick={handleCrear}>
-                        Crear Nuevo Plan
+                <HeaderBase title="Gestión de Planes de Suscripción">
+                    <Button variant="success" onClick={handleCrear} disabled={loading}>
+                        <FiPlus size={18} />
                     </Button>
-                </Card.Header>
+                </HeaderBase>
+
                 <Card.Body>
                     <TablaPlanes
                         planes={planes}
@@ -149,33 +127,17 @@ export const GestionPlanes = () => {
                         setCurrentPage={setCurrentPage}
                     />
                 </Card.Body>
-                
-                {totalPages > 1 && (
-                    <div className="d-flex justify-content-center">
-                        <Pagination>
-                            <Pagination.First
-                                onClick={() => setCurrentPage(0)}
-                                disabled={currentPage === 0}
-                            />
-                            <Pagination.Prev
-                                onClick={() => setCurrentPage(currentPage - 1)}
-                                disabled={currentPage === 0}
-                            />
 
-                            {renderPaginationItems()}
-
-                            <Pagination.Next
-                                onClick={() => setCurrentPage(currentPage + 1)}
-                                disabled={currentPage === totalPages - 1}
-                            />
-                            <Pagination.Last
-                                onClick={() => setCurrentPage(totalPages - 1)}
-                                disabled={currentPage === totalPages - 1}
-                            />
-                        </Pagination>
+                <Card.Footer>
+                    <div className="d-flex justify-content-center mt-3">
+                        <PaginacionBase
+                            page={currentPage}
+                            totalPages={totalPages}
+                            loading={loading}
+                            onPageChange={setCurrentPage}
+                        />
                     </div>
-                )}
-
+                </Card.Footer>
             </Card>
 
             <ModalDetallePlan

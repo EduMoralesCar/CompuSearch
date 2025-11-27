@@ -6,7 +6,6 @@ import { Modal, Button, Card, Badge, Container, Spinner, Row, Col } from "react-
 import { StatusBadge, VerifiedStatus } from "../table/TablaTiendas";
 
 function TiendaAPIDetails({ tiendaAPI }) {
-    const [showSecrets, setShowSecrets] = useState(false);
 
     if (!tiendaAPI) {
         return (
@@ -37,63 +36,6 @@ function TiendaAPIDetails({ tiendaAPI }) {
                 <div className="mt-3">
                     <strong>URL Base:</strong>
                     <div className="text-muted">{tiendaAPI.urlBase}</div>
-                </div>
-
-                <div className="mt-3">
-                    <strong>Endpoints:</strong>
-                    <ul className="small text-muted ms-3">
-                        <li>Catálogo: {tiendaAPI.endpointCatalogo || "—"}</li>
-                        <li>Producto: {tiendaAPI.endpointProducto || "—"}</li>
-                    </ul>
-                </div>
-
-                <div className="mt-3">
-                    <strong>Autenticación:</strong>
-                    <Badge bg="dark" className="ms-2">
-                        {tiendaAPI.tipoAutenticacion}
-                    </Badge>
-                </div>
-
-                <div className="mt-3">
-                    <strong>Credenciales:</strong>
-
-                    <div className="mt-2 small">
-                        {tiendaAPI.tipoAutenticacion === "API_KEY" && (
-                            <div>
-                                <strong>API Key:</strong>{" "}
-                                {showSecrets ? tiendaAPI.apiKey : "••••••••••"}
-                            </div>
-                        )}
-
-                        {tiendaAPI.tipoAutenticacion === "BEARER_TOKEN" && (
-                            <div>
-                                <strong>Bearer Token:</strong>{" "}
-                                {showSecrets ? tiendaAPI.bearerToken : "••••••••••"}
-                            </div>
-                        )}
-
-                        {tiendaAPI.tipoAutenticacion === "BASIC_AUTH" && (
-                            <>
-                                <div>
-                                    <strong>Usuario:</strong>{" "}
-                                    {showSecrets ? tiendaAPI.apiUsuario : "••••••••••"}
-                                </div>
-                                <div>
-                                    <strong>Contraseña:</strong>{" "}
-                                    {showSecrets ? tiendaAPI.apiContrasena : "••••••••••"}
-                                </div>
-                            </>
-                        )}
-                    </div>
-
-                    <Button
-                        variant="outline-secondary"
-                        size="sm"
-                        className="mt-2"
-                        onClick={() => setShowSecrets(!showSecrets)}
-                    >
-                        {showSecrets ? "Ocultar" : "Mostrar"}
-                    </Button>
                 </div>
             </Card.Body>
         </Card>

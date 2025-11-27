@@ -9,12 +9,10 @@ const Footer = () => {
         <footer className="bg-primary text-white pt-4">
             <div className="container">
                 <div className="row text-center">
-                    {/* Columna 1: Logo */}
                     <FooterColumn>
                         <FooterLogo />
                     </FooterColumn>
 
-                    {/* Columna 2: Sobre + Tiendas */}
                     <FooterColumn>
                         <FooterSection
                             title="SOBRE COMPUSEARCH"
@@ -34,7 +32,6 @@ const Footer = () => {
                         />
                     </FooterColumn>
 
-                    {/* Columna 3: Categorías */}
                     <FooterColumn>
                         <FooterSection
                             title="CATEGORÍAS"
@@ -48,7 +45,6 @@ const Footer = () => {
                         />
                     </FooterColumn>
 
-                    {/* Columna 4: Legal + Redes */}
                     <FooterColumn>
                         <FooterSocial />
                     </FooterColumn>
@@ -60,7 +56,6 @@ const Footer = () => {
     );
 };
 
-// Componente auxiliar para columnas
 const FooterColumn = ({ children }) => (
     <div className="col-12 col-md-6 col-lg-3 mb-4 d-flex flex-column align-items-center text-center">
         {children}

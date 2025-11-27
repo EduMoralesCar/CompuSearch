@@ -1,9 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-import { Card, Table, Button, Stack, Alert, Spinner, Form, InputGroup } from "react-bootstrap";
+import { Card, Button, Alert, Spinner, FormControl, InputGroup } from "react-bootstrap";
 import { FiRefreshCw } from "react-icons/fi";
 import ModalInfoUsuario from "../modal/ModalInfoUsuario";
 import { useUsuario } from "../../../hooks/useUsuario";
 import TablaUsuarios from "../table/TablaUsuarios";
+import HeaderBase from "../auxiliar/HeaderBase";
+import PaginacionBase from "../auxiliar/PaginacionBase";
+
+const PAGE_SIZE = 25;
 
 const GestionUsuarios = () => {
     const { obtenerUsuariosPaginados, actualizarEstadoActivo, loading, error } = useUsuario();
@@ -15,36 +19,36 @@ const GestionUsuarios = () => {
     const [gestionError, setGestionError] = useState(null);
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
 
-    const fetchUsuarios = useCallback(async (search) => {
+    // 🔹 Fetch usuarios paginados
+    const fetchUsuarios = useCallback(async (search = '', page = 0) => {
         setGestionError(null);
-        const response = await obtenerUsuariosPaginados(0, 50, search);
+        const response = await obtenerUsuariosPaginados(page, PAGE_SIZE, search);
+
         if (response.success) {
             setUsuarios(response.data.content);
-            console.log(response)
+            setTotalPages(response.data.totalPages);
+            setCurrentPage(page);
         } else {
             setGestionError(response.error || "Error al cargar la lista de usuarios.");
         }
     }, [obtenerUsuariosPaginados]);
 
     useEffect(() => {
-        fetchUsuarios('');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        fetchUsuarios();
+    }, [fetchUsuarios]);
 
-    const handleInputChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
-
-    const handleSearchSubmit = () => {
-        fetchUsuarios(searchTerm);
-    };
-
+    // 🔹 Handlers de búsqueda
+    const handleInputChange = (e) => setSearchTerm(e.target.value);
+    const handleSearchSubmit = () => fetchUsuarios(searchTerm, 0);
     const handleClearSearch = () => {
         setSearchTerm('');
-        fetchUsuarios('');
+        fetchUsuarios('', 0);
     };
 
+    // 🔹 Toggle activo/inactivo
     const handleToggleActivo = async (idUsuario, currentActivo) => {
         setIsTogglingId(idUsuario);
         setGestionError(null);
@@ -56,97 +60,89 @@ const GestionUsuarios = () => {
             setUsuarios(prev =>
                 prev.map(u => u.idUsuario === idUsuario ? { ...u, activo: nuevoEstado } : u)
             );
-            console.log(`Usuario ID ${idUsuario} actualizado a activo=${nuevoEstado}`);
         } else {
-            setGestionError(response.error || `Error al cambiar el estado activo del usuario ID ${idUsuario}.`);
+            setGestionError(response.error || `Error al cambiar el estado del usuario.`);
         }
 
         setIsTogglingId(null);
     };
 
+    // 🔹 Modal de info de usuario
     const handleVerInfo = (usuario) => {
         setUsuarioSeleccionado(usuario);
         setShowModal(true);
     };
-
     const handleCloseModal = () => {
         setShowModal(false);
         setUsuarioSeleccionado(null);
     };
 
+    const isGlobalLoading = loading && usuarios.length === 0;
+
     return (
         <>
             <Card className="shadow-lg border-0">
-                <Card.Header
-                    as="h5"
-                    className="d-flex justify-content-between align-items-center bg-light text-primary"
-                >
-                    Gestión de Usuarios Clientes
-
-                    <div className="d-flex align-items-center" style={{ gap: "8px" }}>
-                        <InputGroup>
-                            <Form.Control
-                                type="text"
-                                placeholder="Buscar por Username..."
-                                value={searchTerm}
-                                onChange={handleInputChange}
-                                disabled={loading && usuarios.length === 0}
-                            />
-
-                            <Button
-                                variant="primary"
-                                disabled={loading}
-                                onClick={handleSearchSubmit}
-                            >
-                                {loading && isTogglingId === null ? (
-                                    <Spinner animation="border" size="sm" className="me-2" />
-                                ) : 'Buscar'}
-                            </Button>
-
-                            <Button
-                                variant="outline-secondary"
-                                onClick={handleClearSearch}
-                                disabled={loading || searchTerm === ''}
-                            >
-                                Limpiar
-                            </Button>
-                        </InputGroup>
-
+                <HeaderBase title="Gestión de Usuarios">
+                    <InputGroup>
+                        <FormControl
+                            type="text"
+                            placeholder="Buscar por Nombre"
+                            value={searchTerm}
+                            onChange={handleInputChange}
+                            disabled={isGlobalLoading}
+                        />
+                        <Button variant="primary" onClick={handleSearchSubmit} disabled={loading}>
+                            {loading ? <Spinner animation="border" size="sm" /> : 'Buscar'}
+                        </Button>
                         <Button
                             variant="outline-secondary"
-                            onClick={handleSearchSubmit}
-                            disabled={loading}
-                            className="d-flex align-items-center justify-content-center"
-                            style={{ width: "42px", height: "38px" }}
+                            onClick={handleClearSearch}
+                            disabled={loading || searchTerm === ''}
                         >
-                            <FiRefreshCw size={18} />
+                            Limpiar
                         </Button>
+                    </InputGroup>
 
-                    </div>
-                </Card.Header>
-
+                    <Button
+                        variant="outline-secondary"
+                        onClick={() => fetchUsuarios(searchTerm, currentPage)}
+                        disabled={loading}
+                        className="d-flex align-items-center justify-content-center"
+                        style={{ width: "42px", height: "38px" }}
+                    >
+                        <FiRefreshCw size={18} />
+                    </Button>
+                </HeaderBase>
 
                 <Card.Body>
+                    {(error || gestionError) && <Alert variant="danger">{error || gestionError}</Alert>}
 
-
-                    {(error || gestionError) && (
-                        <Alert variant="danger">{error || gestionError}</Alert>
-                    )}
-
-                    {loading && usuarios.length === 0 && (
+                    {isGlobalLoading && (
                         <div className="text-center p-5">
                             <Spinner animation="border" role="status" className="me-2" />
                             Cargando usuarios...
                         </div>
                     )}
 
-                    {!(loading && usuarios.length === 0) && (
-                        <TablaUsuarios
-                            usuarios={usuarios}
-                            onVerInfo={handleVerInfo}
-                            onToggleActivo={handleToggleActivo}
-                            isTogglingId={isTogglingId}
-                        />
+                    {!isGlobalLoading && (
+                        <>
+                            <TablaUsuarios
+                                usuarios={usuarios}
+                                onVerInfo={handleVerInfo}
+                                onToggleActivo={handleToggleActivo}
+                                isTogglingId={isTogglingId}
+                            />
+                            {totalPages > 1 && (
+                                <div className="d-flex justify-content-center mt-4">
+                                    <PaginacionBase
+                                        page={currentPage}
+                                        totalPages={totalPages}
+                                        loading={loading}
+                                        onPageChange={(newPage) => fetchUsuarios(searchTerm, newPage)}
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
                 </Card.Body>
             </Card>
