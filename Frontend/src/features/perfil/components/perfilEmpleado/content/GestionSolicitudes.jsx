@@ -150,6 +150,7 @@ const GestionSolicitudes = ({ idEmpleado }) => {
         <Card className="shadow-lg border-0">
             <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
                 Gestión de Solicitudes
+                <div style={{ width: "40px", height: "37px" }}></div>
             </Card.Header>
             <Card.Body>
                 {loading && (

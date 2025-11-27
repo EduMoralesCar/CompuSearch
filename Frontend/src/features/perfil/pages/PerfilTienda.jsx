@@ -9,6 +9,7 @@ import ObtenerPlan from "../components/perfilTienda/content/ObtenerPlan";
 import ConexionAPI from "../components/perfilTienda/content/ConexionAPI";
 import HistorialPagos from "../components/perfilTienda/content/HistorialPagos";
 import TiendaDashboard from "../components/perfilTienda/content/TiendaDashboard";
+import ReportesTienda from "../components/perfilTienda/content/ReportesTienda";
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
 const PerfilTienda = () => {
@@ -24,6 +25,7 @@ const PerfilTienda = () => {
         { eventKey: "planes", label: "Planes", icon: "bi bi-card-list" },
         { eventKey: "pagos", label: "Pagos", icon: "bi bi-credit-card-fill" },
         { eventKey: "conexion", label: "API", icon: "bi bi-code-slash" },
+        { eventKey: "reportes", label: "Reportes", icon: "bi bi-folder2-open" },
     ];
 
     const renderizarVista = () => {
@@ -40,6 +42,8 @@ const PerfilTienda = () => {
                 return <HistorialPagos />
             case "conexion":
                 return <ConexionAPI idTienda={idUsuario}/>
+            case "reportes":
+                return <ReportesTienda idTienda={idUsuario} />
             default:
                 return <TiendaDashboard idTienda={idUsuario}/>
         }

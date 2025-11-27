@@ -13,6 +13,7 @@ import GestionPlanes from "../components/perfilEmpleado/content/GestionPlanes";
 import GestionEmpleados from "../components/perfilEmpleado/content/GestionEmpleados";
 import GestionTiendas from "../components/perfilEmpleado/content/GestionTiendas";
 import EmpleadoDashboard from "../components/perfilEmpleado/content/EmpleadoDashboard";
+import GestionReportesEmpleado from "../components/perfilEmpleado/content/GestionReportesEmpleado";
 
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
@@ -32,6 +33,7 @@ const PerfilEmpleado = () => {
         { eventKey: "solicitudes", label: "Solicitudes", icon: "bi bi-envelope-fill" },
         { eventKey: "incidencias", label: "Incidencias", icon: "bi bi-exclamation-triangle-fill" },
         { eventKey: "planes", label: "Planes", icon: "bi bi-card-checklist" },
+        { eventKey: "reportes", label: "Reportes", icon: "bi bi-folder2-open" },
     ];
 
     const renderizarVista = () => {
@@ -54,6 +56,8 @@ const PerfilEmpleado = () => {
                 return <GestionIncidencias />;
             case "planes":
                 return <GestionPlanes />
+            case "reportes":
+                return <GestionReportesEmpleado />
             default:
                 return <EmpleadoDashboard />;
         }
@@ -70,7 +74,7 @@ const PerfilEmpleado = () => {
             )}
 
             <aside className={`sidebar ${sidebarAbierto ? "abierto" : "cerrado"}`}>
-                <DashboardSidebarLayout 
+                <DashboardSidebarLayout
                     navItems={EMPLOYEE_NAV_ITEMS}
                     setVistaActual={setVistaActual}
                     vistaActual={vistaActual}

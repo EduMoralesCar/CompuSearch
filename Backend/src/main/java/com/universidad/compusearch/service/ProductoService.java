@@ -153,13 +153,23 @@ public class ProductoService {
 
         List<Metrica> metricas = pt.getMetricas();
         metricas.add(metricaService.crearNuevaMetrica(pt, LocalDateTime.now()));
+        Categoria cat = categoriaService.buscarPorNombre(pro.getCategoria());
+
+        Producto productoExistente = pt.getProducto();
+
+        productoExistente.setCategoria(cat);
+        productoExistente.setModelo(pro.getModelo());
+        productoExistente.setMarca(pro.getMarca());
+        productoExistente.setDescripcion(pro.getDescripcion());
+
+        productoRepository.save(productoExistente);
 
         pt.setPrecio(pro.getPrecio());
         pt.setStock(pro.getStock());
         pt.setUrlProducto(pro.getUrlProducto());
         pt.setUrlImagen(pro.getUrlImagen());
         pt.setIdProductoApi(pro.getId());
-        pt.setProducto(producto);
+        pt.setProducto(productoExistente);
         pt.setTienda(tienda);
         pt.setMetricas(metricas);
         productoTiendaRepository.save(pt);

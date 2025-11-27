@@ -87,6 +87,8 @@ public interface ProductoTiendaRepository extends JpaRepository<ProductoTienda, 
 
         List<ProductoTienda> findByTienda(Tienda tienda);
 
+        List<ProductoTienda> findByTienda_idUsuario(Long idTienda);
+
         Page<ProductoTienda> findByTienda_idUsuario(Long idTienda, Pageable pageable);
 
         Page<ProductoTienda> findByTienda_IdUsuarioAndProducto_Categoria_NombreIgnoreCase(

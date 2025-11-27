@@ -8,9 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.universidad.compusearch.entity.Tienda;
+import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.excel.ExcelExporter;
 import com.universidad.compusearch.exception.ReporteException;
 import com.universidad.compusearch.repository.TiendaRepository;
-import com.universidad.compusearch.util.ExcelExporter;
+import com.universidad.compusearch.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ReporteService {
+public class ReporteEmpleadoService {
 
     private final TiendaRepository tiendaRepository;
+    private final UsuarioRepository usuarioRepository;
 
     // Obtener todas las tiendas desde x fecha
     public List<Tienda> getTiendasDesdeFecha(LocalDateTime fechaInicio) {
@@ -106,6 +109,26 @@ public class ReporteService {
         } catch (Exception e) {
             log.error("Error exportando Excel de Top {} tiendas por visitas", n, e);
             throw ReporteException.exportarExcel("Top tiendas por visitas");
+        }
+    }
+
+    public byte[] exportUsuariosDesdeFechaExcel(LocalDateTime fechaInicio) {
+        List<Usuario> usuarios = usuarioRepository.findAll(); 
+        try {
+            return ExcelExporter.exportUsuariosDesdeFecha(usuarios, "Usuarios desde " + fechaInicio, fechaInicio);
+        } catch (Exception e) {
+            log.error("Error exportando Excel de usuarios desde fecha: {}", e.getMessage(), e);
+            throw new RuntimeException("Error exportando usuarios desde fecha");
+        }
+    }
+
+    public byte[] exportUsuariosActivosInactivosExcel() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        try {
+            return ExcelExporter.exportUsuariosActivosInactivos(usuarios, "Usuarios Activos vs Inactivos");
+        } catch (Exception e) {
+            log.error("Error exportando Excel de usuarios activos/inactivos: {}", e.getMessage(), e);
+            throw new RuntimeException("Error exportando usuarios activos/inactivos");
         }
     }
 }

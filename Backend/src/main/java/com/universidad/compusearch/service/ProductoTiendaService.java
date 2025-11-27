@@ -174,4 +174,9 @@ public class ProductoTiendaService {
                 }
         }
 
+        public List<ProductoTienda> obtenerProductosPorTienda(Long idTienda) {
+                List<ProductoTienda> productos = productoTiendaRepository.findByTienda_idUsuario(idTienda);
+                log.info("Productos encontrados, devolviendo productos total: ", productos.size());
+                return productos;
+        }
 }
