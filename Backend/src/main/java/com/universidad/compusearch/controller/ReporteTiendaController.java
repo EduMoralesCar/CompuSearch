@@ -27,10 +27,13 @@ public class ReporteTiendaController {
     // CATÁLOGO COMPLETO
     @GetMapping("/{idTienda}/catalogo")
     public ResponseEntity<byte[]> exportarCatalogo(@PathVariable long idTienda) {
-        List<ProductoTienda> productos = productoTiendaService.obtenerProductosPorTienda(idTienda);
+        log.info("Iniciando exportación de catálogo de productos para la tienda ID {}", idTienda);
 
-        byte[] excel = reporteTiendaService.generarCatalogoProductos(productos,
-                "Catálogo de Productos");
+        List<ProductoTienda> productos = productoTiendaService.obtenerProductosPorTienda(idTienda);
+        log.info("Se obtuvieron {} productos para la tienda ID {}", productos.size(), idTienda);
+
+        byte[] excel = reporteTiendaService.generarCatalogoProductos(productos, "Catálogo de Productos");
+        log.info("Archivo de catálogo generado correctamente para la tienda ID {}, tamaño: {} bytes", idTienda, excel.length);
 
         return crearResponseEntity(excel, "catalogo_productos.xlsx");
     }
@@ -38,10 +41,13 @@ public class ReporteTiendaController {
     // PRODUCTOS CON BAJO STOCK
     @GetMapping("/{idTienda}/stock-bajo")
     public ResponseEntity<byte[]> exportarProductosBajoStock(@PathVariable long idTienda) {
-        List<ProductoTienda> productos = productoTiendaService.obtenerProductosPorTienda(idTienda);
+        log.info("Iniciando exportación de productos con bajo stock para la tienda ID {}", idTienda);
 
-        byte[] excel = reporteTiendaService.generarProductosBajoStock(productos,
-                "Productos con Bajo Stock", 15);
+        List<ProductoTienda> productos = productoTiendaService.obtenerProductosPorTienda(idTienda);
+        log.info("Se obtuvieron {} productos para la tienda ID {}", productos.size(), idTienda);
+
+        byte[] excel = reporteTiendaService.generarProductosBajoStock(productos, "Productos con Bajo Stock", 15);
+        log.info("Archivo de productos con bajo stock generado correctamente para la tienda ID {}, tamaño: {} bytes", idTienda, excel.length);
 
         return crearResponseEntity(excel, "productos_bajo_stock.xlsx");
     }
@@ -49,20 +55,23 @@ public class ReporteTiendaController {
     // MÉTRICAS DE PRODUCTOS
     @GetMapping("/{idTienda}/metricas")
     public ResponseEntity<byte[]> exportarProductosMetricas(@PathVariable long idTienda) {
-        List<ProductoTienda> productos = productoTiendaService.obtenerProductosPorTienda(idTienda);
+        log.info("Iniciando exportación de métricas de productos para la tienda ID {}", idTienda);
 
-        byte[] excel = reporteTiendaService.generarMetricasTienda(productos,
-                "Métricas de Productos");
+        List<ProductoTienda> productos = productoTiendaService.obtenerProductosPorTienda(idTienda);
+        log.info("Se obtuvieron {} productos para la tienda ID {}", productos.size(), idTienda);
+
+        byte[] excel = reporteTiendaService.generarMetricasTienda(productos, "Métricas de Productos");
+        log.info("Archivo de métricas generado correctamente para la tienda ID {}, tamaño: {} bytes", idTienda, excel.length);
 
         return crearResponseEntity(excel, "metricas_productos.xlsx");
     }
 
     // AUXILIAR PARA DESCARGA
     private ResponseEntity<byte[]> crearResponseEntity(byte[] bytes, String filename) {
+        log.info("Preparando archivo '{}' para descarga, tamaño: {} bytes", filename, bytes.length);
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=" + filename)
-                .header("Content-Type",
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 .body(bytes);
     }
 }

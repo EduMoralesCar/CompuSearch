@@ -4,18 +4,28 @@ import FormatDate from "../../../../../utils/FormatDate";
 import ModalProductos from "./ModalProductos";
 import { StatusBadge, VerifiedStatus } from "../table/TablaTiendas";
 
+// Subcomponente para filas de detalle
+const DetailRow = ({ icon, label, value }) => (
+    <div className="d-flex align-items-start py-2">
+        <i className={`fas ${icon} text-primary me-3 mt-1`}></i>
+        <div>
+            <p className="mb-0 fw-bold text-secondary small">{label}</p>
+            <p className="mb-0 text-dark">{value || "—"}</p>
+        </div>
+    </div>
+);
+
+// Subcomponente para mostrar detalles de API
 const TiendaAPIDetails = ({ tiendaAPI }) => {
-    if (!tiendaAPI) {
-        return (
-            <Card className="bg-light border-0 mb-3">
-                <Card.Body className="py-3 text-center">
-                    <Badge bg="warning" text="dark" className="p-2 w-100">
-                        La tienda aún no tiene configuración API
-                    </Badge>
-                </Card.Body>
-            </Card>
-        );
-    }
+    if (!tiendaAPI) return (
+        <Card className="bg-light border-0 mb-3">
+            <Card.Body className="py-3 text-center">
+                <Badge bg="warning" text="dark" className="p-2 w-100">
+                    La tienda aún no tiene configuración API
+                </Badge>
+            </Card.Body>
+        </Card>
+    );
 
     return (
         <Card className="border-0 bg-light mb-3">
@@ -35,21 +45,56 @@ const TiendaAPIDetails = ({ tiendaAPI }) => {
     );
 };
 
-const DetailRow = ({ icon, label, value }) => (
-    <div className="d-flex align-items-start py-2">
-        <i className={`fas ${icon} text-primary me-3 mt-1`}></i>
-        <div>
-            <p className="mb-0 fw-bold text-secondary small">{label}</p>
-            <p className="mb-0 text-dark">{value || "—"}</p>
-        </div>
-    </div>
+// Subcomponente para listas de productos
+const ProductosList = ({ productos, onVerTodos }) => {
+    const productosVisibles = productos?.slice(0, 3) || [];
+
+    return (
+        <Card className="mb-3 shadow-sm">
+            <Card.Header className="py-2 bg-light fw-semibold text-dark d-flex justify-content-between">
+                <div><i className="fas fa-box me-2"></i> Productos ({productos?.length || 0})</div>
+                {productos?.length > 3 && <Button size="sm" variant="outline-primary" onClick={onVerTodos}>Ver todos</Button>}
+            </Card.Header>
+            <Card.Body className="py-2">
+                {productosVisibles.length ? (
+                    productosVisibles.map((p, i) => (
+                        <div key={i} className="mb-2">
+                            <strong>{p.producto?.nombre || p.nombre}</strong>
+                            <div className="text-muted small">S/. {p.precio}</div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-muted small mb-0">Sin productos listados.</p>
+                )}
+            </Card.Body>
+        </Card>
+    );
+};
+
+// Subcomponente para mostrar etiquetas
+const EtiquetasList = ({ etiquetas }) => (
+    <Card className="mb-3 shadow-sm">
+        <Card.Header className="py-2 bg-light fw-semibold text-dark">
+            <i className="fas fa-tags me-2"></i> Etiquetas ({etiquetas?.length || 0})
+        </Card.Header>
+        <Card.Body className="py-2">
+            {etiquetas?.length ? (
+                etiquetas.map((e, i) => (
+                    <span key={i} className="badge rounded-pill bg-primary text-white me-2 mb-2">
+                        {e.nombre}
+                    </span>
+                ))
+            ) : (
+                <p className="text-muted small mb-0">Sin etiquetas.</p>
+            )}
+        </Card.Body>
+    </Card>
 );
 
 const ModalDetalleTienda = ({ store, show, onClose, detailsLoading }) => {
     const [showModalProductos, setShowModalProductos] = useState(false);
 
     const ultimaSuscripcion = useMemo(() => store?.suscripcionActual || null, [store]);
-    const productosVisibles = useMemo(() => store?.productos?.slice(0, 3) || [], [store]);
 
     if (!store && !detailsLoading) return null;
 
@@ -78,7 +123,6 @@ const ModalDetalleTienda = ({ store, show, onClose, detailsLoading }) => {
                     ) : (
                         <Container fluid>
                             <Row>
-                                {/* Columna Izquierda */}
                                 <Col md={6}>
                                     <h3 className="h6 text-primary border-bottom mb-3">Información General</h3>
                                     <Card className="mb-3 shadow-sm">
@@ -109,7 +153,6 @@ const ModalDetalleTienda = ({ store, show, onClose, detailsLoading }) => {
                                     </Card>
                                 </Col>
 
-                                {/* Columna Derecha */}
                                 <Col md={6}>
                                     <h3 className="h6 text-primary border-bottom mb-3">Estado y Métricas</h3>
                                     <Card className="mb-3 shadow-sm">
@@ -119,43 +162,8 @@ const ModalDetalleTienda = ({ store, show, onClose, detailsLoading }) => {
                                         </Card.Body>
                                     </Card>
 
-                                    <Card className="mb-3 shadow-sm">
-                                        <Card.Header className="py-2 bg-light fw-semibold text-dark">
-                                            <i className="fas fa-tags me-2"></i> Etiquetas ({store.etiquetas?.length || 0})
-                                        </Card.Header>
-                                        <Card.Body className="py-2">
-                                            {store.etiquetas?.length ? (
-                                                store.etiquetas.map((e, i) => (
-                                                    <span key={i} className="badge rounded-pill bg-primary text-white me-2 mb-2">
-                                                        {e.nombre}
-                                                    </span>
-                                                ))
-                                            ) : (
-                                                <p className="text-muted small mb-0">Sin etiquetas.</p>
-                                            )}
-                                        </Card.Body>
-                                    </Card>
-
-                                    <Card className="mb-3 shadow-sm">
-                                        <Card.Header className="py-2 bg-light fw-semibold text-dark d-flex justify-content-between">
-                                            <div><i className="fas fa-box me-2"></i> Productos ({store.productos?.length || 0})</div>
-                                            {store.productos?.length > 3 && (
-                                                <Button size="sm" variant="outline-primary" onClick={() => setShowModalProductos(true)}>Ver todos</Button>
-                                            )}
-                                        </Card.Header>
-                                        <Card.Body className="py-2">
-                                            {productosVisibles.length ? (
-                                                productosVisibles.map((p, i) => (
-                                                    <div key={i} className="mb-2">
-                                                        <strong>{p.producto?.nombre || p.nombre}</strong>
-                                                        <div className="text-muted small">S/. {p.precio}</div>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <p className="text-muted small mb-0">Sin productos listados.</p>
-                                            )}
-                                        </Card.Body>
-                                    </Card>
+                                    <EtiquetasList etiquetas={store.etiquetas} />
+                                    <ProductosList productos={store.productos} onVerTodos={() => setShowModalProductos(true)} />
 
                                     <h3 className="h6 text-primary border-bottom mb-2">Configuración API</h3>
                                     <TiendaAPIDetails tiendaAPI={store.tiendaAPI} />
