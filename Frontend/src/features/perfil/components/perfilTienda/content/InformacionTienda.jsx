@@ -1,17 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
 import { useTiendas } from "../../../hooks/useTiendas";
-import {
-    Container, Row, Col, Card, Alert, Spinner, Badge, Image
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Alert, Spinner, Badge, Image } from "react-bootstrap";
 
 import TiendaFormulario from "../form/TiendaFormulario";
-import TiendaLogoUploader from "../form/TiendaLogoUploader"
+import TiendaLogoUploader from "../form/TiendaLogoUploader";
 
 const InformacionTienda = ({ idTienda }) => {
     const [infoTienda, setInfoTienda] = useState(null);
     const [statusFormulario, setStatusFormulario] = useState(null);
     const [statusLogo, setStatusLogo] = useState(null);
-
     const [formDatos, setFormDatos] = useState({
         nombre: "",
         descripcion: "",
@@ -20,104 +17,73 @@ const InformacionTienda = ({ idTienda }) => {
         urlPagina: "",
     });
 
-    const {
-        obtenerTiendaPorId,
-        actualizarDatosTienda,
-        actualizarLogo,
-        loading,
-        error,
-    } = useTiendas();
+    const { obtenerTiendaPorId, actualizarDatosTienda, actualizarLogo, loading, error } = useTiendas();
 
+    // Fetch tienda
     const fetchTiendaData = useCallback(async () => {
         if (!idTienda) return;
         const result = await obtenerTiendaPorId(idTienda, false);
-        if (result.success) {
-            setInfoTienda(result.data);
-        }
+        if (result.success) setInfoTienda(result.data);
     }, [idTienda, obtenerTiendaPorId]);
 
-    useEffect(() => {
-        fetchTiendaData();
-    }, [fetchTiendaData]);
+    useEffect(() => { fetchTiendaData(); }, [fetchTiendaData]);
 
+    // Inicializar formulario
     useEffect(() => {
-        if (infoTienda) {
-            setFormDatos({
-                nombre: infoTienda.nombre || "",
-                descripcion: infoTienda.descripcion || "",
-                direccion: infoTienda.direccion || "",
-                telefono: infoTienda.telefono || "",
-                urlPagina: infoTienda.pagina || "",
-            });
-        }
+        if (!infoTienda) return;
+        setFormDatos({
+            nombre: infoTienda.nombre || "",
+            descripcion: infoTienda.descripcion || "",
+            direccion: infoTienda.direccion || "",
+            telefono: infoTienda.telefono || "",
+            urlPagina: infoTienda.pagina || "",
+        });
     }, [infoTienda]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormDatos((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormDatos(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!idTienda) return;
+
         setStatusFormulario(null);
         const result = await actualizarDatosTienda(idTienda, formDatos);
 
         if (result.success) {
-            setStatusFormulario({
-                type: "success",
-                message: "¡Datos de la tienda actualizados con éxito!",
-            });
+            setStatusFormulario({ type: "success", message: "¡Datos de la tienda actualizados con éxito!" });
             await fetchTiendaData();
         } else {
-            setStatusFormulario({
-                type: "error",
-                message: result.error
-            });
+            setStatusFormulario({ type: "error", message: result.error });
         }
     };
 
-    if (loading && !infoTienda) {
-        return <Spinner animation="border" variant="primary" />;
-    }
+    if (loading && !infoTienda) return <Spinner animation="border" variant="primary" />;
+    if (error && !infoTienda) return <Alert variant="danger">Error al cargar la tienda: {error}</Alert>;
+    if (!infoTienda) return <h1>Información de la tienda</h1>;
 
-    if (error && !infoTienda) {
-        return <Alert variant="danger">Error al cargar la tienda: {error}</Alert>;
-    }
-
-    if (!infoTienda) {
-        return <h1>Información de la tienda</h1>;
-    }
+    const renderBadge = (activo) => <Badge bg={activo ? "success" : "danger"}>{activo ? "Activa" : "Inactiva"}</Badge>;
 
     return (
         <Container className="py-4">
-
+            {/* Encabezado */}
             <Row className="mb-4">
                 <Col>
-                    <h2 className="fw-bold text-primary">
-                        Información de la Tienda
-                    </h2>
-                    <p className="text-muted">
-                        Revisa y edita los datos principales de tu tienda.
-                    </p>
+                    <h2 className="fw-bold text-primary">Información de la Tienda</h2>
+                    <p className="text-muted">Revisa y edita los datos principales de tu tienda.</p>
                 </Col>
             </Row>
 
             <Row className="g-4">
-
+                {/* Información de la tienda */}
                 <Col lg={7}>
                     <Card className="shadow-sm border-0">
                         <Card.Body>
                             <div className="d-flex align-items-center justify-content-between mb-3">
-                                <h4 className="fw-semibold text-dark mb-0">
-                                    {infoTienda.nombre}
-                                </h4>
-                                <Badge bg={infoTienda.activo ? "success" : "danger"}>
-                                    {infoTienda.activo ? "Activa" : "Inactiva"}
-                                </Badge>
+                                <h4 className="fw-semibold text-dark mb-0">{infoTienda.nombre}</h4>
+                                {renderBadge(infoTienda.activo)}
                             </div>
 
                             <div className="mb-3 text-muted">
@@ -145,16 +111,10 @@ const InformacionTienda = ({ idTienda }) => {
                             <div className="mt-4">
                                 <h5 className="fw-semibold text-secondary">Datos Generales</h5>
                                 <ul className="list-unstyled mt-3">
-                                    <li className="mb-1">
-                                        <strong>Descripción:</strong> {infoTienda.descripcion || "—"}
-                                    </li>
-                                    <li className="mb-1">
-                                        <strong>Teléfono:</strong> {infoTienda.telefono || "—"}
-                                    </li>
-                                    <li className="mb-1">
-                                        <strong>Dirección:</strong> {infoTienda.direccion || "—"}
-                                    </li>
-                                    <li className="mb-1">
+                                    <li><strong>Descripción:</strong> {infoTienda.descripcion || "—"}</li>
+                                    <li><strong>Teléfono:</strong> {infoTienda.telefono || "—"}</li>
+                                    <li><strong>Dirección:</strong> {infoTienda.direccion || "—"}</li>
+                                    <li>
                                         <strong>Página Web:</strong>{" "}
                                         {infoTienda.pagina ? (
                                             <a href={infoTienda.pagina} target="_blank" rel="noreferrer">
@@ -169,27 +129,21 @@ const InformacionTienda = ({ idTienda }) => {
 
                             <div>
                                 <h5 className="fw-semibold text-secondary">Inventario</h5>
-                                <p className="mb-1">
-                                    <strong>Productos totales:</strong> {infoTienda.productos}
-                                </p>
+                                <p><strong>Productos totales:</strong> {infoTienda.productos}</p>
                                 <p>
                                     <strong>Etiquetas:</strong>{" "}
-                                    {infoTienda.etiquetas?.length
-                                        ? infoTienda.etiquetas.map(e => e.nombre).join(", ")
-                                        : "Sin etiquetas"}
+                                    {infoTienda.etiquetas?.length ? infoTienda.etiquetas.map(e => e.nombre).join(", ") : "Sin etiquetas"}
                                 </p>
                             </div>
                         </Card.Body>
                     </Card>
                 </Col>
 
+                {/* Formulario y logo */}
                 <Col lg={5}>
                     <Card className="shadow-sm border-0">
                         <Card.Body>
-                            <h5 className="fw-semibold mb-3 text-secondary">
-                                Editar Información
-                            </h5>
-
+                            <h5 className="fw-semibold mb-3 text-secondary">Editar Información</h5>
                             <TiendaFormulario
                                 formDatos={formDatos}
                                 handleInputChange={handleInputChange}
@@ -197,16 +151,12 @@ const InformacionTienda = ({ idTienda }) => {
                                 loading={loading}
                                 updateStatus={statusFormulario}
                             />
-
                         </Card.Body>
                     </Card>
 
                     <Card className="shadow-sm border-0 mt-4">
                         <Card.Body>
-                            <h5 className="fw-semibold mb-3 text-secondary">
-                                Actualizar Logo
-                            </h5>
-
+                            <h5 className="fw-semibold mb-3 text-secondary">Actualizar Logo</h5>
                             <TiendaLogoUploader
                                 idTienda={idTienda}
                                 actualizarLogo={actualizarLogo}
@@ -215,11 +165,9 @@ const InformacionTienda = ({ idTienda }) => {
                                 updateStatus={statusLogo}
                                 setUpdateStatus={setStatusLogo}
                             />
-
                         </Card.Body>
                     </Card>
                 </Col>
-
             </Row>
         </Container>
     );

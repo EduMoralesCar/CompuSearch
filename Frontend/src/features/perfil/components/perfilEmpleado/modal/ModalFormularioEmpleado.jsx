@@ -17,8 +17,6 @@ const ModalFormularioEmpleado = ({
         rol: 'ADMIN',
         password: '',
     });
-    // eslint-disable-next-line no-unused-vars
-    const [passwordRequired, setPasswordRequired] = useState(false);
 
     useEffect(() => {
         if (empleadoAEditar) {
@@ -30,7 +28,6 @@ const ModalFormularioEmpleado = ({
                 rol: empleadoAEditar.rol || 'ADMIN',
                 password: '',
             });
-            setPasswordRequired(false);
         } else {
             setFormData({
                 username: '',
@@ -40,7 +37,6 @@ const ModalFormularioEmpleado = ({
                 rol: 'ADMIN',
                 password: '',
             });
-            setPasswordRequired(true);
         }
     }, [empleadoAEditar, show]);
 
@@ -52,43 +48,67 @@ const ModalFormularioEmpleado = ({
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!formData.username || !formData.nombre || !formData.apellido || !formData.email || !formData.rol) {
-            alert('Por favor, complete todos los campos obligatorios.');
-            return;
+        // Validación básica
+        const requiredFields = ['username', 'nombre', 'apellido', 'email', 'rol'];
+        for (const field of requiredFields) {
+            if (!formData[field].trim()) {
+                alert('Por favor, complete todos los campos obligatorios.');
+                return;
+            }
         }
 
-        const dataToSend = {
-            ...formData,
-        };
+        const dataToSend = { ...formData };
 
-        if (!empleadoAEditar && formData.password.trim() === '') {
+        // Password obligatorio solo al crear
+        if (!empleadoAEditar && !formData.password.trim()) {
             alert('La contraseña es obligatoria para un nuevo empleado.');
             return;
         }
 
-        if (empleadoAEditar && formData.password.trim() === '') {
+        // Si es edición y no se ingresó password, eliminar
+        if (empleadoAEditar && !formData.password.trim()) {
             delete dataToSend.password;
         }
 
         onCreateOrUpdate(dataToSend);
     };
 
-    const title = empleadoAEditar ?
-        `Editar Empleado: ${empleadoAEditar.username}` :
-        'Crear Nuevo Empleado';
-
     const handleCloseInternal = () => {
-        if (!isSubmitting) {
-            handleClose();
-        }
+        if (!isSubmitting) handleClose();
     };
 
+    const renderPasswordField = () => (
+        <Form.Group className="mb-3" controlId="formPassword">
+            <Form.Label>
+                Contraseña {empleadoAEditar ? '(Dejar vacío para no cambiar)' : '(*)'}
+            </Form.Label>
+            <Form.Control
+                type="password"
+                placeholder={empleadoAEditar ? '••••••••' : 'Ingrese contraseña'}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required={!empleadoAEditar}
+                disabled={isSubmitting}
+            />
+            {empleadoAEditar && (
+                <Form.Text className="text-muted">
+                    Si no desea cambiar la contraseña, déjelo en blanco.
+                </Form.Text>
+            )}
+        </Form.Group>
+    );
+
+    const title = empleadoAEditar
+        ? `Editar Empleado: ${empleadoAEditar.username}`
+        : 'Crear Nuevo Empleado';
 
     return (
         <Modal show={show} onHide={handleCloseInternal} centered>
             <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
+
             <Form onSubmit={handleSubmit}>
                 <Modal.Body>
                     {submitError && <Alert variant="danger">{submitError}</Alert>}
@@ -132,7 +152,7 @@ const ModalFormularioEmpleado = ({
                         />
                     </Form.Group>
 
-                    <Form.Group className="mb-3 col-md-6" controlId="formEmail">
+                    <Form.Group className="mb-3" controlId="formEmail">
                         <Form.Label>Email (*)</Form.Label>
                         <Form.Control
                             type="email"
@@ -159,37 +179,16 @@ const ModalFormularioEmpleado = ({
                         </Form.Select>
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formPassword">
-                        <Form.Label>
-                            Contraseña {empleadoAEditar ? '(Dejar vacío para no cambiar)' : '(*)'}
-                        </Form.Label>
-                        <Form.Control
-                            type="password"
-                            placeholder={empleadoAEditar ? '••••••••' : 'Ingrese contraseña'}
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required={!empleadoAEditar}
-                            disabled={isSubmitting}
-                        />
-                        {empleadoAEditar && (
-                            <Form.Text className="text-muted">
-                                Si no desea cambiar la contraseña, déjelo en blanco.
-                            </Form.Text>
-                        )}
-                    </Form.Group>
-
+                    {renderPasswordField()}
                 </Modal.Body>
+
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseInternal} disabled={isSubmitting}>
                         Cancelar
                     </Button>
                     <Button variant="primary" type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                            <Spinner animation="border" size="sm" className="me-2" />
-                        ) : (
-                            empleadoAEditar ? 'Guardar Cambios' : 'Crear Empleado'
-                        )}
+                        {isSubmitting && <Spinner animation="border" size="sm" className="me-2" />}
+                        {empleadoAEditar ? 'Guardar Cambios' : 'Crear Empleado'}
                     </Button>
                 </Modal.Footer>
             </Form>

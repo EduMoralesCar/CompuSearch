@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Spinner, Alert, Row, Col, Container, Button } from "react-bootstrap";
 
 import { useTiendas } from "../../../hooks/useTiendas";
@@ -10,66 +10,44 @@ import ProductoModal from "../modal/ProductoModal";
 import PaginacionProductos from "../auxiliar/PaginacionProductos";
 
 const MisProductos = ({ idTienda }) => {
-
-    const {
-        obtenerProductosAdmin,
-        cambiarHabilitadoProducto,
-        obtenerProductosDesdeApi,
-        loading,
-        error
-    } = useTiendas();
-
+    const { obtenerProductosAdmin, cambiarHabilitadoProducto, obtenerProductosDesdeApi, loading, error } = useTiendas();
     const { obtenerCategorias } = useCategorias();
-    const [loadingApi, setLoadingApi] = useState(false);
+
     const [productosPage, setProductosPage] = useState(null);
     const [categorias, setCategorias] = useState([]);
+    const [selected, setSelected] = useState(null);
 
     const [page, setPage] = useState(0);
     const [size] = useState(12);
     const [categoria, setCategoria] = useState("");
     const [sort, setSort] = useState("precio,asc");
-
-    const [selected, setSelected] = useState(null);
+    const [loadingApi, setLoadingApi] = useState(false);
 
     // Cargar categorías
     useEffect(() => {
-        const cargarCats = async () => {
+        const fetchCategorias = async () => {
             const resp = await obtenerCategorias();
             if (resp.success) setCategorias(resp.response);
         };
-        cargarCats();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        fetchCategorias();
+    }, [obtenerCategorias]);
 
-    // Cargar productos
-    useEffect(() => {
-        const cargar = async () => {
-            const resp = await obtenerProductosAdmin(
-                idTienda,
-                page,
-                size,
-                categoria || null,
-                sort
-            );
-            if (resp.success) setProductosPage(resp.data);
-        };
-        cargar();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, categoria, sort]);
+    // Cargar productos según filtros/paginación
+    const fetchProductos = useCallback(async () => {
+        const resp = await obtenerProductosAdmin(idTienda, page, size, categoria || null, sort);
+        if (resp.success) setProductosPage(resp.data);
+    }, [idTienda, page, size, categoria, sort, obtenerProductosAdmin]);
 
+    useEffect(() => { fetchProductos(); }, [fetchProductos]);
+
+    // Toggle habilitado
     const handleToggleHabilitado = async (producto) => {
-        const resp = await cambiarHabilitadoProducto(
-            producto.idProductoTienda,
-            !producto.habilitado
-        );
-
+        const resp = await cambiarHabilitadoProducto(producto.idProductoTienda, !producto.habilitado);
         if (resp.success) {
             setProductosPage(prev => ({
                 ...prev,
                 content: prev.content.map(p =>
-                    p.idProductoTienda === producto.idProductoTienda
-                        ? { ...p, habilitado: !p.habilitado }
-                        : p
+                    p.idProductoTienda === producto.idProductoTienda ? { ...p, habilitado: !p.habilitado } : p
                 )
             }));
         }
@@ -81,46 +59,27 @@ const MisProductos = ({ idTienda }) => {
         setPage(0);
     };
 
-    const productos = productosPage?.content ?? [];
-
+    // Actualizar desde API externa
     const handleActualizarApi = async () => {
         setLoadingApi(true);
-
         const resp = await obtenerProductosDesdeApi(idTienda);
-
-        if (resp.success) {
-            const newData = await obtenerProductosAdmin(
-                idTienda,
-                page,
-                size,
-                categoria || null,
-                sort
-            );
-            if (newData.success) setProductosPage(newData.data);
-        }
-
+        if (resp.success) await fetchProductos();
         setLoadingApi(false);
     };
 
+    const productos = productosPage?.content ?? [];
 
     return (
         <Container className="py-4">
 
-            {/* Título + subtítulo + botón actualizar */}
+            {/* Encabezado y botón actualizar */}
             <Row className="mb-4 align-items-center">
                 <Col>
                     <h2 className="fw-bold text-primary mb-1">Mis productos</h2>
-                    <p className="text-muted mb-0">
-                        Administra, organiza y controla los productos de tu tienda.
-                    </p>
+                    <p className="text-muted mb-0">Administra, organiza y controla los productos de tu tienda.</p>
                 </Col>
-
                 <Col xs="auto">
-                    <Button
-                        variant="dark"
-                        onClick={handleActualizarApi}
-                        disabled={loadingApi}
-                    >
+                    <Button variant="dark" onClick={handleActualizarApi} disabled={loadingApi}>
                         {loadingApi ? (
                             <>
                                 <Spinner size="sm" animation="border" className="me-2" />
@@ -128,10 +87,10 @@ const MisProductos = ({ idTienda }) => {
                             </>
                         ) : "Actualizar desde API"}
                     </Button>
-
                 </Col>
             </Row>
 
+            {/* Filtros */}
             <FiltroProductos
                 categorias={categorias}
                 categoria={categoria}
@@ -141,14 +100,9 @@ const MisProductos = ({ idTienda }) => {
                 limpiarFiltros={limpiarFiltros}
             />
 
-            {loading && (
-                <div className="text-center">
-                    <Spinner animation="border" />
-                </div>
-            )}
-
+            {/* Carga / error / vacío */}
+            {loading && <div className="text-center"><Spinner animation="border" /></div>}
             {error && <Alert variant="danger" className="text-center">{error}</Alert>}
-
             {!loading && productos.length === 0 && (
                 <Alert variant="info" className="text-center py-4">
                     <h4 className="fw-bold">No se encontraron productos</h4>
@@ -156,24 +110,19 @@ const MisProductos = ({ idTienda }) => {
                 </Alert>
             )}
 
+            {/* Lista de productos */}
             <Row xs={1} md={2} lg={3} className="g-4">
                 {productos.map(prod => (
                     <Col key={prod.idProductoTienda}>
-                        <ProductoCard
-                            prod={prod}
-                            onSelect={setSelected}
-                            onToggle={handleToggleHabilitado}
-                        />
+                        <ProductoCard prod={prod} onSelect={setSelected} onToggle={handleToggleHabilitado} />
                     </Col>
                 ))}
             </Row>
 
-            <PaginacionProductos
-                page={page}
-                totalPages={productosPage?.totalPages}
-                setPage={setPage}
-            />
+            {/* Paginación */}
+            <PaginacionProductos page={page} totalPages={productosPage?.totalPages} setPage={setPage} />
 
+            {/* Modal */}
             <ProductoModal producto={selected} onClose={() => setSelected(null)} />
         </Container>
     );
