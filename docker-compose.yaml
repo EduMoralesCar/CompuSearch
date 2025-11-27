@@ -1,5 +1,4 @@
 services:
-
   backend:
     build: ./backend
     container_name: compusearch-backend
@@ -52,9 +51,6 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: compusearch-prometheus
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
     ports:
       - "9090:9090"
     depends_on:
@@ -62,6 +58,11 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    volumes:
+      - prometheus_data:/prometheus
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
 
   grafana:
     image: grafana/grafana:latest
@@ -84,3 +85,15 @@ volumes:
   mysql_data:
   prometheus_data:
   grafana_data:
+
+configs:
+  prometheus_config:
+    content: |
+      global:
+        scrape_interval: 5s
+
+      scrape_configs:
+        - job_name: 'compusearch-backend'
+          metrics_path: '/actuator/prometheus'
+          static_configs:
+            - targets: ['backend:8080']
