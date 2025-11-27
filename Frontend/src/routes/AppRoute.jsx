@@ -66,6 +66,14 @@ const AppRoute = () => {
                         </RequireAnonimo>
                     }
                 />
+                <Route
+                    path="/perfil/usuario"
+                    element={
+                        <RequireTipoUsuario tiposPermitidos={["USUARIO", "TIENDA"]}>
+                            <PerfilUsuario />
+                        </RequireTipoUsuario>
+                    }
+                />
             </Route>
 
             <Route element={<LayoutPrincipal />}>
@@ -78,14 +86,6 @@ const AppRoute = () => {
             </Route>
 
             <Route element={<LayoutPerfil />}>
-                <Route
-                    path="/perfil/usuario"
-                    element={
-                        <RequireTipoUsuario tiposPermitidos={["USUARIO"]}>
-                            <PerfilUsuario />
-                        </RequireTipoUsuario>
-                    }
-                />
                 <Route
                     path="/perfil/empleado"
                     element={

@@ -113,6 +113,6 @@ Puedes guiarte por las imágenes de referencia:
    ```
 5. Una vez ejecutado se lanza un servidor local:
    
-🌐 Acceso local: [http://localhost:5173/](http://localhost:5173/)   
-   
+🌐 Acceso local: [http://localhost:5173/](http://localhost:5173/)  
+🌐 Acceso por Docker: [http://localhost:3000/](http://localhost:3000/)   
 ---

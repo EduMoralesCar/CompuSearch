@@ -1,77 +1,102 @@
 import { useState } from "react";
-import { Row, Col, Button } from "react-bootstrap";
-import { BsArrowBarLeft, BsList } from "react-icons/bs"; 
-import AsideDashboard from "../components/perfilEmpleado/slider/AsideDashboard";
-import "../css/PerfilEmpleado.css";
+import { Button } from "react-bootstrap";
+import { BsArrowBarLeft, BsList } from "react-icons/bs";
+import DashboardSidebarLayout from "../components/auxiliar/DashboardSidebarLayout";
+import "../css/AsidebarPerfil.css"
 
 import GestionCategorias from "../components/perfilEmpleado/content/GestionCategorias";
 import GestionEtiquetas from "../components/perfilEmpleado/content/GestionEtiquetas";
 import GestionUsuarios from "../components/perfilEmpleado/content/GestionUsuarios";
 import GestionSolicitudes from "../components/perfilEmpleado/content/GestionSolicitudes";
 import GestionIncidencias from "../components/perfilEmpleado/content/GestionIncidencias";
+import GestionPlanes from "../components/perfilEmpleado/content/GestionPlanes";
+import GestionEmpleados from "../components/perfilEmpleado/content/GestionEmpleados";
+import GestionTiendas from "../components/perfilEmpleado/content/GestionTiendas";
+import EmpleadoDashboard from "../components/perfilEmpleado/content/EmpleadoDashboard";
+import GestionReportesEmpleado from "../components/perfilEmpleado/content/GestionReportesEmpleado";
+
 import { useAuthStatus } from "../../../hooks/useAuthStatus";
 
 const PerfilEmpleado = () => {
-    const [vistaActual, setVistaActual] = useState("categorias"); 
-    const [sidebarAbierto, setSidebarAbierto] = useState(true); 
+    const [vistaActual, setVistaActual] = useState("dashboard");
+    const [sidebarAbierto, setSidebarAbierto] = useState(true);
 
     const { idUsuario } = useAuthStatus();
 
+    const EMPLOYEE_NAV_ITEMS = [
+        { eventKey: "dashboard", label: "Dashboard", icon: "bi bi-speedometer2" },
+        { eventKey: "categorias", label: "Categorías", icon: "bi bi-grid-3x3-gap-fill" },
+        { eventKey: "etiquetas", label: "Etiquetas", icon: "bi bi-tags-fill" },
+        { eventKey: "usuarios", label: "Usuarios", icon: "bi bi-people-fill" },
+        { eventKey: "tiendas", label: "Tiendas", icon: "bi bi-shop-window" },
+        { eventKey: "empleados", label: "Empleados", icon: "bi bi-person-badge" },
+        { eventKey: "solicitudes", label: "Solicitudes", icon: "bi bi-envelope-fill" },
+        { eventKey: "incidencias", label: "Incidencias", icon: "bi bi-exclamation-triangle-fill" },
+        { eventKey: "planes", label: "Planes", icon: "bi bi-card-checklist" },
+        { eventKey: "reportes", label: "Reportes", icon: "bi bi-folder2-open" },
+    ];
+
     const renderizarVista = () => {
         switch (vistaActual) {
+            case "dashboard":
+                return <EmpleadoDashboard />;
             case "categorias":
                 return <GestionCategorias />;
             case "etiquetas":
                 return <GestionEtiquetas />;
             case "usuarios":
                 return <GestionUsuarios />;
+            case "tiendas":
+                return <GestionTiendas />
+            case "empleados":
+                return <GestionEmpleados />
             case "solicitudes":
                 return <GestionSolicitudes idEmpleado={idUsuario} />;
             case "incidencias":
                 return <GestionIncidencias />;
+            case "planes":
+                return <GestionPlanes />
+            case "reportes":
+                return <GestionReportesEmpleado />
             default:
-                return <GestionCategorias />;
+                return <EmpleadoDashboard />;
         }
     };
 
     return (
-        <div className="dashboard-layout">
-            
-            {/* Se muestra si el sidebar está abierto Y estamos en vista móvil (d-lg-none) */}
+        <div className={`dashboard-layout ${sidebarAbierto ? "sidebar-open" : "sidebar-closed"}`}>
+
             {sidebarAbierto && (
-                <div 
+                <div
                     className="dashboard-backdrop d-lg-none"
                     onClick={() => setSidebarAbierto(false)}
                 ></div>
             )}
 
-            {/* Columna 1: Barra Lateral (Aside)*/}
             <aside className={`sidebar ${sidebarAbierto ? "abierto" : "cerrado"}`}>
-                <AsideDashboard 
-                    setVistaActual={setVistaActual} 
+                <DashboardSidebarLayout
+                    navItems={EMPLOYEE_NAV_ITEMS}
+                    setVistaActual={setVistaActual}
                     vistaActual={vistaActual}
-                    // Pasamos la función para que el aside se cierre al navegar
                     setSidebarAbierto={setSidebarAbierto}
+                    headerTitle="Panel Administrador"
                 />
             </aside>
 
-            {/* Columna 2: Contenido Principal */}
             <main className="dashboard-content">
-                
-                {/*  SECCIÓN PARA MÓVIL */}
-                <Button 
+
+                <Button
                     variant="outline-primary"
                     onClick={() => setSidebarAbierto(!sidebarAbierto)}
-                    className="mb-3 d-lg-none" 
+                    className="mb-3 d-lg-none"
                 >
                     {sidebarAbierto ? <BsArrowBarLeft /> : <BsList />}
                 </Button>
                 <h2 className="mb-3 d-lg-none">Panel de Administrador</h2>
 
 
-                {/* SECCIÓN PARA DESKTOP */}
                 <div className="d-none d-lg-flex align-items-center mb-3">
-                    <Button 
+                    <Button
                         variant="outline-primary"
                         onClick={() => setSidebarAbierto(!sidebarAbierto)}
                         className="me-3"
@@ -82,8 +107,7 @@ const PerfilEmpleado = () => {
                     <h2 className="mb-0">Panel de Administrador</h2>
                 </div>
 
-                
-                {/* Aquí se renderiza el módulo seleccionado */}
+
                 <div className="vista-gestion-container">
                     {renderizarVista()}
                 </div>

@@ -11,12 +11,6 @@ import com.universidad.compusearch.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Servicio para manejar la lógica de reseteo de contraseña.
- * <p>
- * Valida emails, tokens de reseteo y controla los intentos para prevenir abusos.
- * </p>
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,15 +20,7 @@ public class ResetPasswordService {
     private final AuthService authService;
     private final ResetTokenService resetTokenService;
 
-    /**
-     * Valida que el email exista en el sistema y que no esté bloqueado
-     * por demasiados intentos de reseteo.
-     *
-     * @param email correo electrónico del usuario
-     * @return usuario asociado al email
-     * @throws TooManyAttemptsException si el email está bloqueado por intentos fallidos
-     * @throws UserException            si no existe el usuario con el email proporcionado
-     */
+    // Validar email para el reseteo de contraseña
     public Usuario validateEmail(String email) {
         log.info("Validando solicitud de reseteo para email: {}", email);
 
@@ -56,15 +42,7 @@ public class ResetPasswordService {
         return usuario;
     }
 
-    /**
-     * Valida un token de reseteo de contraseña y devuelve el usuario asociado.
-     * Además, revoca el token y registra el intento como exitoso.
-     *
-     * @param token token de reseteo recibido
-     * @return usuario asociado al token
-     * @throws TokenException           si el token es inválido o no existe
-     * @throws TooManyAttemptsException si el usuario está bloqueado por intentos
-     */
+    // Validar token de reseteo
     public Usuario validateResetToken(String token) {
         log.debug("Validando token de reseteo: {}", token);
 
@@ -81,7 +59,6 @@ public class ResetPasswordService {
             throw TooManyAttemptsException.resetPassword();
         }
 
-        // Revocar token para que no pueda reutilizarse
         resetTokenService.revokeResetToken(token);
         resetPasswordAttemptService.success(email);
 

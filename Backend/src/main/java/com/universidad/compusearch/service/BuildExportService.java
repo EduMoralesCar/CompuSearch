@@ -1,41 +1,23 @@
 package com.universidad.compusearch.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.universidad.compusearch.entity.Build;
 import com.universidad.compusearch.entity.DetalleBuild;
 import com.universidad.compusearch.entity.Producto;
 import com.universidad.compusearch.entity.ProductoAtributo;
-import com.universidad.compusearch.entity.Usuario;
+import com.universidad.compusearch.excel.ExcelUtils;
 import com.universidad.compusearch.exception.BuildException;
 import com.universidad.compusearch.repository.BuildRepository;
-import com.universidad.compusearch.util.CargarImagen;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Servicio encargado de exportar información de una {@link Build}
- * a un archivo de Excel (.xlsx).
- *
- * <p>Incluye dos hojas:
- * <ul>
- *   <li><b>Resumen:</b> información general de la build y del usuario.</li>
- *   <li><b>Detalle:</b> lista de productos, atributos y totales.</li>
- * </ul>
- *
- * <p>Utiliza Apache POI para generar el archivo Excel y puede incluir
- * un logotipo cargado desde los recursos del proyecto.</p>
- *
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -43,216 +25,105 @@ public class BuildExportService {
 
     private final BuildRepository buildRepository;
 
-    /**
-     * Exporta una {@link Build} específica a un archivo Excel.
-     *
-     * @param idBuild el identificador único de la build a exportar.
-     * @return un {@link ByteArrayInputStream} que contiene los bytes del archivo Excel generado.
-     * @throws IOException si ocurre un error al escribir el archivo.
-     * @throws BuildException si no se encuentra la build solicitada.
-     */
     public ByteArrayInputStream exportarBuildAExcel(Long idBuild) throws IOException {
         Build build = buildRepository.findById(idBuild)
-                .orElseThrow(() -> {
-                    log.error("No se encontró build con ID: {}", idBuild);
-                    return BuildException.notFound();
-                });
+                .orElseThrow(() -> BuildException.notFound());
 
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            CreationHelper helper = workbook.getCreationHelper();
-            DataFormat format = workbook.createDataFormat();
+        Workbook workbook = ExcelUtils.createWorkbook();
+        CreationHelper helper = workbook.getCreationHelper();
 
-            CellStyle headerStyle = crearEstiloEncabezado(workbook);
-            CellStyle currencyStyle = workbook.createCellStyle();
-            currencyStyle.setDataFormat(format.getFormat("$#,##0.00"));
+        CellStyle headerStyle = ExcelUtils.createHeaderStyle(workbook);
+        CellStyle currencyStyle = ExcelUtils.createCurrencyStyle(workbook);
 
-            Sheet resumenSheet = workbook.createSheet("Resumen");
-            agregarLogo(resumenSheet, helper, workbook);
-            escribirResumen(resumenSheet, build, headerStyle, currencyStyle);
+        Sheet resumenSheet = workbook.createSheet("Resumen");
+        ExcelUtils.agregarLogo(resumenSheet, helper, workbook);
+        escribirResumen(resumenSheet, build, headerStyle, currencyStyle);
 
-            Sheet detalleSheet = workbook.createSheet("Detalle");
-            escribirDetalle(detalleSheet, build, headerStyle, currencyStyle);
+        Sheet detalleSheet = workbook.createSheet("Detalle");
+        escribirDetalle(detalleSheet, build, headerStyle, currencyStyle);
 
-            workbook.write(out);
-            log.info("Exportación de build ID {} a Excel completada.", idBuild);
-            return new ByteArrayInputStream(out.toByteArray());
-        }
+        byte[] bytes = ExcelUtils.writeToBytes(workbook);
+        return new ByteArrayInputStream(bytes);
     }
 
-    /**
-     * Crea un estilo de celda para los encabezados de las tablas.
-     *
-     * @param workbook el libro de trabajo de Excel donde se aplicará el estilo.
-     * @return un {@link CellStyle} configurado para encabezados.
-     */
-    private CellStyle crearEstiloEncabezado(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        Font font = workbook.createFont();
-        font.setBold(true);
-        font.setFontHeightInPoints((short) 12);
-        font.setColor(IndexedColors.WHITE.getIndex());
-        style.setFont(font);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
-        return style;
-    }
+    /** ------------------ RESUMEN ------------------ **/
+    private void escribirResumen(Sheet sheet, Build build,
+            CellStyle headerStyle, CellStyle currencyStyle) {
 
-    /**
-     * Inserta un logotipo en la parte superior de la hoja de resumen.
-     *
-     * @param sheet la hoja de Excel donde se insertará el logotipo.
-     * @param helper el {@link CreationHelper} del libro de trabajo.
-     * @param workbook el {@link Workbook} activo.
-     */
-    private void agregarLogo(Sheet sheet, CreationHelper helper, Workbook workbook) {
-        for (int r = 0; r < 6; r++) { 
-            Row row = sheet.getRow(r);
-            if (row == null)
-                row = sheet.createRow(r);
-            for (int c = 0; c < 4; c++) {
-                Cell cell = row.createCell(c);
-                CellStyle bgStyle = workbook.createCellStyle();
-                bgStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-                bgStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                cell.setCellStyle(bgStyle);
-            }
-        }
-
-        try {
-            byte[] imageBytes = CargarImagen.cargarImagen("static/images/util/logo.png");
-
-            if (imageBytes != null) {
-                int pictureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
-                Drawing<?> drawing = sheet.createDrawingPatriarch();
-                ClientAnchor anchor = helper.createClientAnchor();
-                anchor.setCol1(0);
-                anchor.setRow1(0);
-                anchor.setCol2(4);
-                anchor.setRow2(6);
-                drawing.createPicture(anchor, pictureIdx);
-                log.info("Logo agregado correctamente a la hoja de resumen.");
-            } else {
-                log.warn("No se pudo cargar el logo (bytes nulos).");
-            }
-        } catch (Exception e) {
-            log.warn("Error al agregar el logo: {}", e.getMessage());
-        }
-    }
-
-    /**
-     * Escribe los datos generales de la build y del usuario en la hoja de resumen.
-     *
-     * @param sheet hoja donde se escribirá la información.
-     * @param build la build a exportar.
-     * @param headerStyle estilo para los encabezados.
-     * @param currencyStyle estilo para las celdas con formato monetario.
-     */
-    private void escribirResumen(Sheet sheet, Build build, CellStyle headerStyle, CellStyle currencyStyle) {
-        int rowIdx = 6;
-        Usuario usuario = build.getUsuario();
-
-        CellStyle compatibleStyle = sheet.getWorkbook().createCellStyle();
-        Font compFont = sheet.getWorkbook().createFont();
-        compFont.setBold(true);
-        compatibleStyle.setFont(compFont);
-        compatibleStyle.setFillForegroundColor(
-                build.isCompatible() ? IndexedColors.LIGHT_GREEN.getIndex() : IndexedColors.ROSE.getIndex());
-        compatibleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-        String compatText = build.isCompatible() ? "Sí" : "No";
+        int rowIdx = 7;
 
         String[][] resumen = {
                 { "ID Build", String.valueOf(build.getIdBuild()) },
-                { "Nombre Build", build.getNombre() },
+                { "Nombre", build.getNombre() },
                 { "Fecha Creación", build.getFechaCreacion() != null ? build.getFechaCreacion().toString() : "N/A" },
-                { "Compatible", compatText },
-                { "Costo Total", build.getCostoTotal() != null ? build.getCostoTotal().toString() : "$0.00" },
-                { "Cantidad de Productos", String.valueOf(build.getDetalles().size()) },
-                { "ID Usuario", String.valueOf(usuario.getIdUsuario()) },
-                { "Nombre Usuario", usuario.getUsername() },
-                { "Correo Usuario", usuario.getEmail() },
-                { "Tipo Usuario", usuario.getTipoUsuario() != null ? usuario.getTipoUsuario().name() : "N/A" }
+                { "Compatible", build.isCompatible() ? "Sí" : "No" },
+                { "Costo Total (S/.)", build.getCostoTotal() != null ? build.getCostoTotal().toString() : "S/. 0.00" },
+                { "# Productos", String.valueOf(build.getDetalles().size()) },
+                { "ID Usuario", Long.toString(build.getUsuario().getIdUsuario()) },
+                { "Usuario", build.getUsuario().getUsername() },
+                { "Correo", build.getUsuario().getEmail() },
+                { "Tipo Usuario",
+                        build.getUsuario().getTipoUsuario() != null ? build.getUsuario().getTipoUsuario().name()
+                                : "N/A" }
         };
 
-        for (String[] fila : resumen) {
+        for (String[] item : resumen) {
             Row row = sheet.createRow(rowIdx++);
-            Cell celdaTitulo = row.createCell(0);
-            celdaTitulo.setCellValue(fila[0]);
-            celdaTitulo.setCellStyle(headerStyle);
-            Cell celdaValor = row.createCell(1);
-            celdaValor.setCellValue(fila[1]);
-            if ("Compatible".equals(fila[0])) {
-                celdaValor.setCellStyle(compatibleStyle);
+            ExcelUtils.writeRow(row, null, item[0], item[1]);
+
+            row.getCell(0).setCellStyle(headerStyle);
+
+            if (item[0].equals("Compatible")) {
+                CellStyle comp = sheet.getWorkbook().createCellStyle();
+                comp.cloneStyleFrom(headerStyle);
+                comp.setFillForegroundColor(build.isCompatible()
+                        ? IndexedColors.LIGHT_GREEN.getIndex()
+                        : IndexedColors.ROSE.getIndex());
+                comp.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                row.getCell(1).setCellStyle(comp);
             }
         }
 
-        sheet.autoSizeColumn(0);
-        sheet.autoSizeColumn(1);
+        ExcelUtils.autoSize(sheet, 2);
     }
 
-    /**
-     * Escribe el detalle de productos, atributos y totales en la hoja "Detalle".
-     *
-     * @param sheet hoja de detalle.
-     * @param build la build a exportar.
-     * @param headerStyle estilo para encabezados.
-     * @param currencyStyle estilo para valores monetarios.
-     */
-    private void escribirDetalle(Sheet sheet, Build build, CellStyle headerStyle, CellStyle currencyStyle) {
-        String[] columnasFijas = {
+    /** ------------------ DETALLE ------------------ **/
+    private void escribirDetalle(Sheet sheet, Build build,
+            CellStyle headerStyle, CellStyle currencyStyle) {
+
+        String[] headers = {
                 "Producto", "Marca", "Modelo", "Categoría",
-                "Cantidad", "Precio Unitario", "Subtotal"
+                "Cantidad", "Precio Unitario", "Subtotal",
+                "Atributo", "Valor"
         };
 
+        // Header
         Row headerRow = sheet.createRow(0);
-        for (int i = 0; i < columnasFijas.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(columnasFijas[i]);
-            cell.setCellStyle(headerStyle);
-        }
+        ExcelUtils.writeRow(headerRow, headerStyle, (Object[]) headers);
 
-        Cell attrNameHeader = headerRow.createCell(columnasFijas.length);
-        attrNameHeader.setCellValue("Atributo");
-        attrNameHeader.setCellStyle(headerStyle);
-
-        Cell attrValueHeader = headerRow.createCell(columnasFijas.length + 1);
-        attrValueHeader.setCellValue("Valor");
-        attrValueHeader.setCellStyle(headerStyle);
-
-        List<DetalleBuild> detalles = build.getDetalles();
         int rowIdx = 1;
-        BigDecimal totalBuild = BigDecimal.ZERO;
 
-        for (DetalleBuild detalle : detalles) {
+        for (DetalleBuild detalle : build.getDetalles()) {
             Producto producto = detalle.getProductoTienda().getProducto();
+
             List<ProductoAtributo> atributos = producto.getAtributos();
             int startRow = rowIdx;
 
             for (ProductoAtributo atributo : atributos) {
                 Row row = sheet.createRow(rowIdx++);
+
                 if (row.getRowNum() == startRow) {
-                    row.createCell(0).setCellValue(producto.getNombre());
-                    row.createCell(1).setCellValue(producto.getMarca());
-                    row.createCell(2).setCellValue(producto.getModelo());
-                    row.createCell(3).setCellValue(producto.getCategoria().getNombre());
-                    row.createCell(4).setCellValue(detalle.getCantidad());
+                    ExcelUtils.writeRow(row, null,
+                            producto.getNombre(),
+                            producto.getMarca(),
+                            producto.getModelo(),
+                            producto.getCategoria().getNombre(),
+                            detalle.getCantidad(),
+                            detalle.getPrecioUnitario(),
+                            detalle.getSubTotal());
 
-                    BigDecimal precioUnitario = detalle.getPrecioUnitario() != null ? detalle.getPrecioUnitario() : BigDecimal.ZERO;
-                    Cell precioCell = row.createCell(5);
-                    precioCell.setCellValue(precioUnitario.doubleValue());
-                    precioCell.setCellStyle(currencyStyle);
-
-                    BigDecimal subtotal = detalle.getSubTotal() != null ? detalle.getSubTotal() : BigDecimal.ZERO;
-                    Cell subtotalCell = row.createCell(6);
-                    subtotalCell.setCellValue(subtotal.doubleValue());
-                    subtotalCell.setCellStyle(currencyStyle);
-
-                    totalBuild = totalBuild.add(subtotal);
+                    row.getCell(5).setCellStyle(currencyStyle);
+                    row.getCell(6).setCellStyle(currencyStyle);
                 }
 
                 row.createCell(7).setCellValue(atributo.getAtributo().getNombre());
@@ -261,40 +132,27 @@ public class BuildExportService {
 
             if (atributos.isEmpty()) {
                 Row row = sheet.createRow(rowIdx++);
-                row.createCell(0).setCellValue(producto.getNombre());
-                row.createCell(1).setCellValue(producto.getMarca());
-                row.createCell(2).setCellValue(producto.getModelo());
-                row.createCell(3).setCellValue(producto.getCategoria().getNombre());
-                row.createCell(4).setCellValue(detalle.getCantidad());
 
-                BigDecimal precioUnitario = detalle.getPrecioUnitario() != null ? detalle.getPrecioUnitario() : BigDecimal.ZERO;
-                Cell precioCell = row.createCell(5);
-                precioCell.setCellValue(precioUnitario.doubleValue());
-                precioCell.setCellStyle(currencyStyle);
+                ExcelUtils.writeRow(row, null,
+                        producto.getNombre(),
+                        producto.getMarca(),
+                        producto.getModelo(),
+                        producto.getCategoria().getNombre(),
+                        detalle.getCantidad(),
+                        detalle.getPrecioUnitario(),
+                        detalle.getSubTotal(),
+                        "",
+                        "");
 
-                BigDecimal subtotal = detalle.getSubTotal() != null ? detalle.getSubTotal() : BigDecimal.ZERO;
-                Cell subtotalCell = row.createCell(6);
-                subtotalCell.setCellValue(subtotal.doubleValue());
-                subtotalCell.setCellStyle(currencyStyle);
-
-                totalBuild = totalBuild.add(subtotal);
+                row.getCell(5).setCellStyle(currencyStyle);
+                row.getCell(6).setCellStyle(currencyStyle);
             }
-
-            rowIdx++;
         }
 
-        Row totalRow = sheet.createRow(rowIdx++);
-        Cell totalLabel = totalRow.createCell(5);
-        totalLabel.setCellValue("TOTAL:");
-        totalLabel.setCellStyle(headerStyle);
+        ExcelUtils.autoSize(sheet, 9);
 
-        Cell totalCell = totalRow.createCell(6);
-        totalCell.setCellValue(totalBuild.doubleValue());
-        totalCell.setCellStyle(currencyStyle);
-
-        for (int i = 0; i <= 8; i++) {
-            sheet.autoSizeColumn(i);
-        }
+        int extra = 1500;
+        sheet.setColumnWidth(5, sheet.getColumnWidth(5) + extra); // Precio Unitario
+        sheet.setColumnWidth(6, sheet.getColumnWidth(6) + extra); // Subtotal
     }
-
 }

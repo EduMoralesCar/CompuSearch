@@ -22,24 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * Filtro de autenticación JWT que se ejecuta una vez por cada solicitud.
- * 
- * Este filtro extrae el token JWT desde las cookies de la solicitud, valida el
- * token
- * y, si es válido, establece la autenticación en el contexto de seguridad de
- * Spring.
- * 
- * Funcionalidades principales:
- * <ul>
- * <li>Extraer el token JWT desde la cookie "access_token".</li>
- * <li>Extraer el nombre de usuario del token.</li>
- * <li>Validar el token contra los detalles del usuario cargados desde la base
- * de datos.</li>
- * <li>Configurar la autenticación en el contexto de seguridad si el token es
- * válido.</li>
- * </ul>
- */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -98,13 +80,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * Obtiene el valor de una cookie por nombre.
-     *
-     * @param request La solicitud HTTP.
-     * @param name    Nombre de la cookie a buscar.
-     * @return El valor de la cookie si existe, de lo contrario null.
-     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.equals("/auth/refresh")
+                || path.equals("/auth/login");
+    }
+
     private String getCookieValue(HttpServletRequest request, String name) {
         if (request.getCookies() == null)
             return null;

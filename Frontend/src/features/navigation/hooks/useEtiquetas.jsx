@@ -5,22 +5,50 @@ const BASE_URL = "http://localhost:8080/etiquetas";
 
 export default function useEtiquetas() {
     const [etiquetas, setEtiquetas] = useState([]);
+    
+    const [etiquetasPaginadas, setEtiquetasPaginadas] = useState([]);
+    const [totalPages, setTotalPages] = useState(0); 
+    const [number, setNumber] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
+    
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Obtener todas las etiquetas
-    const cargarEtiquetas = async () => {
+    const cargarEtiquetasPaginadas = async (page = 0, size = 10, sort = 'idEtiqueta,asc') => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(BASE_URL, { withCredentials: true });
-            setEtiquetas(response.data || []);
+            const response = await axios.get(BASE_URL, { 
+                params: { page, size, sort }, 
+                withCredentials: true 
+            });
+            const data = response.data;
+            
+            setEtiquetasPaginadas(data.content || []);
+            setTotalPages(data.totalPages || 0);
+            setNumber(data.number || 0);
+            setTotalElements(data.totalElements || 0);
+            
         } catch (err) {
-            setError(err.response?.data?.message || "Error al cargar etiquetas");
+            setError(err.response?.data?.message || "Error al cargar etiquetas paginadas");
         } finally {
             setLoading(false);
         }
     };
+
+    const cargarEtiquetas = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`${BASE_URL}/todas`, { withCredentials: true });
+            setEtiquetas(response.data || []);
+        } catch (err) {
+            setError(err.response?.data?.message || "Error al cargar todas las etiquetas");
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     // Crear nueva etiqueta
     const crearEtiqueta = async (nombreEtiqueta) => {
@@ -31,6 +59,7 @@ export default function useEtiquetas() {
                 headers: { "Content-Type": "text/plain" },
                 withCredentials: true
             });
+
             setEtiquetas((prev) => [...prev, response.data]);
             return response.data;
         } catch (err) {
@@ -77,16 +106,20 @@ export default function useEtiquetas() {
         }
     };
 
-    // Cargar al montar
     useEffect(() => {
         cargarEtiquetas();
     }, []);
 
     return {
         etiquetas,
+        etiquetasPaginadas,
+        totalPages,
+        number,
+        totalElements,
         loading,
         error,
         cargarEtiquetas,
+        cargarEtiquetasPaginadas,
         crearEtiqueta,
         actualizarEtiqueta,
         eliminarEtiqueta

@@ -13,6 +13,7 @@ import BuildsModal from "../components/builds/modal/BuildsModal";
 import { validarCompatibilidad } from "../validation/validarCompatibilidad"
 import CompatibilidadModal from "../components/builds/modal/CompatibilidadModal"
 import { useLocation } from "react-router-dom";
+import { useMetricas } from "../hooks/useMetricas";
 
 const Builds = () => {
     // Obtener si el usuario inicio sesion
@@ -36,6 +37,7 @@ const Builds = () => {
     const [showCompatModal, setShowCompatModal] = useState(false);
     const [erroresCompatibilidad, setErroresCompatibilidad] = useState([]);
 
+    const { incrementarBuilds } = useMetricas();
 
     const [page, setPage] = useState(0); // Paginacion del modal de productos
 
@@ -56,7 +58,7 @@ const Builds = () => {
     const { search } = useLocation();
     const params = new URLSearchParams(search);
     const idBuildParametro = params.get("idBuild");
-    
+
 
     // Funciones para las buiilds
     const {
@@ -112,8 +114,21 @@ const Builds = () => {
         };
 
         cargarBuildPorId();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const updateMetricsForDetails = async (detalles, incrementarBuilds) => {
+        if (!detalles || detalles.length === 0) {
+            return;
+        }
+
+        detalles.map(detalle => {
+            if (detalle.idProductoTienda) {
+                return incrementarBuilds(detalle.idProductoTienda);
+            }
+            return Promise.resolve(null);
+        });
+    };
 
     const totalCosto = Object.values(buildActualizada).reduce(
         (acc, item) => acc + item.subtotal,
@@ -270,6 +285,8 @@ const Builds = () => {
             subTotal: item.subtotal
         }));
 
+        updateMetricsForDetails(detalles, incrementarBuilds);
+
         const buildData = {
             nombre: nombreActualizado,
             compatible: resultadoCompat.compatible,
@@ -318,12 +335,18 @@ const Builds = () => {
             return;
         }
 
+        ejecutarActualizacion();
+    }
+
+    const ejecutarActualizacion = async () => {
         const detalles = Object.values(buildActualizada).map(item => ({
             idProductoTienda: item.idProductoTienda,
             cantidad: item.cantidad,
             precioUnitario: item.precio,
             subTotal: item.subtotal
         }));
+
+        updateMetricsForDetails(detalles, incrementarBuilds);
 
         const buildData = {
             nombre: nombreActualizado,
@@ -341,7 +364,7 @@ const Builds = () => {
                 ? "¡Tu build fue actualizado exitosamente!"
                 : "Error al actualizar tu build. Intenta nuevamente."
         );
-    }
+    };
 
     // Elimina la build
     const handleEliminar = async () => {
@@ -367,7 +390,6 @@ const Builds = () => {
                 : "Error al eliminar el armado. Intenta nuevamente."
         );
     }
-
 
     const handleSeleccionarBuild = (build) => {
         const armado = convertirBuildADisplay(build.detalles);
@@ -418,11 +440,10 @@ const Builds = () => {
                 errores={erroresCompatibilidad}
                 onConfirmar={() => {
                     setShowCompatModal(false);
-                    guardarBuildFinal();
+                    idBuild === null ? guardarBuildFinal() : ejecutarActualizacion();
                 }}
                 onCancelar={() => setShowCompatModal(false)}
             />
-
 
             <BuildsModal
                 show={showModalBuild}
@@ -432,8 +453,8 @@ const Builds = () => {
                 obtenerBuildsPorUsuario={obtenerBuildsPorUsuario}
             />
 
-            <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} 
-                message="Debes iniciar sesión o registrarte para guardar o descargar tu armado."/>
+            <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)}
+                message="Debes iniciar sesión o registrarte para guardar o descargar tu armado." />
 
             <BuildProductModal
                 show={showModalProductos}

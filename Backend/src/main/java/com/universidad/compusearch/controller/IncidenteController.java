@@ -21,17 +21,6 @@ import com.universidad.compusearch.service.IncidenteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Controlador REST para manejar las operaciones relacionadas con incidentes.
- *
- * <p>
- * Permite crear incidentes y obtener los incidentes de un usuario específico.
- * </p>
- *
- * <p>
- * Base URL: <b>/incidentes</b>
- * </p>
- */
 @RestController
 @Slf4j
 @RequestMapping("/incidentes")
@@ -40,16 +29,6 @@ public class IncidenteController {
 
     private final IncidenteService incidenteService;
 
-    /**
-     * Obtiene los incidentes de un usuario específico de manera paginada.
-     *
-     * Endpoint: GET /incidentes/{@literal /incidentes/{id}?page={page}&size={size}}
-     *
-     * @param id   ID del usuario
-     * @param page Número de página (opcional, por defecto 0)
-     * @param size Tamaño de la página (opcional, por defecto 10)
-     * @return ResponseEntity con la página de incidentes del usuario
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Page<Incidente>> obtenerIncidentesUsuario(
             @PathVariable Long id,
@@ -60,19 +39,6 @@ public class IncidenteController {
         return ResponseEntity.ok(incidentes);
     }
 
-    /**
-     * Crea un nuevo incidente para un usuario.
-     *
-     * Endpoint: POST /incidentes
-     *
-     * @param request Objeto IncidenciaResponse que contiene:
-     *                <ul>
-     *                <li>idUsuario: ID del usuario</li>
-     *                <li>titulo: Título del incidente</li>
-     *                <li>descripcion: Descripción del incidente</li>
-     *                </ul>
-     * @return ResponseEntity con el incidente creado y código HTTP 201
-     */
     @PostMapping
     public ResponseEntity<MessageResponse> crearIncidente(@RequestBody IncidenciaRequest request) {
         log.info("Creando nuevo incidente para usuario: {}", request.getIdUsuario());
@@ -88,17 +54,8 @@ public class IncidenteController {
         return ResponseEntity.ok(new MessageResponse("Incidencia creada con exito"));
     }
 
-    /**
-     * Obtiene todas las incidencias de manera paginada.
-     *
-     * Endpoint: GET {@literal /incidentes?page={page}&size={size}}
-     *
-     * @param page Número de página (opcional, por defecto 0)
-     * @param size Tamaño de la página (opcional, por defecto 10)
-     * @return ResponseEntity con la página de incidencias
-     */
     @GetMapping
-    public ResponseEntity<Page<IncidenteResponse>> obtenerSolicitudesPaginadas(
+    public ResponseEntity<Page<IncidenteResponse>> obtenerTodosIncidentes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -108,16 +65,6 @@ public class IncidenteController {
         return ResponseEntity.ok(incidentes);
     }
 
-    /**
-     * Elimina una incidencia específica por su ID.
-     *
-     * <p>
-     * Endpoint: DELETE /incidentes/{id}
-     * </p>
-     *
-     * @param id ID del incidente a eliminar
-     * @return ResponseEntity con un mensaje de confirmación
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> eliminarIncidente(@PathVariable Long id) {
         log.info("Solicitud para eliminar el incidente con id: {}", id);
@@ -128,14 +75,6 @@ public class IncidenteController {
         return ResponseEntity.ok(new MessageResponse("Incidente eliminado exitosamente"));
     }
 
-    /**
-     * Marca un incidente como revisado o no revisado.
-     *
-     * @param idIncidente ID del incidente que se desea actualizar.
-     * @param revisado    Estado del campo revisado (true = revisado, false = no
-     *                    revisado).
-     * @return Mensaje de confirmación y el estado actualizado.
-     */
     @PutMapping("/{idIncidente}/revisado")
     public ResponseEntity<MessageResponse> actualizarEstadoRevisado(
             @PathVariable Long idIncidente,

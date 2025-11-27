@@ -7,11 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * DTO utilizado para manejar las solicitudes de inicio de sesión.
- * 
- * Contiene los campos necesarios para autenticar a un usuario.
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

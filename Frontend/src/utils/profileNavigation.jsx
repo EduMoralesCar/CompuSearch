@@ -7,18 +7,18 @@ export const getProfileNavigation = (isAuthenticated, tipoUsuario) => {
         };
     }
 
+    if (tipoUsuario === "TIENDA") {
+        return {
+            path: "/modal-selector", 
+            iconClass: "bi-shop",
+            text: "Seleccionar Perfil",
+        };
+    }
+
     if (tipoUsuario === "EMPLEADO") {
         return {
             path: "/perfil/empleado",
             iconClass: "bi-shield-lock-fill",
-            text: "Mi Tienda",
-        };
-    }
-
-    if (tipoUsuario === "TIENDA") {
-        return {
-            path: "/perfil/tienda",
-            iconClass: "bi-shop",
             text: "Administrador",
         };
     }

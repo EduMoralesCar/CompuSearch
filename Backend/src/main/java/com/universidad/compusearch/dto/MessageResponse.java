@@ -5,15 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * DTO utilizado para devolver mensajes simples en las respuestas HTTP,
- * como confirmaciones o notificaciones de error.
- *
- * Ejemplo:
- * {
- *   "message": "Contraseña actualizada correctamente"
- * }
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

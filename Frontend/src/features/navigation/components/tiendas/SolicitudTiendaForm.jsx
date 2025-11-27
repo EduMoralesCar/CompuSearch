@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Alert, Spinner, Card, Row, Col } from "react-bootstrap";
 import axios from "axios";
 
-const SolicitudTiendaForm = ({ idUsuario }) => {
+const SolicitudTiendaForm = ({ idUsuario, validarAutenticacion }) => {
     const [formData, setFormData] = useState({
         nombreTienda: "",
         descripcion: "",
@@ -29,6 +29,7 @@ const SolicitudTiendaForm = ({ idUsuario }) => {
     };
 
     const validarFormulario = () => {
+
         const nuevosErrores = {};
         const {
             nombreTienda,
@@ -95,17 +96,18 @@ const SolicitudTiendaForm = ({ idUsuario }) => {
         setMensaje(null);
         setErrorGeneral(null);
 
+        if (!validarAutenticacion()) return;
+
         const esValido = validarFormulario();
         if (!esValido) return;
 
         setLoading(true);
 
         try {
-            const datosFormulario = JSON.stringify(formData);
 
             await axios.post(
                 `http://localhost:8080/solicitud/${idUsuario}`,
-                { datosFormulario },
+                formData ,
                 { withCredentials: true }
             );
 

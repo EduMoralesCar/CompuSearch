@@ -1,4 +1,13 @@
+import { useMetricas } from "../../hooks/useMetricas";
+
 const ProductoInfo = ({ productoInfo }) => {
+
+    const { incrementarVisitas } = useMetricas();
+
+    const updateMetricsVistas = async () => {
+        await incrementarVisitas(productoInfo.idProductoTienda)
+    };
+
     if (!productoInfo) return null;
     
     const {
@@ -54,6 +63,7 @@ const ProductoInfo = ({ productoInfo }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-outline-primary btn-lg px-4 py-2"
+                        onClick={updateMetricsVistas}
                     >
                         Ver en tienda
                     </a>

@@ -16,8 +16,8 @@ const MisBuilds = () => {
         if (idUsuario) {
             const fetchBuilds = async () => {
                 const res = await obtenerBuildsPorUsuario(idUsuario, page, 5);
+                console.log(res)
                 if (res) {
-                    
                     setTotalPages(res.data.totalPages || 0);
                 }
             };
@@ -43,7 +43,14 @@ const MisBuilds = () => {
     if (builds.length === 0) {
         return (
             <Alert variant="info">
-                Aún no tienes ninguna construcción guardada. <Alert.Link href="/builds">¡Crea una ahora!</Alert.Link>
+                Aún no tienes ninguna construcción guardada.{" "}
+                <Alert.Link
+                    as="button"
+                    className="btn btn-link p-0 m-0 align-baseline"
+                    onClick={() => navigate("/builds")}
+                >
+                    ¡Crea una ahora!
+                </Alert.Link>
             </Alert>
         );
     }
@@ -95,10 +102,17 @@ const MisBuilds = () => {
                                         </Button>
 
                                         <ul>
-                                            {producto.detalles.map(attr => (
-                                                <li key={attr.nombreAtributo}><strong>{attr.nombreAtributo}:</strong> {attr.valor}</li>
+                                            {(producto?.detalles ?? []).map(attr => (
+                                                <li key={attr.nombreAtributo}>
+                                                    <strong>{attr.nombreAtributo}:</strong> {attr.valor}
+                                                </li>
                                             ))}
+
+                                            {(!producto?.detalles || producto.detalles.length === 0) && (
+                                                <li className="text-muted">Sin detalles adicionales</li>
+                                            )}
                                         </ul>
+
                                     </Accordion.Body>
                                 </Accordion.Item>
                             ))}

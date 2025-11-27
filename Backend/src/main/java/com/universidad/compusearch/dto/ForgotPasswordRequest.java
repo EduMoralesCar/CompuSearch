@@ -7,10 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * DTO utilizado para solicitar el restablecimiento de contraseña.
- * Contiene el correo electrónico del usuario y el dispositivo desde el cual realiza la solicitud.
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

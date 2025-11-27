@@ -8,51 +8,36 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.universidad.compusearch.dto.ProductoBuildResponse;
+import com.universidad.compusearch.dto.ProductoTiendaAdminResponse;
 import com.universidad.compusearch.dto.TiendaProductoDisponibleResponse;
 import com.universidad.compusearch.entity.ProductoTienda;
+import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.exception.ProductoTiendaException;
+import com.universidad.compusearch.exception.TiendaException;
 import com.universidad.compusearch.repository.ProductoTiendaRepository;
+import com.universidad.compusearch.repository.TiendaRepository;
 import com.universidad.compusearch.specification.ProductoTiendaSpecification;
 import com.universidad.compusearch.specification.ProductoTiendaSpecificationFactory;
-import com.universidad.compusearch.util.ProductoTiendaMapper;
+import com.universidad.compusearch.util.Mapper;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Servicio para gestionar productos de tiendas.
- * <p>
- * Permite filtrar, buscar y obtener información de productos por categoría,
- * tienda,
- * nombre, atributos adicionales y otros criterios.
- * </p>
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ProductoTiendaService {
 
         private final ProductoTiendaRepository productoTiendaRepository;
+        private final TiendaRepository tiendaRepository;
 
-        /**
-         * Filtra productos por categoría y otros criterios opcionales.
-         *
-         * @param categoria    nombre de la categoría
-         * @param nombreTienda nombre de la tienda (opcional)
-         * @param marca        marca del producto (opcional)
-         * @param precioMax    precio máximo (opcional)
-         * @param precioMin    precio mínimo (opcional)
-         * @param disponible   si se busca solo productos disponibles (opcional)
-         * @param habilitado   si se busca solo productos habilitados (opcional)
-         * @param filtrosExtra mapa con filtros adicionales (atributos)
-         * @param page         número de página
-         * @param size         tamaño de página
-         * @return página de productos filtrados
-         */
+        // Filtrar productos de tiendas por diferentes parametros
         public Page<ProductoTienda> filtrarPorCategoria(
                         String categoria,
                         String nombreTienda,
@@ -79,14 +64,7 @@ public class ProductoTiendaService {
                 return productos;
         }
 
-        /**
-         * Busca productos por nombre parcial o completo.
-         *
-         * @param nombreProducto nombre o parte del nombre del producto
-         * @param page           número de página
-         * @param size           tamaño de página
-         * @return página de productos que coinciden con el nombre
-         */
+        // Buscar producto de tienda por nombre
         public Page<ProductoTienda> buscarPorNombreProducto(String nombreProducto, int page, int size) {
                 log.info("Buscando productos por nombre o parecido: '{}'", nombreProducto);
 
@@ -100,27 +78,15 @@ public class ProductoTiendaService {
                 return productos;
         }
 
-        /**
-         * Busca un producto específico en una tienda específica.
-         *
-         * @param nombreProducto nombre del producto
-         * @param nombreTienda   nombre de la tienda
-         * @return producto de la tienda
-         * @throws ProductoTiendaException si no se encuentra el producto en la tienda
-         */
+        // Buscar producto por nombre especifico
         public ProductoTienda buscarPorNombreProductoEspecifico(String nombreProducto, String nombreTienda) {
                 log.info("Buscando producto '{}' en la tienda '{}'", nombreProducto, nombreTienda);
 
                 return productoTiendaRepository.findByNombreProductoAndNombreTienda(nombreProducto, nombreTienda)
-                                .orElseThrow(() -> ProductoTiendaException.notFoundProductoOrShop());
+                                .orElseThrow(() -> ProductoTiendaException.notFoundProductoShop());
         }
 
-        /**
-         * Obtiene todas las tiendas donde un producto específico está disponible.
-         *
-         * @param nombreProducto nombre del producto
-         * @return lista de tiendas con disponibilidad del producto
-         */
+        // Obtener tiendas que tengan un producto con x nombre
         public List<TiendaProductoDisponibleResponse> obtenerTiendasPorNombreProducto(String nombreProducto) {
                 List<ProductoTienda> productosTienda = productoTiendaRepository.findByNombreProducto(nombreProducto);
 
@@ -133,14 +99,7 @@ public class ProductoTiendaService {
                                 .collect(Collectors.toList());
         }
 
-        /**
-         * Obtiene productos habilitados de una categoría para construir builds.
-         *
-         * @param categoria nombre de la categoría
-         * @param page      número de página
-         * @param size      tamaño de página
-         * @return página de productos mapeados a ProductoBuildResponse
-         */
+        // Obtener productos de tiendas que estan en builds
         public Page<ProductoBuildResponse> obtenerProductosBuilds(String categoria, int page, int size) {
                 log.info("Buscando productos para build de categoría: {}", categoria);
 
@@ -151,19 +110,73 @@ public class ProductoTiendaService {
 
                 Page<ProductoTienda> productos = productoTiendaRepository.findAll(spec, pageable);
 
-                return productos.map(ProductoTiendaMapper::mapToProductoBuildResponse);
+                return productos.map(Mapper::mapToProductoBuildResponse);
         }
 
-        /**
-         * Obtiene un producto de tienda por su ID.
-         *
-         * @param idProductoTienda ID del producto en la tienda
-         * @return producto de la tienda
-         * @throws ProductoTiendaException si no se encuentra el producto
-         */
+        // Obtener un producto de tienda por id
         public ProductoTienda obtenerPorId(long idProductoTienda) {
                 log.info("Obteniendo producto tienda con id: {}", idProductoTienda);
                 return productoTiendaRepository.findById(idProductoTienda)
-                                .orElseThrow(() -> ProductoTiendaException.notFoundProductoOrShop());
+                                .orElseThrow(() -> ProductoTiendaException.notFoundProductoShop());
+        }
+
+        // Cambiar habilitado
+        @Transactional
+        public void actualizarHabilitado(Long id, boolean habilitado) {
+                log.info("Buscando producto tienda con id {}", id);
+                productoTiendaRepository.actualizarHabilitado(id, habilitado);
+                log.info("Habilitado modificado correctamente a {}", habilitado);
+        }
+
+        public Page<ProductoTiendaAdminResponse> obtenerProductosFiltrados(
+                        Long idTienda,
+                        int page,
+                        int size,
+                        String categoria,
+                        String sort) {
+
+                Tienda tienda = tiendaRepository.findById(idTienda)
+                                .orElseThrow(null);
+
+                if (tienda == null)
+                        throw TiendaException.notFound();
+
+                Sort sortConfig = parseSort(sort);
+
+                Pageable pageable = PageRequest.of(page, size, sortConfig);
+
+                Page<ProductoTienda> pageProductos;
+
+                if (categoria != null && !categoria.isBlank()) {
+                        pageProductos = productoTiendaRepository
+                                        .findByTienda_IdUsuarioAndProducto_Categoria_NombreIgnoreCase(
+                                                        idTienda, categoria, pageable);
+
+                } else {
+                        pageProductos = productoTiendaRepository.findByTienda_idUsuario(idTienda, pageable);
+                }
+
+                return pageProductos.map(Mapper::mapToProductoTiendaAdminResponse);
+        }
+
+        private Sort parseSort(String sort) {
+                try {
+                        String[] parts = sort.split(",");
+                        String field = parts[0];
+                        String direction = parts.length > 1 ? parts[1] : "asc";
+
+                        return direction.equalsIgnoreCase("desc")
+                                        ? Sort.by(field).descending()
+                                        : Sort.by(field).ascending();
+
+                } catch (Exception e) {
+                        return Sort.by("precio").ascending();
+                }
+        }
+
+        public List<ProductoTienda> obtenerProductosPorTienda(Long idTienda) {
+                List<ProductoTienda> productos = productoTiendaRepository.findByTienda_idUsuario(idTienda);
+                log.info("Productos encontrados, devolviendo productos total: ", productos.size());
+                return productos;
         }
 }
