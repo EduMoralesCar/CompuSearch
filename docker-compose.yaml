@@ -1,17 +1,22 @@
 services:
-  backend:
-    build: ./backend
-    container_name: compusearch-backend
-    env_file:
-      - .env
-    ports:
-      - "8080:8080"
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - app-network
-    restart: unless-stopped
+
+backend:
+  build: ./backend
+  container_name: compusearch-backend
+  env_file:
+    - .env
+  ports:
+    - "8080:8080"
+  depends_on:
+    mysql:
+      condition: service_healthy
+  networks:
+    - app-network
+  restart: unless-stopped
+  volumes:
+    - ./backups:/var/backups
+  command: >
+    sh -c " apt-get update && apt-get install -y mysql-client gzip && java -jar app.jar "
 
   frontend:
     build: ./frontend
@@ -39,7 +44,7 @@ services:
       - app-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
       interval: 10s
       timeout: 5s
       retries: 5
