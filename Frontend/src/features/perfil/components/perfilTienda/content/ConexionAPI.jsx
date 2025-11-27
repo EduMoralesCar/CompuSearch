@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useTiendas } from "../../../hooks/useTiendas";
-import { Card, Button, Form, Alert, Spinner, Badge, Container, Row, Col, Stack } from "react-bootstrap";
+import { Card, Button, Form, Alert, Spinner, Badge, Container, Row, Col } from "react-bootstrap";
 
 const ConexionAPI = ({ idTienda }) => {
     const { obtenerApi, actualizarApi, probarApi, loading, error } = useTiendas();
@@ -9,21 +9,24 @@ const ConexionAPI = ({ idTienda }) => {
     const [nuevaUrl, setNuevaUrl] = useState("");
     const [status, setStatus] = useState({ type: "", message: "" });
 
-    const showStatus = (type, message) => {
+    // Mostrar mensaje temporal
+    const showStatus = useCallback((type, message, duration = 4000) => {
         setStatus({ type, message });
-        setTimeout(() => setStatus({ type: "", message: "" }), 4000);
-    };
+        setTimeout(() => setStatus({ type: "", message: "" }), duration);
+    }, []);
+
+    // Cargar API al montar
+    const cargarApi = useCallback(async () => {
+        const resp = await obtenerApi(idTienda);
+        if (resp.success) {
+            setApiActual(resp.data);
+            setNuevaUrl(resp.data?.urlBase || "");
+        }
+    }, [idTienda, obtenerApi]);
 
     useEffect(() => {
-        const cargarApi = async () => {
-            const resp = await obtenerApi(idTienda);
-            if (resp.success) {
-                setApiActual(resp.data);
-                setNuevaUrl(resp.data?.urlBase || "");
-            }
-        };
         cargarApi();
-    }, [idTienda, obtenerApi]);
+    }, [cargarApi]);
 
     const handleGuardar = async () => {
         if (!nuevaUrl.trim()) {
@@ -32,7 +35,6 @@ const ConexionAPI = ({ idTienda }) => {
         }
 
         const resp = await actualizarApi(idTienda, nuevaUrl);
-
         if (resp.success) {
             setApiActual(prev => ({ ...prev, urlBase: nuevaUrl, estadoAPI: resp.data }));
             showStatus("success", "API actualizada correctamente.");
@@ -51,9 +53,14 @@ const ConexionAPI = ({ idTienda }) => {
         }
     };
 
+    const renderEstadoBadge = (estado) => {
+        const variant = estado === "ACTIVA" ? "success" : estado === "INACTIVA" ? "warning" : "danger";
+        return <Badge bg={variant}>{estado || "DESCONOCIDO"}</Badge>;
+    };
+
     return (
         <Container className="py-4">
-            {/* Título y descripción */}
+            {/* Título */}
             <Row className="mb-4">
                 <Col>
                     <h2 className="fw-bold text-primary mb-1">Conexión a API</h2>
@@ -77,7 +84,6 @@ const ConexionAPI = ({ idTienda }) => {
             {/* Card principal */}
             <Card className="shadow-sm border-0">
                 <Card.Body>
-                    {/* Estado de la API */}
                     {apiActual ? (
                         <>
                             <div className="mb-3">
@@ -87,15 +93,7 @@ const ConexionAPI = ({ idTienda }) => {
 
                             <div className="mb-4">
                                 <p className="mb-1"><strong>Estado:</strong></p>
-                                <Badge
-                                    bg={
-                                        apiActual.estadoAPI === "ACTIVA" ? "success" :
-                                            apiActual.estadoAPI === "INACTIVA" ? "warning" :
-                                                "danger"
-                                    }
-                                >
-                                    {apiActual.estadoAPI || "DESCONOCIDO"}
-                                </Badge>
+                                {renderEstadoBadge(apiActual.estadoAPI)}
                             </div>
                         </>
                     ) : (
@@ -105,7 +103,7 @@ const ConexionAPI = ({ idTienda }) => {
                         </Alert>
                     )}
 
-                    {/* Formulario de URL */}
+                    {/* Formulario */}
                     <Form.Group className="mb-4">
                         <Form.Label className="fw-medium">Nueva URL base</Form.Label>
                         <Form.Text className="text-muted d-block mb-2">
@@ -122,12 +120,7 @@ const ConexionAPI = ({ idTienda }) => {
 
                     {/* Botones */}
                     <div className="d-flex flex-wrap gap-2">
-                        <Button
-                            variant="primary"
-                            onClick={handleGuardar}
-                            disabled={loading}
-                            className="flex-shrink-0"
-                        >
+                        <Button variant="primary" onClick={handleGuardar} disabled={loading}>
                             {loading ? (
                                 <>
                                     <Spinner size="sm" className="me-2" animation="border" />
@@ -137,12 +130,7 @@ const ConexionAPI = ({ idTienda }) => {
                         </Button>
 
                         {apiActual?.urlBase && (
-                            <Button
-                                variant="dark"
-                                onClick={handleProbar}
-                                disabled={loading}
-                                className="flex-shrink-0"
-                            >
+                            <Button variant="dark" onClick={handleProbar} disabled={loading}>
                                 {loading ? (
                                     <>
                                         <Spinner size="sm" className="me-2" animation="border" />
@@ -152,7 +140,6 @@ const ConexionAPI = ({ idTienda }) => {
                             </Button>
                         )}
                     </div>
-
                 </Card.Body>
             </Card>
         </Container>
