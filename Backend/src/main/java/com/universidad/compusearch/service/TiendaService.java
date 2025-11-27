@@ -219,7 +219,8 @@ public class TiendaService {
     }
 
     public EstadoAPI llamarApiExterna(TiendaAPI api) {
-        String url = "http://localhost:8081/";
+        // String url = "http://localhost:8081/"; Sin docker
+        String url = "http://host.docker.internal:8081/";
 
         log.info("Probando la url de la api: {}", url);
 

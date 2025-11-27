@@ -60,7 +60,8 @@ public class ApiService {
     }
 
     private void procesarProductosDeTienda(Tienda tienda) {
-        String baseUrl = "http://localhost:8081/producto";
+        //String baseUrl = "http://localhost:8081/producto"; Usan sin docker
+        String baseUrl = "http://host.docker.internal:8081/producto";
         String requestParam = tienda.getTiendaAPI().getUrlBase();
 
         try {
