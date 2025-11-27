@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import NavbarMobile from "./NavbarMobile";
 import NavbarDesktop from "./NavbarDesktop";
 import SearchBar from "./SearchBar";
@@ -71,12 +71,10 @@ const Header = () => {
             <header className="fixed-top">
                 <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
                     <div className="container-fluid">
-                        {/* Logo */}
                         <NavLink className="navbar-brand d-flex align-items-center" to="/">
                             <img src={Logo} alt="Logo" height="60" className="me-2" />
                         </NavLink>
 
-                        {/* Botón toggle */}
                         <button
                             className="navbar-toggler"
                             type="button"
@@ -89,7 +87,6 @@ const Header = () => {
                             <span className="navbar-toggler-icon"></span>
                         </button>
 
-                        {/* Contenido colapsable */}
                         <div className="collapse navbar-collapse" id="navbarCompuSearch">
                             <NavbarMobile />
                             <SearchBar />
@@ -98,7 +95,6 @@ const Header = () => {
                     </div>
                 </nav>
 
-                {/* Barra secundaria solo en escritorio */}
                 <nav className="navbar navbar-expand navbar-dark bg-dark d-none d-lg-block">
                     <div className="container-fluid">
                         <NavbarDesktop secondary />

@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
-import axios from 'axios';
+import { useState, useCallback } from "react";
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8080/plan';
+const API_BASE_URL = "http://localhost:8080/plan";
 
 export function usePlanes() {
     const [planes, setPlanes] = useState([]);
@@ -10,26 +10,28 @@ export function usePlanes() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const handleError = (err, defaultMessage) => {
-        const errorMessage = err.response?.data?.message || defaultMessage;
+    // Manejo centralizado de errores
+    const handleError = useCallback((err, defaultMessage) => {
+        const message = err.response?.data?.message || defaultMessage;
         console.error("Error en la solicitud:", err);
-        setError(errorMessage);
-        return errorMessage; // Retorna solo el mensaje para que la función llamadora decida qué devolver.
-    };
-    
+        setError(message);
+        return message;
+    }, []);
+
     const clearError = useCallback(() => setError(null), []);
 
-    const obtenerTodosLosPlanes = useCallback(async (page = 0, size = 10, nombre = '', incluirInactivos = false) => {
+    const obtenerTodosLosPlanes = useCallback(async (page = 0, size = 10, nombre = "", incluirInactivos = false) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(API_BASE_URL, {
+            const { data } = await axios.get(API_BASE_URL, {
                 params: { page, size, nombre, incluirInactivos },
                 withCredentials: true
             });
-            const data = response.data; 
+
             setPlanes(data.content || []);
             setTotalPages(data.totalPages || 0);
+
             return data.content || [];
         } catch (err) {
             handleError(err, "Error al obtener la lista de planes.");
@@ -37,17 +39,15 @@ export function usePlanes() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [handleError]);
 
     const obtenerPlanPorId = useCallback(async (id) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`${API_BASE_URL}/${id}`, {
-                withCredentials: true
-            });
-            setPlanDetalle(response.data);
-            return response.data;
+            const { data } = await axios.get(`${API_BASE_URL}/${id}`, { withCredentials: true });
+            setPlanDetalle(data);
+            return data;
         } catch (err) {
             handleError(err, `Error al obtener el plan con ID: ${id}`);
             setPlanDetalle(null);
@@ -55,53 +55,40 @@ export function usePlanes() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [handleError]);
 
-    const crearPlan = async (planData) => {
+    const crearPlan = useCallback(async (planData) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.post(API_BASE_URL, planData, {
-                withCredentials: true
-            });
-            
-            // Éxito: Retorna un objeto con success: true
-            return { success: true, data: response.data }; 
-
+            const { data } = await axios.post(API_BASE_URL, planData, { withCredentials: true });
+            return { success: true, data };
         } catch (err) {
-            // Error: Retorna un objeto con success: false y el mensaje de error
-            const errorMessage = handleError(err, "Error al crear el nuevo plan.");
-            return { success: false, error: errorMessage };
-
+            return { success: false, error: handleError(err, "Error al crear el nuevo plan.") };
         } finally {
             setLoading(false);
         }
-    };
+    }, [handleError]);
 
-    const actualizarPlan = async (id, planData) => {
+    const actualizarPlan = useCallback(async (id, planData) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.put(`${API_BASE_URL}/${id}`, planData, {
-                withCredentials: true
-            });
+            const { data } = await axios.put(`${API_BASE_URL}/${id}`, planData, { withCredentials: true });
 
-            if (planDetalle && planDetalle.idPlan === id) {
-                setPlanDetalle(response.data);
+            if (planDetalle?.idPlan === id) {
+                setPlanDetalle(data);
             }
-            
-            return { success: true, data: response.data };
 
+            return { success: true, data };
         } catch (err) {
-            const errorMessage = handleError(err, `Error al actualizar el plan con ID: ${id}`);
-            return { success: false, error: errorMessage };
-            
+            return { success: false, error: handleError(err, `Error al actualizar el plan con ID: ${id}`) };
         } finally {
             setLoading(false);
         }
-    };
-    
-    const actualizarEstadoActivo = async (id, activo) => {
+    }, [handleError, planDetalle]);
+
+    const actualizarEstadoActivo = useCallback(async (id, activo) => {
         setLoading(true);
         setError(null);
         try {
@@ -110,27 +97,19 @@ export function usePlanes() {
                 withCredentials: true
             });
 
-            setPlanes(prevPlanes => 
-                prevPlanes.map(p => 
-                    p.idPlan === id ? { ...p, activo } : p
-                )
-            );
+            setPlanes(prev => prev.map(p => p.idPlan === id ? { ...p, activo } : p));
 
-            if (planDetalle && planDetalle.idPlan === id) {
-                setPlanDetalle(prevDetalle => ({ ...prevDetalle, activo }));
+            if (planDetalle?.idPlan === id) {
+                setPlanDetalle(prev => ({ ...prev, activo }));
             }
-            
-            return { success: true }; 
 
+            return { success: true };
         } catch (err) {
-            const errorMessage = handleError(err, `Error al cambiar el estado activo del plan ID: ${id}`);
-            return { success: false, error: errorMessage };
-            
+            return { success: false, error: handleError(err, `Error al cambiar el estado activo del plan ID: ${id}`) };
         } finally {
             setLoading(false);
         }
-    };
-
+    }, [handleError, planDetalle]);
 
     return {
         planes,
@@ -138,12 +117,11 @@ export function usePlanes() {
         totalPages,
         loading,
         error,
-
         obtenerTodosLosPlanes,
         obtenerPlanPorId,
         crearPlan,
         actualizarPlan,
         actualizarEstadoActivo,
-        clearError, 
+        clearError,
     };
 }

@@ -1,18 +1,13 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTiendas } from "../../../hooks/useTiendas";
 import TablaTiendas from "../table/TablaTiendas";
-import ModalDetalleTienda from "../modal/ModalDetalleTienda"
+import ModalDetalleTienda from "../modal/ModalDetalleTienda";
 import { FiRefreshCw } from "react-icons/fi";
+import HeaderBase from '../auxiliar/HeaderBase';
+import PaginacionBase from '../auxiliar/PaginacionBase';
+import { Spinner, Row, Button, Card, InputGroup, FormControl } from 'react-bootstrap';
 
-import {
-    Spinner,
-    Row,
-    Button,
-    Card,
-    InputGroup,
-    Pagination,
-    FormControl
-} from 'react-bootstrap';
+const PAGE_SIZE = 10;
 
 const GestionTiendas = () => {
     const {
@@ -32,15 +27,13 @@ const GestionTiendas = () => {
     const [showModal, setShowModal] = useState(false);
     const [detailsLoading, setDetailsLoading] = useState(false);
 
-    const pageSize = 10;
-
-    const loadTiendas = useCallback(async (p, filters) => {
-        const result = await obtenerTiendasPaginadas(p, pageSize, filters);
+    const loadTiendas = useCallback(async (p = 0, filters = {}) => {
+        const result = await obtenerTiendasPaginadas(p, PAGE_SIZE, filters);
         if (result.success) {
             setTiendasData(result.data);
             setPage(result.data.number);
         } else {
-            console.error("Fallo al cargar tiendas:", result.error);
+            console.error("Error al cargar tiendas:", result.error);
         }
     }, [obtenerTiendasPaginadas]);
 
@@ -48,36 +41,26 @@ const GestionTiendas = () => {
         loadTiendas(page, { nombre: currentFilter });
     }, [page, currentFilter, loadTiendas]);
 
-    const handleFilterChange = () => {
-        setCurrentFilter(filterName);
+    const handleFilterChange = () => setCurrentFilter(filterName);
+
+    const handleClearFilter = () => {
+        setFilterName('');
+        setCurrentFilter('');
         setPage(0);
     };
 
-    const handleToggleEstado = async (idUsuario, nuevoEstado) => {
-        const result = await actualizarEstado(idUsuario, nuevoEstado);
+    const handleToggle = async (idUsuario, nuevoValor, type = 'estado') => {
+        const action = type === 'estado' ? actualizarEstado : actualizarVerificacion;
+        const result = await action(idUsuario, nuevoValor);
         if (result.success) {
             setTiendasData(prev => ({
                 ...prev,
                 content: prev.content.map(t =>
-                    t.idUsuario === idUsuario ? { ...t, activo: nuevoEstado } : t
+                    t.idUsuario === idUsuario ? { ...t, [type === 'estado' ? 'activo' : 'verificado']: nuevoValor } : t
                 )
             }));
         } else {
-            alert(`Fallo al actualizar el estado: ${result.error}`);
-        }
-    };
-
-    const handleToggleVerificacion = async (idUsuario, nuevoEstado) => {
-        const result = await actualizarVerificacion(idUsuario, nuevoEstado);
-        if (result.success) {
-            setTiendasData(prev => ({
-                ...prev,
-                content: prev.content.map(t =>
-                    t.idUsuario === idUsuario ? { ...t, verificado: nuevoEstado } : t
-                )
-            }));
-        } else {
-            alert(`Fallo al actualizar la verificación: ${result.error}`);
+            alert(`Fallo al actualizar ${type === 'estado' ? 'estado' : 'verificación'}: ${result.error}`);
         }
     };
 
@@ -87,13 +70,13 @@ const GestionTiendas = () => {
         setModalStore(null);
 
         const result = await obtenerTiendaPorId(idUsuario, true);
-        console.log(result)
         if (result.success) {
             setModalStore(result.data);
         } else {
             alert(`Fallo al cargar detalles: ${result.error}`);
             setShowModal(false);
         }
+
         setDetailsLoading(false);
     };
 
@@ -102,139 +85,60 @@ const GestionTiendas = () => {
         setModalStore(null);
     };
 
-    const totalPages = tiendasData.totalPages || 1;
-
-    const renderPagination = useMemo(() => {
-        let items = [];
-        const maxPagesToShow = 5;
-        let startPage, endPage;
-
-        if (totalPages <= maxPagesToShow) {
-            startPage = 1;
-            endPage = totalPages;
-        } else {
-            if (page <= Math.floor(maxPagesToShow / 2)) {
-                startPage = 1;
-                endPage = maxPagesToShow;
-            } else if (page + Math.floor(maxPagesToShow / 2) >= totalPages) {
-                startPage = totalPages - maxPagesToShow + 1;
-                endPage = totalPages;
-            } else {
-                startPage = page - Math.floor(maxPagesToShow / 2) + 1;
-                endPage = page + Math.ceil(maxPagesToShow / 2);
-            }
-        }
-
-        for (let number = startPage; number <= endPage; number++) {
-            items.push(
-                <Pagination.Item
-                    key={number}
-                    active={number === page + 1}
-                    onClick={() => setPage(number - 1)}
-                    disabled={loading}
-                >
-                    {number}
-                </Pagination.Item>,
-            );
-        }
-
-        return (
-            <div className="d-flex justify-content-center">
-                <Pagination>
-                    <Pagination.Prev
-                        onClick={() => setPage(p => Math.max(0, p - 1))}
-                        disabled={page === 0 || loading}
-                    />
-                    {items}
-                    <Pagination.Next
-                        onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                        disabled={page >= totalPages - 1 || loading}
-                    />
-                </Pagination>
-            </div>
-        );
-    }, [page, totalPages, loading]);
-
-
     return (
         <>
             <Card className="shadow-lg border-0">
-                <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
-                    Gestión de Tiendas
-
-                    <div className="d-flex align-items-center" style={{ gap: "8px" }}>
-                        <InputGroup>
-                            <FormControl
-                                type='text'
-                                placeholder='Buscar por Nombre'
-                                value={filterName}
-                                onChange={(e) => setFilterName(e.target.value)}
-                                disabled={loading}
-                            />
-
-                            <Button
-                                variant='primary'
-                                onClick={handleFilterChange}
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <Spinner animation="border" size="sm" />
-                                ) : 'Buscar'}
-                            </Button>
-
-                            <Button
-                                variant="outline-secondary"
-                                onClick={() => {
-                                    setFilterName("");
-                                    setCurrentFilter("");
-                                    setPage(0);
-                                }}
-                                disabled={loading}
-                            >
-                                Limpiar
-                            </Button>
-
-                        </InputGroup>
-
-                        <Button
-                            variant="outline-secondary"
-                            onClick={() => loadTiendas(page, { nombre: currentFilter })}
+                <HeaderBase title="Gestión de Tiendas">
+                    <InputGroup>
+                        <FormControl
+                            type='text'
+                            placeholder='Buscar por Nombre'
+                            value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)}
                             disabled={loading}
-                            className="d-flex align-items-center justify-content-center"
-                            style={{ width: "42px", height: "38px" }}
-                        >
-                            <FiRefreshCw size={18} />
+                        />
+                        <Button variant='primary' onClick={handleFilterChange} disabled={loading}>
+                            {loading ? <Spinner animation="border" size="sm" /> : 'Buscar'}
                         </Button>
-                    </div>
-                </Card.Header>
-            </Card>
+                        <Button variant="outline-secondary" onClick={handleClearFilter} disabled={loading}>
+                            Limpiar
+                        </Button>
+                    </InputGroup>
 
-            {error && (
-                <div className="alert alert-danger" role="alert">
-                    <i className="fas fa-exclamation-triangle me-2"></i>
-                    <span className="fw-medium">Error:</span> {error}
-                </div>
-            )}
+                    <Button
+                        variant="outline-secondary"
+                        onClick={() => loadTiendas(page, { nombre: currentFilter })}
+                        disabled={loading}
+                        className="d-flex align-items-center justify-content-center"
+                        style={{ width: "42px", height: "38px" }}
+                    >
+                        <FiRefreshCw size={18} />
+                    </Button>
+                </HeaderBase>
 
-            <Card className="shadow-lg">
+                {error && <div className="alert alert-danger">{error}</div>}
+
                 <Card.Body>
                     <TablaTiendas
                         loading={loading}
                         tiendasData={tiendasData}
-                        error={error}
-                        handleToggleEstado={handleToggleEstado}
-                        handleToggleVerificacion={handleToggleVerificacion}
+                        handleToggleEstado={(id, val) => handleToggle(id, val, 'estado')}
+                        handleToggleVerificacion={(id, val) => handleToggle(id, val, 'verificacion')}
                         viewDetails={viewDetails}
                     />
                 </Card.Body>
 
                 <Card.Footer>
-                    <Row className="align-items-center">
-                        {tiendasData.content.length > 0 && renderPagination}
+                    <Row className="align-items-center justify-content-center">
+                        <PaginacionBase
+                            page={page}
+                            totalPages={tiendasData.totalPages || 1}
+                            loading={loading}
+                            onPageChange={(p) => setPage(p)}
+                        />
                     </Row>
                 </Card.Footer>
             </Card>
-
 
             <ModalDetalleTienda
                 store={modalStore}
@@ -243,7 +147,6 @@ const GestionTiendas = () => {
                 onClose={handleCloseModal}
             />
         </>
-
     );
 };
 

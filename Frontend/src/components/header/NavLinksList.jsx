@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const NavLinksList = ({ itemClassName = "nav-item", linkClassName = "nav-link" }) => (

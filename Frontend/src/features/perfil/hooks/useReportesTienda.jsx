@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import axios from "axios";
+
+const BASE_URL = "http://localhost:8080/reportes/tiendas";
 
 const useReportesTienda = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const descargarArchivo = (blob, nombre) => {
+    const descargarArchivo = useCallback((blob, nombre) => {
         const url = window.URL.createObjectURL(new Blob([blob]));
         const link = document.createElement("a");
         link.href = url;
@@ -13,46 +15,28 @@ const useReportesTienda = () => {
         document.body.appendChild(link);
         link.click();
         link.remove();
-    };
+        window.URL.revokeObjectURL(url);
+    }, []);
 
-    const ejecutarDescarga = async (url, nombreArchivo) => {
+    const ejecutarDescarga = useCallback(async (endpoint, nombreArchivo) => {
         setLoading(true);
         setError(null);
-
         try {
-            const response = await axios.get(url, {
+            const response = await axios.get(`${BASE_URL}${endpoint}`, {
                 responseType: "arraybuffer",
                 withCredentials: true
             });
-
             descargarArchivo(response.data, nombreArchivo);
         } catch (err) {
             setError(err.response?.data?.message || "Error descargando reporte");
         } finally {
             setLoading(false);
         }
-    };
+    }, [descargarArchivo]);
 
-    const obtenerCatalogo = (idTienda) => {
-        return ejecutarDescarga(
-            `http://localhost:8080/reportes/tiendas/${idTienda}/catalogo`,
-            "catalogo_productos"
-        );
-    };
-
-    const obtenerStockBajo = (idTienda) => {
-        return ejecutarDescarga(
-            `http://localhost:8080/reportes/tiendas/${idTienda}/stock-bajo`,
-            "productos_bajo_stock"
-        );
-    };
-
-    const obtenerMetricas = (idTienda) => {
-        return ejecutarDescarga(
-            `http://localhost:8080/reportes/tiendas/${idTienda}/metricas`,
-            "metricas_productos"
-        );
-    };
+    const obtenerCatalogo = useCallback((idTienda) => ejecutarDescarga(`/${idTienda}/catalogo`, "catalogo_productos"), [ejecutarDescarga]);
+    const obtenerStockBajo = useCallback((idTienda) => ejecutarDescarga(`/${idTienda}/stock-bajo`, "productos_bajo_stock"), [ejecutarDescarga]);
+    const obtenerMetricas = useCallback((idTienda) => ejecutarDescarga(`/${idTienda}/metricas`, "metricas_productos"), [ejecutarDescarga]);
 
     return {
         loading,

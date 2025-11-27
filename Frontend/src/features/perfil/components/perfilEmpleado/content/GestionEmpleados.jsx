@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
-import { Card, Button, Alert, Spinner, Form, InputGroup } from "react-bootstrap";
+import { Card, Button, Alert, Spinner, FormControl, InputGroup } from "react-bootstrap";
+import { FiPlus, FiRefreshCw } from "react-icons/fi";
 import useEmpleadosApi from "../../../hooks/useEmpleados";
-import ModalFormularioEmpleado from "../modal/ModalFormularioEmpleado";
 import TablaEmpleados from "../table/TablaEmpleados";
-import ModalInfoEmpleado from "../modal/ModalInfoEmpleado"
-import { FiPlus } from "react-icons/fi";
-import { FiRefreshCw } from "react-icons/fi";
+import ModalFormularioEmpleado from "../modal/ModalFormularioEmpleado";
+import ModalInfoEmpleado from "../modal/ModalInfoEmpleado";
+import HeaderBase from "../auxiliar/HeaderBase";
+import PaginacionBase from "../auxiliar/PaginacionBase";
+
+const PAGE_SIZE = 20;
 
 const GestionEmpleados = () => {
     const {
@@ -15,106 +18,73 @@ const GestionEmpleados = () => {
         updateEmpleado,
         isLoading,
         error,
-        empleados: empleadosFromHook
+        empleados: empleadosFromHook,
     } = useEmpleadosApi();
 
-    const [empleados, setEmpleados] = useState(empleadosFromHook);
-    useEffect(() => {
-        setEmpleados(empleadosFromHook);
-    }, [empleadosFromHook]);
+    const [empleados, setEmpleados] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(0);
 
     const [isTogglingId, setIsTogglingId] = useState(null);
-    const [showModalInfo, setShowModalInfo] = useState(false);
-    const [showModalForm, setShowModalForm] = useState(false);
-    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
-    const [empleadoAEditar, setEmpleadoAEditar] = useState(null);
-    const [gestionError, setGestionError] = useState(null);
-    const [formSubmitError, setFormSubmitError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [searchTerm, setSearchTerm] = useState('');
+    const [showModalInfo, setShowModalInfo] = useState(false);
+    const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
 
-    const fetchEmpleados = useCallback(async (search) => {
+    const [showModalForm, setShowModalForm] = useState(false);
+    const [empleadoAEditar, setEmpleadoAEditar] = useState(null);
+
+    const [gestionError, setGestionError] = useState(null);
+    const [formSubmitError, setFormSubmitError] = useState(null);
+
+    // Sincronizar empleados del hook
+    useEffect(() => setEmpleados(empleadosFromHook), [empleadosFromHook]);
+
+    const fetchEmpleados = useCallback(async (page, search) => {
         setGestionError(null);
-        await getEmpleados(0, 50, search);
+        await getEmpleados(page, PAGE_SIZE, search);
     }, [getEmpleados]);
 
-    useEffect(() => {
-        fetchEmpleados('');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    useEffect(() => { fetchEmpleados(0, ""); }, [fetchEmpleados]);
 
-    const handleInputChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
+    // ---- BÚSQUEDA ----
+    const handleInputChange = (e) => setSearchTerm(e.target.value);
+    const handleSearchSubmit = () => { setCurrentPage(0); fetchEmpleados(0, searchTerm); };
+    const handleClearSearch = () => { setSearchTerm(""); setCurrentPage(0); fetchEmpleados(0, ""); };
 
-    const handleSearchSubmit = () => {
-        fetchEmpleados(searchTerm);
-    };
-
-    const handleClearSearch = () => {
-        setSearchTerm('');
-        fetchEmpleados('');
-    };
-
+    // ---- TOGGLE ACTIVO ----
     const handleToggleActivo = async (idUsuario, currentActivo) => {
         setIsTogglingId(idUsuario);
         setGestionError(null);
 
-        const nuevoEstado = !currentActivo;
-        const response = await updateEmpleadoActivo(idUsuario, nuevoEstado);
-
-        if (!response.success) {
-            setGestionError(response.error || `Error al cambiar el estado activo del empleado ID ${idUsuario}.`);
-        }
+        const response = await updateEmpleadoActivo(idUsuario, !currentActivo);
+        if (!response.success) setGestionError(response.error || `Error al cambiar el estado del empleado ID ${idUsuario}.`);
 
         setIsTogglingId(null);
     };
 
-    const handleVerInfo = (empleado) => {
-        setEmpleadoSeleccionado(empleado);
-        setShowModalInfo(true);
-    };
+    // ---- MODALES ----
+    const handleVerInfo = (empleado) => { setEmpleadoSeleccionado(empleado); setShowModalInfo(true); };
+    const handleCloseModalInfo = () => { setShowModalInfo(false); setEmpleadoSeleccionado(null); };
 
-    const handleCloseModalInfo = () => {
-        setShowModalInfo(false);
-        setEmpleadoSeleccionado(null);
-    };
+    const handleCrear = () => { setEmpleadoAEditar(null); setFormSubmitError(null); setShowModalForm(true); };
+    const handleEditar = (empleado) => { setEmpleadoAEditar(empleado); setFormSubmitError(null); setShowModalForm(true); };
+    const handleCloseModalForm = () => { setShowModalForm(false); setEmpleadoAEditar(null); setFormSubmitError(null); };
 
-    const handleCrear = () => {
-        setEmpleadoAEditar(null);
-        setFormSubmitError(null);
-        setShowModalForm(true);
-    };
-
-    const handleEditar = (empleado) => {
-        setEmpleadoAEditar(empleado);
-        setFormSubmitError(null);
-        setShowModalForm(true);
-    };
-
-    const handleCloseModalForm = () => {
-        setShowModalForm(false);
-        setEmpleadoAEditar(null);
-        setFormSubmitError(null);
-    };
-
+    // ---- CREAR / ACTUALIZAR ----
     const handleCreateOrUpdate = async (empleadoData) => {
         setIsSubmitting(true);
         setFormSubmitError(null);
 
-        let response;
-        if (empleadoAEditar) {
-            response = await updateEmpleado(empleadoAEditar.idUsuario, empleadoData);
-        } else {
-            response = await createEmpleado(empleadoData);
-        }
+        const response = empleadoAEditar
+            ? await updateEmpleado(empleadoAEditar.idUsuario, empleadoData)
+            : await createEmpleado(empleadoData);
 
         if (response.success) {
             handleCloseModalForm();
-            fetchEmpleados(searchTerm);
+            fetchEmpleados(currentPage, searchTerm);
         } else {
-            setFormSubmitError(response.error || 'Ocurrió un error desconocido al guardar el empleado.');
+            setFormSubmitError(response.error || "Ocurrió un error desconocido al guardar el empleado.");
         }
 
         setIsSubmitting(false);
@@ -125,89 +95,74 @@ const GestionEmpleados = () => {
     return (
         <>
             <Card className="shadow-lg border-0">
-                <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
-                    Gestión de Empleados
-
-                    <div className="d-flex align-items-center" style={{ gap: "8px" }}>
-
-                        <InputGroup>
-                            <Form.Control
-                                type="text"
-                                placeholder="Buscar por Username..."
-                                value={searchTerm}
-                                onChange={handleInputChange}
-                                disabled={isGlobalLoading && empleados.length === 0}
-                            />
-
-                            <Button
-                                variant="primary"
-                                onClick={handleSearchSubmit}
-                                disabled={isGlobalLoading}
-                            >
-                                {isGlobalLoading ? (
-                                    <Spinner animation="border" size="sm" />
-                                ) : 'Buscar'}
-                            </Button>
-
-                            <Button
-                                variant="outline-secondary"
-                                onClick={handleClearSearch}
-                                disabled={isGlobalLoading || searchTerm === ''}
-                            >
-                                Limpiar
-                            </Button>
-                        </InputGroup>
-
-                        <Button variant="success" onClick={handleCrear} disabled={isGlobalLoading}>
-                            <FiPlus size={18} />
+                <HeaderBase title="Gestión de Empleados">
+                    <InputGroup>
+                        <FormControl
+                            type="text"
+                            placeholder="Buscar por Username"
+                            value={searchTerm}
+                            onChange={handleInputChange}
+                            disabled={isGlobalLoading && empleados.length === 0}
+                        />
+                        <Button variant="primary" onClick={handleSearchSubmit} disabled={isGlobalLoading}>
+                            {isGlobalLoading ? <Spinner animation="border" size="sm" /> : "Buscar"}
                         </Button>
-
-                        <Button
-                            variant="outline-secondary"
-                            onClick={handleSearchSubmit}
-                            disabled={isGlobalLoading}
-                            className="d-flex align-items-center justify-content-center"
-                            style={{ width: "42px", height: "38px" }}
-                        >
-                            <FiRefreshCw size={18} />
+                        <Button variant="outline-secondary" onClick={handleClearSearch} disabled={isGlobalLoading || searchTerm === ""}>
+                            Limpiar
                         </Button>
+                    </InputGroup>
 
-                    </div>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={handleSearchSubmit}
+                        disabled={isGlobalLoading}
+                        className="d-flex align-items-center justify-content-center"
+                        style={{ width: "42px", height: "38px" }}
+                    >
+                        <FiRefreshCw size={18} />
+                    </Button>
 
-                </Card.Header>
+                    <Button variant="success" onClick={handleCrear} disabled={isGlobalLoading}>
+                        <FiPlus size={18} />
+                    </Button>
+                </HeaderBase>
 
                 <Card.Body>
+                    {(error || gestionError) && <Alert variant="danger">{error || gestionError}</Alert>}
 
-                    {(error || gestionError) && (
-                        <Alert variant="danger">{error || gestionError}</Alert>
-                    )}
-
-                    {isGlobalLoading && empleados.length === 0 && (
+                    {isGlobalLoading && empleados.length === 0 ? (
                         <div className="text-center p-5">
                             <Spinner animation="border" role="status" className="me-2" />
                             Cargando empleados...
                         </div>
+                    ) : (
+                        empleados.length > 0 && (
+                            <TablaEmpleados
+                                empleados={empleados}
+                                onVerInfo={handleVerInfo}
+                                onToggleActivo={handleToggleActivo}
+                                onEditar={handleEditar}
+                                isTogglingId={isTogglingId}
+                            />
+                        )
                     )}
-
-                    {!(isGlobalLoading && empleados.length === 0) && (
-                        <TablaEmpleados
-                            empleados={empleados}
-                            onVerInfo={handleVerInfo}
-                            onToggleActivo={handleToggleActivo}
-                            onEditar={handleEditar}
-                            isTogglingId={isTogglingId}
-                        />
-                    )}
-
                 </Card.Body>
+
+                <Card.Footer>
+                    {empleadosFromHook?.totalPages > 1 && (
+                        <div className="d-flex justify-content-center mt-3">
+                            <PaginacionBase
+                                page={currentPage}
+                                totalPages={empleadosFromHook.totalPages}
+                                loading={isGlobalLoading}
+                                onPageChange={(newPage) => { setCurrentPage(newPage); fetchEmpleados(newPage, searchTerm); }}
+                            />
+                        </div>
+                    )}
+                </Card.Footer>
             </Card>
 
-            <ModalInfoEmpleado
-                show={showModalInfo}
-                handleClose={handleCloseModalInfo}
-                empleado={empleadoSeleccionado}
-            />
-
+            <ModalInfoEmpleado show={showModalInfo} handleClose={handleCloseModalInfo} empleado={empleadoSeleccionado} />
             <ModalFormularioEmpleado
                 show={showModalForm}
                 handleClose={handleCloseModalForm}

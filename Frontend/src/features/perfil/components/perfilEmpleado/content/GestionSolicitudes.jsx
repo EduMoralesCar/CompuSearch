@@ -9,9 +9,10 @@ import {
     Alert,
     Modal,
     Table,
-    Pagination,
 } from "react-bootstrap";
 import { useSolicitudes } from "../../../hooks/useSolicitudes";
+import HeaderBase from "../auxiliar/HeaderBase";
+import PaginacionBase from "../auxiliar/PaginacionBase";
 
 const PAGE_SIZE = 10;
 
@@ -26,49 +27,29 @@ const GestionSolicitudes = ({ idEmpleado }) => {
     } = useSolicitudes();
 
     const [currentPage, setCurrentPage] = useState(0);
-
     const [showModal, setShowModal] = useState(false);
     const [solicitudSeleccionada, setSolicitudSeleccionada] = useState(null);
-    const [feedbackMessage, setFeedbackMessage] = useState(null);
-    const [feedbackType, setFeedbackType] = useState(null);
+    const [feedback, setFeedback] = useState({ message: null, type: null });
 
     useEffect(() => {
         obtenerTodasSolicitudes(currentPage, PAGE_SIZE);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage]);
 
-    const mostrarMensaje = (mensaje, tipo = "success") => {
-        setFeedbackMessage(mensaje);
-        setFeedbackType(tipo);
-        setTimeout(() => {
-            setFeedbackMessage(null);
-            setFeedbackType(null);
-        }, 3000);
+    const mostrarMensaje = (message, type = "success") => {
+        setFeedback({ message, type });
+        setTimeout(() => setFeedback({ message: null, type: null }), 3000);
     };
 
-    const recargarPagina = () => {
-        obtenerTodasSolicitudes(currentPage, PAGE_SIZE);
-    };
+    const recargar = () => obtenerTodasSolicitudes(currentPage, PAGE_SIZE);
 
-    const handleAceptar = async (idSolicitud) => {
+    const handleActualizarEstado = async (idSolicitud, estado) => {
         try {
-            await actualizarEstadoSolicitud(idSolicitud, "APROBADA", idEmpleado);
-            mostrarMensaje("Solicitud aprobada correctamente", "success");
-            recargarPagina();
-            // eslint-disable-next-line no-unused-vars
-        } catch (err) {
-            mostrarMensaje("Error al aprobar la solicitud", "danger");
-        }
-    };
-
-    const handleRechazar = async (idSolicitud) => {
-        try {
-            await actualizarEstadoSolicitud(idSolicitud, "RECHAZADA", idEmpleado);
-            mostrarMensaje("Solicitud rechazada correctamente", "success");
-            recargarPagina();
-            // eslint-disable-next-line no-unused-vars
-        } catch (err) {
-            mostrarMensaje("Error al rechazar la solicitud", "danger");
+            await actualizarEstadoSolicitud(idSolicitud, estado, idEmpleado);
+            mostrarMensaje(`Solicitud ${estado.toLowerCase()} correctamente`, "success");
+            recargar();
+        } catch {
+            mostrarMensaje(`Error al ${estado.toLowerCase()} la solicitud`, "danger");
         }
     };
 
@@ -98,60 +79,30 @@ const GestionSolicitudes = ({ idEmpleado }) => {
     };
 
     const renderDatosFormulario = (datosFormulario) => {
-        try {
-            const parsed = datosFormulario;
-            return (
-                <Table striped bordered hover size="sm">
-                    <tbody>
-                        {Object.entries(parsed).map(([clave, valor]) => (
-                            <tr key={clave}>
-                                <td style={{ width: "30%" }}>
-                                    <strong>{formatKey(clave)}</strong>
-                                </td>
-                                <td>{valor?.toString()}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            );
-            // eslint-disable-next-line no-unused-vars
-        } catch (e) {
-            return <p>{datosFormulario}</p>;
-        }
+        if (!datosFormulario || typeof datosFormulario !== "object") return <p>{datosFormulario}</p>;
+
+        return (
+            <Table striped bordered hover size="sm">
+                <tbody>
+                    {Object.entries(datosFormulario).map(([clave, valor]) => (
+                        <tr key={clave}>
+                            <td style={{ width: "30%" }}>
+                                <strong>{formatKey(clave)}</strong>
+                            </td>
+                            <td>{valor?.toString()}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+        );
     };
-
-    const renderPaginationItems = () => {
-        const items = [];
-        const maxPagesToShow = 5;
-
-        let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
-        let endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
-
-        if (totalPages > maxPagesToShow && endPage - startPage + 1 < maxPagesToShow) {
-            startPage = Math.max(0, endPage - maxPagesToShow + 1);
-        }
-
-        for (let number = startPage; number <= endPage; number++) {
-            items.push(
-                <Pagination.Item
-                    key={number}
-                    active={number === currentPage}
-                    onClick={() => setCurrentPage(number)}
-                >
-                    {number + 1}
-                </Pagination.Item>
-            );
-        }
-        return items;
-    };
-
 
     return (
         <Card className="shadow-lg border-0">
-            <Card.Header as="h5" className="d-flex justify-content-between align-items-center bg-light text-primary">
-                Gestión de Solicitudes
+            <HeaderBase title="Gestión de Solicitudes">
                 <div style={{ width: "40px", height: "37px" }}></div>
-            </Card.Header>
+            </HeaderBase>
+
             <Card.Body>
                 {loading && (
                     <div className="text-center my-4">
@@ -162,9 +113,9 @@ const GestionSolicitudes = ({ idEmpleado }) => {
 
                 {error && <Alert variant="danger">{error}</Alert>}
 
-                {feedbackMessage && (
-                    <Alert variant={feedbackType} className="text-center">
-                        {feedbackMessage}
+                {feedback.message && (
+                    <Alert variant={feedback.type} className="text-center">
+                        {feedback.message}
                     </Alert>
                 )}
 
@@ -179,63 +130,45 @@ const GestionSolicitudes = ({ idEmpleado }) => {
                         <Col key={solicitud.idSolicitudTienda}>
                             <Card className="h-100">
                                 <Card.Header>
-                                    <strong>Usuario:</strong>{" "}
-                                    {solicitud.nombreUsuario}
+                                    <strong>Usuario:</strong> {solicitud.nombreUsuario}
                                 </Card.Header>
                                 <Card.Body className="d-flex flex-column">
                                     <Card.Text>
                                         <strong>Fecha:</strong>{" "}
-                                        {new Date(
-                                            solicitud.fechaSolicitud
-                                        ).toLocaleString()}
+                                        {new Date(solicitud.fechaSolicitud).toLocaleString()}
                                         <br />
                                         <strong>Estado:</strong> {solicitud.estado}
                                         {solicitud.nombreEmpleado && (
                                             <>
                                                 <br />
                                                 <strong>Empleado:</strong>{" "}
-                                                {solicitud.nombreEmpleado} (ID:{" "}
-                                                {solicitud.idEmpleado})
+                                                {solicitud.nombreEmpleado} (ID: {solicitud.idEmpleado})
                                             </>
                                         )}
                                     </Card.Text>
 
-                                    <Stack
-                                        direction="horizontal"
-                                        gap={2}
-                                        className="mt-auto"
-                                    >
+                                    <Stack direction="horizontal" gap={2} className="mt-auto">
                                         <Button
                                             variant="primary"
-                                            onClick={() =>
-                                                handleVerDetalles(solicitud)
-                                            }
+                                            onClick={() => handleVerDetalles(solicitud)}
                                         >
                                             Ver Detalles
                                         </Button>
                                         <Button
                                             variant="success"
                                             onClick={() =>
-                                                handleAceptar(
-                                                    solicitud.idSolicitudTienda
-                                                )
+                                                handleActualizarEstado(solicitud.idSolicitudTienda, "APROBADA")
                                             }
-                                            disabled={
-                                                solicitud.estado !== "OBSERVACION"
-                                            }
+                                            disabled={solicitud.estado !== "OBSERVACION"}
                                         >
                                             Aceptar
                                         </Button>
                                         <Button
                                             variant="danger"
                                             onClick={() =>
-                                                handleRechazar(
-                                                    solicitud.idSolicitudTienda
-                                                )
+                                                handleActualizarEstado(solicitud.idSolicitudTienda, "RECHAZADA")
                                             }
-                                            disabled={
-                                                solicitud.estado !== "OBSERVACION"
-                                            }
+                                            disabled={solicitud.estado !== "OBSERVACION"}
                                         >
                                             Rechazar
                                         </Button>
@@ -245,40 +178,18 @@ const GestionSolicitudes = ({ idEmpleado }) => {
                         </Col>
                     ))}
                 </Row>
-
-                {totalPages > 1 && (
-                    <div className="d-flex justify-content-center mt-4">
-                        <Pagination>
-                            <Pagination.First
-                                onClick={() => setCurrentPage(0)}
-                                disabled={currentPage === 0}
-                            />
-                            <Pagination.Prev
-                                onClick={() => setCurrentPage(currentPage - 1)}
-                                disabled={currentPage === 0}
-                            />
-
-                            {renderPaginationItems()}
-
-                            <Pagination.Next
-                                onClick={() => setCurrentPage(currentPage + 1)}
-                                disabled={currentPage === totalPages - 1}
-                            />
-                            <Pagination.Last
-                                onClick={() => setCurrentPage(totalPages - 1)}
-                                disabled={currentPage === totalPages - 1}
-                            />
-                        </Pagination>
-                    </div>
-                )}
             </Card.Body>
 
-            <Modal
-                show={showModal}
-                onHide={() => setShowModal(false)}
-                centered
-                size="lg"
-            >
+            <Card.Footer>
+                <PaginacionBase
+                    page={currentPage}
+                    totalPages={totalPages}
+                    loading={loading}
+                    onPageChange={(newPage) => setCurrentPage(newPage)}
+                />
+            </Card.Footer>
+
+            <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>Detalles de la Solicitud</Modal.Title>
                 </Modal.Header>
@@ -286,43 +197,32 @@ const GestionSolicitudes = ({ idEmpleado }) => {
                     {solicitudSeleccionada ? (
                         <>
                             <p>
-                                <strong>ID Solicitud:</strong>{" "}
-                                {solicitudSeleccionada.idSolicitudTienda}
+                                <strong>ID Solicitud:</strong> {solicitudSeleccionada.idSolicitudTienda}
                                 <br />
-                                <strong>Usuario:</strong>{" "}
-                                {solicitudSeleccionada.nombreUsuario}
+                                <strong>Usuario:</strong> {solicitudSeleccionada.nombreUsuario}
                                 <br />
                                 <strong>Fecha:</strong>{" "}
-                                {new Date(
-                                    solicitudSeleccionada.fechaSolicitud
-                                ).toLocaleString()}
+                                {new Date(solicitudSeleccionada.fechaSolicitud).toLocaleString()}
                                 <br />
-                                <strong>Estado:</strong>{" "}
-                                {solicitudSeleccionada.estado}
+                                <strong>Estado:</strong> {solicitudSeleccionada.estado}
                                 {solicitudSeleccionada.nombreEmpleado && (
                                     <>
                                         <br />
                                         <strong>Empleado:</strong>{" "}
-                                        {solicitudSeleccionada.nombreEmpleado} (
-                                        ID: {solicitudSeleccionada.idEmpleado})
+                                        {solicitudSeleccionada.nombreEmpleado} (ID: {solicitudSeleccionada.idEmpleado})
                                     </>
                                 )}
                             </p>
                             <hr />
                             <h6>Datos del Formulario</h6>
-                            {renderDatosFormulario(
-                                solicitudSeleccionada.datosFormulario
-                            )}
+                            {renderDatosFormulario(solicitudSeleccionada.datosFormulario)}
                         </>
                     ) : (
                         <p>No se han encontrado datos.</p>
                     )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button
-                        variant="secondary"
-                        onClick={() => setShowModal(false)}
-                    >
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
                         Cerrar
                     </Button>
                 </Modal.Footer>
