@@ -55,7 +55,10 @@ public class SecurityConfig {
                                 "/filtro/**",
                                 "/componentes/**",
                                 "/metricas/**",
-                                "/stripe/**")
+                                "/stripe/**",
+                                "/actuator/prometheus",
+                                "/actuator/health",
+                                "/actuator/info")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
