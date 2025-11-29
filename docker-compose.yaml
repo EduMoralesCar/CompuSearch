@@ -14,8 +14,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./backups:/var/backups
-    command: >
-      sh -c "apt-get update && apt-get install -y mysql-client gzip && java -jar app.jar"
 
   frontend:
     build: ./frontend

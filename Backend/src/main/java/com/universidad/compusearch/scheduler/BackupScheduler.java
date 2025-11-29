@@ -40,9 +40,6 @@ public class BackupScheduler {
     @Value("${backup.path}")
     private String backupPath;
 
-    @Value("${backup.mysqldump.path}")
-    private String mysqldumpPath;
-
     @Scheduled(cron = "0 0 1 * * *")
     public void realizarBackup() {
         try {
@@ -53,10 +50,8 @@ public class BackupScheduler {
 
             log.info("Ejecutando backup MySQL...");
 
-            // Determinar ruta de mysqldump
-            String dumpExecutable = mysqldumpPath.isBlank() ? "mysqldump" : mysqldumpPath;
+            String dumpExecutable = "mysqldump";
 
-            // Construir comandos
             List<String> command = new ArrayList<>();
             command.add(dumpExecutable);
             command.add("-h");
@@ -76,7 +71,6 @@ public class BackupScheduler {
 
             StringBuilder logOutput = new StringBuilder();
 
-            // Comprimir salida directamente en gzip y almacenar copia para logs
             try (InputStream is = process.getInputStream();
                     GZIPOutputStream gos = new GZIPOutputStream(new FileOutputStream(backupFile))) {
 
@@ -84,7 +78,7 @@ public class BackupScheduler {
                 int len;
                 while ((len = is.read(buffer)) > 0) {
                     gos.write(buffer, 0, len);
-                    logOutput.append(new String(buffer, 0, len)); // guardar para log
+                    logOutput.append(new String(buffer, 0, len));
                 }
             }
 
