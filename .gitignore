@@ -4,6 +4,9 @@
 logs/
 *.log
 
+backups/
+*.gz
+
 ehcache/
 *.sqlite
 *.db
