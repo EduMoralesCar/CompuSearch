@@ -45,7 +45,7 @@ public class PlanController {
         log.info("Retornando página {} de planes (Total: {}).", page, planes.getTotalElements());
         return ResponseEntity.ok(planes);
     }
-
+    
     @GetMapping("/{id}")
     public ResponseEntity<PlanResponse> obtenerPlanPorId(@PathVariable Long id) {
         log.info("GET /planes/{} - Solicitud para obtener plan por ID.", id);

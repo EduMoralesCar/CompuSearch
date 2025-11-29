@@ -28,8 +28,8 @@ const VISTAS_COMPONENTES = (idTienda) => ({
     dashboard: <TiendaDashboard idTienda={idTienda} />,
     informacion: <InformacionTienda idTienda={idTienda} />,
     productos: <MisProductos idTienda={idTienda} />,
-    planes: <ObtenerPlan />,
-    pagos: <HistorialPagos />,
+    planes: <ObtenerPlan idTienda={idTienda}/>,
+    pagos: <HistorialPagos idTienda={idTienda}/>,
     conexion: <ConexionAPI idTienda={idTienda} />,
     reportes: <ReportesTienda idTienda={idTienda} />,
 });

@@ -20,6 +20,7 @@ import com.universidad.compusearch.dto.ProductoTiendaInfoResponse;
 import com.universidad.compusearch.dto.ProductoTiendaResponse;
 import com.universidad.compusearch.dto.SolicitudTiendaResponse;
 import com.universidad.compusearch.dto.SusTiendaResponse;
+import com.universidad.compusearch.dto.SuscripcionResponse;
 import com.universidad.compusearch.dto.TiendaDashboardResponse;
 import com.universidad.compusearch.dto.TiendaDetallesResponse;
 import com.universidad.compusearch.dto.TiendaInfoDetalleResponse;
@@ -427,4 +428,19 @@ public class Mapper {
                 pago.getEstadoPago().name(),
                 pago.getSuscripcion().getTienda().getNombre());
     }
+
+    public static SuscripcionResponse mapToSuscripcion(Suscripcion sus) {
+        if (sus == null)
+            return null;
+
+        SuscripcionResponse r = new SuscripcionResponse();
+        r.setIdSuscripcion(sus.getIdSuscripcion());
+        r.setNombrePlan(sus.getPlan().getNombre());
+        r.setEstado(sus.getEstado());
+        r.setPrecio(sus.getPlan().getPrecioMensual());
+        r.setFechaInicio(sus.getFechaInicio());
+        r.setFechaFin(sus.getFechaFin());
+        return r;
+    }
+
 }

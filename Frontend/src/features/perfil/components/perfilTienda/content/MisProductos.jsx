@@ -30,7 +30,8 @@ const MisProductos = ({ idTienda }) => {
             if (resp.success) setCategorias(resp.response);
         };
         fetchCategorias();
-    }, [obtenerCategorias]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Cargar productos según filtros/paginación
     const fetchProductos = useCallback(async () => {

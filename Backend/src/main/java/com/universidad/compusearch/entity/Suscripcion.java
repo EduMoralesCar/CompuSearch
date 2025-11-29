@@ -45,15 +45,6 @@ public class Suscripcion {
     @Column(nullable = false)
     private EstadoSuscripcion estado;
 
-    @Column(nullable = true, unique = true)
-    private String stripeSubscriptionId;
-
-    @Column(nullable = true)
-    private String stripeLatestInvoiceId;
-
-    @Column(nullable = true)
-    private String stripeClientSecret;
-
     // Referencia al plan que tiene la suscripcion
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_plan", nullable = false)

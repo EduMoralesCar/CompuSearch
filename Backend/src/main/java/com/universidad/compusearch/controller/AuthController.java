@@ -10,6 +10,8 @@ import com.universidad.compusearch.dto.AuthResponse;
 import com.universidad.compusearch.dto.LoginRequest;
 import com.universidad.compusearch.dto.MessageResponse;
 import com.universidad.compusearch.entity.Empleado;
+import com.universidad.compusearch.entity.EstadoSuscripcion;
+import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.entity.TipoUsuario;
 import com.universidad.compusearch.entity.Token;
 import com.universidad.compusearch.entity.Usuario;
@@ -80,10 +82,20 @@ public class AuthController {
         @GetMapping("/me")
         public ResponseEntity<AuthResponse> getAuthenticatedUser(@AuthenticationPrincipal Usuario usuario) {
                 String rol = null;
+                boolean susActiva = false;
 
                 if (usuario instanceof Empleado) {
                         Empleado empleado = (Empleado) usuario;
                         rol = empleado.getRol().name();
+                }
+
+                if (usuario instanceof Tienda) {
+                        Tienda tienda = (Tienda) usuario;
+
+                        susActiva = tienda.getSuscripciones().stream()
+                                        .anyMatch(s -> s.getEstado() == EstadoSuscripcion.ACTIVA
+                                                        || s.getEstado() == EstadoSuscripcion.CAMBIO_PROGRAMADO
+                                                        || s.getEstado() == EstadoSuscripcion.CANCELADA_PROGRAMADA);
                 }
 
                 return ResponseEntity.ok(
@@ -91,6 +103,7 @@ public class AuthController {
                                                 usuario.getIdUsuario(),
                                                 usuario.getUsername(),
                                                 usuario.getTipoUsuario().name(),
-                                                rol));
+                                                rol,
+                                                susActiva));
         }
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.universidad.compusearch.dto.MessageResponse;
-import com.universidad.compusearch.service.ApiService;
+import com.universidad.compusearch.scheduler.ApiScheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ApiController {
 
-    private final ApiService apiService;
+    private final ApiScheduler apiService;
 
     @PostMapping("/{idTienda}/actualizar")
     public ResponseEntity<MessageResponse> actualizarUnaTienda(@PathVariable Long idTienda) {

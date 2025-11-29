@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [usuario, setUsuario] = useState(null);
     const [idUsuario, setIdUsuario] = useState(null);
     const [rol, setRol] = useState(null);
+    const [suscripcionActiva, setSuscripcionActiva] = useState(false);
     const [sessionReady, setSessionReady] = useState(false);
     const [sessionError, setSessionError] = useState(null);
 
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }) => {
             setUsuario(resMe.data);
             setTipoUsuario(resMe.data.tipoUsuario);
             setIdUsuario(resMe.data.idUsuario);
+            setSuscripcionActiva(resMe.data.suscripcionActiva);
             setRol(resMe.data.rol);
 
             return { success: true };
@@ -45,6 +47,7 @@ export const AuthProvider = ({ children }) => {
             setUsuario(resMe.data);
             setTipoUsuario(resMe.data.tipoUsuario);
             setIdUsuario(resMe.data.idUsuario);
+            setSuscripcionActiva(resMe.data.suscripcionActiva);
             setRol(resMe.data.rol);
 
             return { success: true };
@@ -86,6 +89,7 @@ export const AuthProvider = ({ children }) => {
             setSessionError(error.response?.data?.message);
         } finally {
             setUsuario(null);
+            setSuscripcionActiva(false);
             setTipoUsuario(null);
             setIdUsuario(null);
             setRol(null);
@@ -98,6 +102,7 @@ export const AuthProvider = ({ children }) => {
             const resMe = await MeService();
 
             setUsuario(resMe.data);
+            setSuscripcionActiva(resMe.data.suscripcionActiva);
             setTipoUsuario(resMe.data.tipoUsuario);
             setIdUsuario(resMe.data.idUsuario);
             setRol(resMe.data.rol);
@@ -106,6 +111,7 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             setSessionError(error.response?.data?.message);
             setUsuario(null);
+            setSuscripcionActiva(false);
             setTipoUsuario(null);
             setIdUsuario(null);
             setRol(null);
@@ -119,6 +125,7 @@ export const AuthProvider = ({ children }) => {
                 const refreshed = await refreshSession();
                 if (!refreshed.success) {
                     setUsuario(null);
+                    setSuscripcionActiva(false);
                     setTipoUsuario(null);
                     setIdUsuario(null);
                     setRol(null);
@@ -128,6 +135,7 @@ export const AuthProvider = ({ children }) => {
                 setTipoUsuario(null);
                 setIdUsuario(null);
                 setRol(null);
+                setSuscripcionActiva(false);
                 setSessionError(error.response?.data?.message || "Error al cargar sesión");
             } finally {
                 setSessionReady(true);
@@ -144,6 +152,7 @@ export const AuthProvider = ({ children }) => {
             tipoUsuario,
             idUsuario,
             rol,
+            suscripcionActiva,
             sessionReady,
             sessionError,
             login,

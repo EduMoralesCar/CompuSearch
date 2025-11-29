@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import useEmpleados from "../../../hooks/useEmpleados";
 import HeaderBase from "../auxiliar/HeaderBase";
-import { Row, Col, Card, Table, Spinner, Alert, Badge } from "react-bootstrap";
-import { FaStore, FaUserTie, FaUsers, FaBoxOpen, FaMoneyBillWave, FaExclamationTriangle } from "react-icons/fa";
+import { useBackup } from "../../../hooks/useBackup";
+import { Row, Col, Card, Table, Spinner, Alert, Badge, Button } from "react-bootstrap";
+import { FaStore, FaDatabase, FaUserTie, FaUsers, FaBoxOpen, FaMoneyBillWave, FaExclamationTriangle } from "react-icons/fa";
 
 const InfoCard = ({ icon: Icon, title, value, color, badges }) => (
     <Card className="shadow-sm p-3 rounded-4 text-center h-100">
@@ -51,6 +52,8 @@ const EmpleadoDashboard = () => {
     const { obtenerEmpleadoDashboard, isLoading, error } = useEmpleados();
     const [dashboard, setDashboard] = useState(null);
 
+    const { loading: backupLoading, error: backupError, success: backupSuccess, ejecutarBackup } = useBackup();
+
     useEffect(() => {
         obtenerEmpleadoDashboard().then(res => {
             if (res.success) setDashboard(res.data);
@@ -71,8 +74,27 @@ const EmpleadoDashboard = () => {
     return (
         <Card className="shadow-lg border-0">
             <HeaderBase title="Dashboard del Empleado">
-                <div style={{ width: "40px", height: "37px" }}></div>
+                    <Button
+                        variant="danger"
+                        onClick={ejecutarBackup}
+                        disabled={backupLoading}
+                        className="d-flex align-items-center"
+                    >
+                        <FaDatabase size={18} className="me-1" />
+                        {backupLoading ? (
+                            <>
+                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                {' '}Ejecutando...
+                            </>
+                        ) : (
+                            "Ejecutar Backup"
+                        )}
+                    </Button>
             </HeaderBase>
+
+            {/* Mostrar alertas de backup */}
+            {backupError && <Alert variant="danger" className="m-3">{backupError}</Alert>}
+            {backupSuccess && <Alert variant="success" className="m-3">Backup ejecutado correctamente.</Alert>}
 
             {dashboard && (
                 <>

@@ -40,9 +40,12 @@ public class SecurityConfig {
                                 "/usuario/**",
                                 "/incidentes/**",
                                 "/empleado/**",
-                                "/plan",
+                                "/plan/**",
                                 "/reportes/**",
-                                "/api/**")
+                                "/api/**",
+                                "/suscripciones/**",
+                                "/pagos/**",
+                                "/backup")
                         .authenticated()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
@@ -55,7 +58,6 @@ public class SecurityConfig {
                                 "/filtro/**",
                                 "/componentes/**",
                                 "/metricas/**",
-                                "/stripe/**",
                                 "/actuator/prometheus",
                                 "/actuator/health",
                                 "/actuator/info")

@@ -9,11 +9,9 @@ import com.universidad.compusearch.dto.PlanResponse;
 import com.universidad.compusearch.entity.Plan;
 import com.universidad.compusearch.exception.PlanException;
 import com.universidad.compusearch.repository.PlanRepository;
-import com.universidad.compusearch.stripe.ProductStripeService;
 import com.universidad.compusearch.util.Mapper;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PlanService {
 
     private final PlanRepository planRepository;
-    private final ProductStripeService productStripeService;
 
     // Obtener por nombre
     public Plan obtenerPorNombre(String nombre) {
@@ -52,18 +49,6 @@ public class PlanService {
         plan.setDescripcion(request.getDescripcion());
         plan.setBeneficios(request.getBeneficios());
         plan.setActivo(true);
-
-        try {
-            String productId = productStripeService.crearProductoStripe(plan);
-            plan.setStripeProductId(productId);
-
-            String priceId = productStripeService.crearPrecioStripe(plan, productId);
-            plan.setStripePriceId(priceId);
-
-        } catch (Exception e) {
-            log.error("Error creando plan en Stripe: {}", e.getMessage(), e);
-            throw PlanException.create();
-        }
 
         Plan nuevoPlan = planRepository.save(plan);
         log.info("Plan ID {} creado exitosamente.", nuevoPlan.getIdPlan());
@@ -114,7 +99,6 @@ public class PlanService {
         return plan;
     }
 
-    // Actualizar el plan
     @Transactional
     public PlanResponse actualizarPlan(Long id, PlanRequest request) {
         log.info("Actualizando plan con ID: {}", id);
@@ -126,55 +110,17 @@ public class PlanService {
             throw PlanException.exist(request.getNombre());
         }
 
-        // boolean precioCambio = plan.getPrecioMensual().compareTo(request.getPrecioMensual()) != 0;
-
-        // 1. Actualizar entidad local
         plan.setNombre(request.getNombre());
         plan.setDuracionMeses(request.getDuracionMeses());
         plan.setPrecioMensual(request.getPrecioMensual());
         plan.setDescripcion(request.getDescripcion());
         plan.setBeneficios(request.getBeneficios());
 
-        try {
-            productStripeService.actualizarProductoStripe(plan.getStripeProductId(), plan);
-            /* 
-            // Si el precio cambió, migrar suscripciones
-            if (precioCambio) {
-
-                String nuevoPriceId = productStripeService.crearNuevoPrecioStripe(plan, plan.getStripeProductId());
-                plan.setStripePriceId(nuevoPriceId);
-
-                log.warn("Precio cambiado. Migrando suscripciones activas...");
-
-                List<Suscripcion> suscripcionesActivas =
-                        suscripcionRepository.findByPlanIdPlanAndEstado(plan.getIdPlan(), EstadoSuscripcion.ACTIVA);
-
-                for (Suscripcion suscripcion : suscripcionesActivas) {
-                    try {
-                        suscripcionService.actualizarSuscripcionConNuevoPrecio(
-                                suscripcion.getIdSuscripcion(),
-                                plan.getIdPlan()
-                        );
-                    } catch (Exception subEx) {
-                        log.error("Error migrando suscripción {}: {}", suscripcion.getIdSuscripcion(), subEx.getMessage());
-                    }
-                }
-
-                log.warn("Migración completada. Total: {}", suscripcionesActivas.size());
-            }
-                */
-
-        } catch (Exception e) {
-            log.error("Error al sincronizar con Stripe: {}", e.getMessage(), e);
-            throw new ValidationException("Error al sincronizar cambios con Stripe");
-        }
-
         Plan planActualizado = planRepository.save(plan);
         log.info("Plan ID {} modificado exitosamente.", id);
         return Mapper.mapToPlan(planActualizado);
     }
 
-    // Actualizar estado activo
     @Transactional
     public void actualizarEstadoActivo(Long id, boolean activo) {
         log.warn("Cambiando estado activo del plan ID {} a {}", id, activo);

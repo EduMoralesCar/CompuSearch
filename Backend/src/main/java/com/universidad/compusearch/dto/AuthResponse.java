@@ -15,4 +15,5 @@ public class AuthResponse {
     private String identificador;
     private String tipoUsuario;
     private String rol;
+    private boolean suscripcionActiva;;
 }
