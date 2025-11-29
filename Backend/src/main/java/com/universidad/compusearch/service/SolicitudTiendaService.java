@@ -31,7 +31,7 @@ public class SolicitudTiendaService {
     private final UsuarioService usuarioService;
     private final SolicitudTiendaAttempService solicitudTiendaAttempService;
     private final EmpleadoService empleadoService;
-    private final ConversionService conversionService; 
+    private final ConversionService conversionService;
 
     // Obtener todas las solicitudes por usuario
     public Page<SolicitudTienda> obtenerSolicitudesPorUsuario(Long idUsuario, int page, int size) {
@@ -94,8 +94,9 @@ public class SolicitudTiendaService {
         Page<SolicitudTienda> solicitudesPage = solicitudTiendaRepository.findAll(pageable);
 
         Page<SolicitudTiendaResponse> respuestaPage = solicitudesPage.map(Mapper::mapToSolicitudTienda);
-        
+
         log.info("Se encontraron {} solicitudes en la página {}", respuestaPage.getNumberOfElements(), page);
         return respuestaPage;
     }
+
 }

@@ -1,4 +1,4 @@
-package com.universidad.compusearch.service;
+package com.universidad.compusearch.scheduler;
 
 import java.util.List;
 import java.util.Set;
@@ -16,6 +16,8 @@ import com.universidad.compusearch.dto.ProductoRequest;
 import com.universidad.compusearch.entity.ProductoTienda;
 import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.repository.ProductoTiendaRepository;
+import com.universidad.compusearch.service.ProductoService;
+import com.universidad.compusearch.service.TiendaService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ApiService {
+public class ApiScheduler {
 
     private final TiendaService tiendaService;
     private final RestTemplate restTemplate;
     private final ProductoService productoService;
     private final ProductoTiendaRepository productoTiendaRepository;
 
-    @Scheduled(cron = "0 0 23 * * ?")
+    @Scheduled(cron = "0 30 1 * * ?")
     public void ObtenerProductosDesdeApi() {
         log.info("Iniciando servicio de obtención de productos mediante API");
 
@@ -41,7 +43,7 @@ public class ApiService {
             if (!tienda.isVerificado() || tienda.getTiendaAPI() == null) {
                 log.debug("Saltando tienda '{}' (ID: {}) porque no está verificada o no tiene API",
                         tienda.getNombre(), tienda.getIdUsuario());
-                continue; // cambiar return a continue para procesar todas las tiendas
+                continue;
             }
 
             log.info("Procesando productos de la tienda '{}' (ID: {})", tienda.getNombre(), tienda.getIdUsuario());

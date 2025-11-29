@@ -26,4 +26,8 @@ public class PlanException extends CustomException {
         return new PlanException(
                 "Error al crear el plan");
     }
+
+    public static PlanException inactive(String nombre){
+        return new PlanException("El plan " + nombre + " esta inactivo");
+    }
 }

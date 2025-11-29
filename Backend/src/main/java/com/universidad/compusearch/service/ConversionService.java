@@ -9,7 +9,6 @@ import com.universidad.compusearch.entity.SolicitudTienda;
 import com.universidad.compusearch.entity.Tienda;
 import com.universidad.compusearch.entity.TipoUsuario;
 import com.universidad.compusearch.entity.Usuario;
-import com.universidad.compusearch.stripe.CustomerStripeService;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ConversionService {
 
     private final TiendaService tiendaService;
-    private final CustomerStripeService customerStripeService;
     private final EntityManager entityManager;
 
     // Convertir un usuario en tienda
@@ -40,9 +38,7 @@ public class ConversionService {
 
         Tienda tienda = crearTienda(solicitudTienda);
 
-        customerStripeService.crearCustomer(tienda);
-
-        log.info("Usuario {} convertido exitosamente.", usuario.getUsername());
+        log.info("Usuario {} convertido exitosamente.", tienda.getUsername());
     }
 
     public Tienda crearTienda(SolicitudTienda solicitudTienda) {
