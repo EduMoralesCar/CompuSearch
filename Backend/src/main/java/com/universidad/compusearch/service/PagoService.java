@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 public class PagoService {
 
     private final PagoRepository pagoRepository;
+    private final FacturaService facturaService;
+    private final EmailService emailService;
 
     public boolean cobrarPago(Suscripcion sus, boolean aceptar) {
         log.info("Generando pago por la suscripcion del plan {}", sus.getPlan().getNombre());
@@ -48,7 +50,16 @@ public class PagoService {
 
         if (aceptar) {
             pago.setEstadoPago(EstadoPago.COMPLETADO);
-            log.info("Pago realizado correctamente");
+            pagoRepository.save(pago);
+
+            byte[] pdf = facturaService.generarFacturaPdf(pago);
+
+            emailService.sendInvoiceEmail(
+                    pago.getSuscripcion().getTienda().getEmail(),
+                    pago,
+                    pdf);
+
+            log.info("Pago completado y factura enviada.");
         } else {
             pago.setEstadoPago(EstadoPago.FALLIDO);
             log.info("Pago fallido, intente más tarde");

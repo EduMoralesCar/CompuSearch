@@ -1,9 +1,14 @@
 package com.universidad.compusearch.service;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.universidad.compusearch.entity.Pago;
+
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,6 +47,51 @@ public class EmailService {
         } catch (Exception e) {
             log.error("Error al enviar correo de restablecimiento a {}", to, e);
             throw new RuntimeException("Error al enviar correo de recuperación de contraseña", e);
+        }
+    }
+
+    public void sendInvoiceEmail(String to, Pago pago, byte[] pdfBytes) {
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(to);
+            helper.setSubject("Factura de tu Suscripción - CompuSearch");
+
+            String body = """
+                    Hola,
+
+                    Gracias por tu pago. Adjuntamos la factura correspondiente.
+
+                    Detalles del pago:
+                    - Monto: %s
+                    - Fecha: %s
+                    - ID de Operación: %s
+                    - Plan: %s
+
+                    Si tienes alguna consulta, no dudes en responder este correo.
+
+                    Atentamente,
+                    CompuSearch
+                    """.formatted(
+                    pago.getMonto(),
+                    pago.getFechaPago(),
+                    pago.getIdOperacion(),
+                    pago.getSuscripcion().getPlan().getNombre());
+
+            helper.setText(body);
+
+            helper.addAttachment("factura-" + pago.getIdOperacion() + ".pdf",
+                    new ByteArrayResource(pdfBytes));
+
+            mailSender.send(message);
+
+            log.info("Factura enviada correctamente a {}", to);
+
+        } catch (Exception e) {
+            log.error("Error al enviar factura al correo {}", to, e);
+            throw new RuntimeException("Error al enviar factura", e);
         }
     }
 }
